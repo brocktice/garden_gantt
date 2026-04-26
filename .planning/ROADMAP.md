@@ -34,7 +34,15 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. The app boots cleanly in iOS Safari Private Browsing mode with a non-blocking banner explaining persistence is unavailable, instead of crashing on the first localStorage write
   4. Refreshing or deep-linking to `#/setup`, `#/plan`, `#/tasks`, or `#/settings` resolves to the right route without a 404 on a static host
   5. `npm test` passes a snapshot test suite covering tomato, lettuce, broccoli, and garlic across DST-crossing, leap-year, and year-rollover fixtures
-**Plans**: TBD
+**Plans**: 8 plans
+- [ ] 01-01-PLAN.md — Vite scaffold + Tailwind v4 tokens + lifecyclePalette + PlaceholderRoute + _redirects
+- [ ] 01-02-PLAN.md — UTC-noon date primitive (`dateWrappers.ts`) + DST/leap/rollover unit tests
+- [ ] 01-03-PLAN.md — Domain types + ids + 4-plant catalog + hardcoded sample plan
+- [ ] 01-04-PLAN.md — Schedule engine + constraint registry + auto-task emitter
+- [ ] 01-05-PLAN.md — Snapshot test suite (4 plants + DST + leap + year-rollover) + constraint unit tests
+- [ ] 01-06-PLAN.md — Persistence layer: storage probe + multi-tab listener + Zustand persist + uiStore
+- [ ] 01-07-PLAN.md — Hash router shell + AppShell + iOS Private banner + ErrorBoundary
+- [ ] 01-08-PLAN.md — timeScale + bare-SVG GanttView + useDerivedSchedule selector + /plan route wiring
 **UI hint**: yes
 
 ### Phase 2: Data Layer & First End-to-End
@@ -105,7 +113,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4. Decimal phases (e.g., 2.1)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Schedule Engine | 0/TBD | Not started | - |
+| 1. Foundation & Schedule Engine | 0/8 | Not started | - |
 | 2. Data Layer & First End-to-End | 0/TBD | Not started | - |
 | 3. Drag, Cascade, Calendar & Tasks | 0/TBD | Not started | - |
 | 4. Polish, Mobile & Ship | 0/TBD | Not started | - |
