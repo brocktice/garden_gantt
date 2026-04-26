@@ -38,7 +38,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] 01-01-PLAN.md — Vite scaffold + Tailwind v4 tokens + lifecyclePalette + PlaceholderRoute + _redirects
 - [x] 01-02-PLAN.md — UTC-noon date primitive (`dateWrappers.ts`) + DST/leap/rollover unit tests
 - [x] 01-03-PLAN.md — Domain types + ids + 4-plant catalog + hardcoded sample plan
-- [ ] 01-04-PLAN.md — Schedule engine + constraint registry + auto-task emitter
+- [x] 01-04-PLAN.md — Schedule engine + constraint registry + auto-task emitter
 - [ ] 01-05-PLAN.md — Snapshot test suite (4 plants + DST + leap + year-rollover) + constraint unit tests
 - [ ] 01-06-PLAN.md — Persistence layer: storage probe + multi-tab listener + Zustand persist + uiStore
 - [ ] 01-07-PLAN.md — Hash router shell + AppShell + iOS Private banner + ErrorBoundary

@@ -28,13 +28,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Schedule Engine
 
-- [ ] **SCH-01**: For each planting in the plan, the engine computes a per-plant lifecycle: indoor-start window → harden-off window → transplant date → harvest window
+- [x] **SCH-01**: For each planting in the plan, the engine computes a per-plant lifecycle: indoor-start window → harden-off window → transplant date → harvest window
 - [x] **SCH-02**: All scheduling math is pure functions over `(plan, catalog) → ScheduleEvent[]` with no I/O dependencies
 - [x] **SCH-03**: All dates stored and computed as UTC noon to avoid timezone/DST drift; no raw `new Date(string)` outside a single wrapper module
-- [ ] **SCH-04**: Engine respects frost tolerance: tender plants clamp transplant ≥ last frost; hardy plants allow transplant before last frost by their tolerance offset
-- [ ] **SCH-05**: Year-rollover crops (fall garlic, overwintered alliums) compute correctly across calendar boundaries
+- [x] **SCH-04**: Engine respects frost tolerance: tender plants clamp transplant ≥ last frost; hardy plants allow transplant before last frost by their tolerance offset
+- [x] **SCH-05**: Year-rollover crops (fall garlic, overwintered alliums) compute correctly across calendar boundaries
 - [ ] **SCH-06**: Engine supports succession planting — given an interval (days) and a season cutoff, it generates additional plantings of the same crop until none can reach harvest before first fall frost
-- [ ] **SCH-07**: Engine emits auto-derived task events alongside lifecycle events (water seedlings during indoor phase, fertilize at flowering, harden off before transplant, etc.)
+- [x] **SCH-07**: Engine emits auto-derived task events alongside lifecycle events (water seedlings during indoor phase, fertilize at flowering, harden off before transplant, etc.)
 - [ ] **SCH-08**: Snapshot tests cover known plants (tomato, lettuce, broccoli, garlic) plus DST-crossing and leap-year fixtures
 
 ### Gantt View
@@ -162,13 +162,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CAT-06 | Phase 2 | Pending |
 | CAT-07 | Phase 2 | Pending |
 | CAT-08 | Phase 2 | Pending |
-| SCH-01 | Phase 1 | Pending |
+| SCH-01 | Phase 1 | Complete |
 | SCH-02 | Phase 1 | Complete |
 | SCH-03 | Phase 1 | Complete |
-| SCH-04 | Phase 1 | Pending |
-| SCH-05 | Phase 1 | Pending |
+| SCH-04 | Phase 1 | Complete |
+| SCH-05 | Phase 1 | Complete |
 | SCH-06 | Phase 2 | Pending |
-| SCH-07 | Phase 1 | Pending |
+| SCH-07 | Phase 1 | Complete |
 | SCH-08 | Phase 1 | Pending |
 | GANTT-01 | Phase 2 | Pending |
 | GANTT-02 | Phase 2 | Pending |
