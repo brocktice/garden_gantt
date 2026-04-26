@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router';
 import { App } from './app/App';
 import { probeStorage, withStorageDOMEvents } from './data/storage';
+import { useCatalogStore } from './stores/catalogStore';
 import { usePlanStore } from './stores/planStore';
 import { useUIStore } from './stores/uiStore';
 import './index.css';
@@ -13,9 +14,11 @@ import './index.css';
 const isStorageAvailable = probeStorage();
 useUIStore.getState().setStorageAvailable(isStorageAvailable);
 
-// 2. Wire multi-tab `storage` event listener (D-15 / DATA-06).
-//    No-op in Phase 1 since no plan data persists, but contract is in place.
+// 2. Wire multi-tab `storage` event listener (D-15 / DATA-06) for BOTH persist stores.
+//    Phase 2 adds catalogStore alongside planStore so customPlants + permapeopleCache
+//    sync across tabs.
 withStorageDOMEvents(usePlanStore);
+withStorageDOMEvents(useCatalogStore);
 
 // 3. Render hash-router shell.
 createRoot(document.getElementById('root')!).render(
