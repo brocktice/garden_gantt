@@ -4,6 +4,7 @@
 //         [CITED: .planning/phases/01-foundation-schedule-engine/01-RESEARCH.md §Code Examples lines 884–971]
 import { describe, it, expect } from 'vitest';
 import { generateSchedule } from '../../src/domain/scheduler';
+import { expandSuccessions } from '../../src/domain/succession';
 import { sampleCatalog } from '../../src/assets/catalog';
 import type { GardenPlan } from '../../src/domain/types';
 
@@ -77,6 +78,16 @@ describe('schedule engine — year-rollover fixture (SCH-05, D-17)', () => {
     expect(harvest).toBeDefined();
     expect(harvest!.start.startsWith('2027')).toBe(true);
     expect(harvest!.start).toBe('2027-07-12T12:00:00.000Z');
+    expect(events).toMatchSnapshot();
+  });
+});
+
+describe('schedule engine — Phase 2 succession expansion (Plan 02-06)', () => {
+  it('lettuce zone 7 with successionEnabled produces multi-row schedule', () => {
+    const plan = planFor('lettuce');
+    plan.plantings[0]!.successionEnabled = true;
+    const expanded = expandSuccessions(plan, sampleCatalog);
+    const events = generateSchedule(expanded, sampleCatalog);
     expect(events).toMatchSnapshot();
   });
 });
