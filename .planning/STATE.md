@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Plan 01-01 complete
-last_updated: "2026-04-26T19:49:44.971Z"
+last_updated: "2026-04-26T19:56:04.708Z"
 last_activity: 2026-04-26
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 8
-  completed_plans: 2
-  percent: 25
+  completed_plans: 3
+  percent: 38
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 01 (foundation-schedule-engine) — EXECUTING
-Plan: 3 of 8
+Plan: 4 of 8
 Status: Ready to execute
 Last activity: 2026-04-26
 
-Progress: [███░░░░░░░] 25%
+Progress: [████░░░░░░] 38%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [███░░░░░░░] 25%
 *Updated after each plan completion*
 | Phase 01-foundation-schedule-engine P01 | 6min | 2 tasks | 13 files |
 | Phase 01 P02 | 2min | 2 tasks | 2 files |
+| Phase 01-foundation-schedule-engine P03 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Recent decisions affecting current work:
 - [Phase ?]: Plan 01-01: ESLint enforces SCH-03 via no-restricted-syntax with allowlist for dateWrappers.ts, GanttView.tsx, and build configs
 - [Phase ?]: Plan 01-01: passWithNoTests enabled in vite.config.ts test block so empty Phase 1 Wave 1 exits clean; Plan 02 writes the first tests
 - [Phase ?]: Plan 01-02: dateWrappers.ts is the single allowed new Date(string) site; UTC-noon storage discipline pinned by 12 vitest assertions
+- [Phase 01]: Plan 01-03: Canonical Phase 1 type system locked - 9-member EventType union (6 lifecycle from D-11 + 3 task from D-12); PlantTiming requires hasFlowering + requiresHardening booleans
+- [Phase 01]: Plan 01-03: 4-plant fixture catalog (tomato, lettuce, broccoli, garlic) as ReadonlyMap; samplePlan hardcoded with ZIP 20001 / lastFrost 2026-04-15 / firstFrost 2026-10-20 (loaded fresh per D-03)
 
 ### Pending Todos
 
@@ -91,6 +94,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-26T19:49:11.960Z
+Last session: 2026-04-26T19:55:30.594Z
 Stopped at: Plan 01-01 complete
 Resume file: None
