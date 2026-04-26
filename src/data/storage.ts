@@ -1,0 +1,56 @@
+// src/data/storage.ts
+// The SOLE module in src/ that touches localStorage.
+// Source: [VERIFIED: developer.mozilla.org/en-US/docs/Web/API/Storage/setItem]
+//         [VERIFIED: zustand persist withStorageDOMEvents pattern via Context7 /pmndrs/zustand]
+//         [CITED: .planning/phases/01-foundation-schedule-engine/01-RESEARCH.md §Code Examples lines 662–698]
+
+const PROBE_KEY = '__gg_probe';
+
+/**
+ * Probe localStorage availability. iOS Safari Private Browsing has quota=0 → setItem throws
+ * QuotaExceededError. (Pitfall 18.) Sync; safe to call before app render.
+ */
+export function probeStorage(): boolean {
+  try {
+    window.localStorage.setItem(PROBE_KEY, '1');
+    window.localStorage.removeItem(PROBE_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Convenience alias used by the banner UI. */
+export function isStorageAvailable(): boolean {
+  return probeStorage();
+}
+
+/**
+ * Structural shape of a Zustand store wrapped with the `persist` middleware.
+ * Reproduced here (rather than imported from `zustand`) because the upstream
+ * `Mutate<StoreApi<T>, [['zustand/persist', unknown]]>` collapses to `never`
+ * under exactOptionalPropertyTypes — the inferred mutator chain doesn't satisfy
+ * `StoreMutatorIdentifier` without the concrete creator type.
+ *
+ * Matches `StorePersist<S, Ps, Pr>['persist']` from zustand/middleware/persist.d.ts.
+ */
+export interface StoreWithPersist {
+  persist: {
+    getOptions: () => { name?: string };
+    rehydrate: () => Promise<void> | void;
+  };
+}
+
+/**
+ * Multi-tab sync: re-hydrate the persisted store when ANOTHER tab writes the same key.
+ * (DATA-06, Pitfall 19.) Returns a cleanup function that detaches the listener.
+ */
+export function withStorageDOMEvents(store: StoreWithPersist): () => void {
+  const callback = (e: StorageEvent) => {
+    if (e.key === store.persist.getOptions().name && e.newValue) {
+      void store.persist.rehydrate();
+    }
+  };
+  window.addEventListener('storage', callback);
+  return () => window.removeEventListener('storage', callback);
+}

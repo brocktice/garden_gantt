@@ -22,15 +22,33 @@ describe('probeStorage (DATA-03)', () => {
   });
 
   it('returns false when setItem throws (iOS Safari Private Browsing simulation)', () => {
-    const original = window.localStorage.setItem.bind(window.localStorage);
-    window.localStorage.setItem = vi.fn(() => {
-      throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+    // happy-dom routes Storage.setItem through an internal Proxy after first use, so spying
+    // on the prototype no longer intercepts the call. Instead, swap window.localStorage with
+    // a Storage-shaped mock whose setItem throws — this matches iOS Safari Private Browsing,
+    // which surfaces the failure via `localStorage.setItem(...) → QuotaExceededError`.
+    const original = window.localStorage;
+    const throwingStorage = {
+      length: 0,
+      clear: () => {},
+      getItem: () => null,
+      key: () => null,
+      removeItem: () => {},
+      setItem: () => {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      },
+    } satisfies Storage;
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      get: () => throwingStorage,
     });
     try {
       expect(probeStorage()).toBe(false);
       expect(isStorageAvailable()).toBe(false);
     } finally {
-      window.localStorage.setItem = original;
+      Object.defineProperty(window, 'localStorage', {
+        configurable: true,
+        get: () => original,
+      });
     }
   });
 });
