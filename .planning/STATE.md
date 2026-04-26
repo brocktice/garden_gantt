@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-06-PLAN.md
-last_updated: "2026-04-26T20:14:27.608Z"
+stopped_at: Completed 01-05-PLAN.md
+last_updated: "2026-04-26T20:21:48.358Z"
 last_activity: 2026-04-26
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 8
-  completed_plans: 5
-  percent: 63
+  completed_plans: 6
+  percent: 75
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 01 (foundation-schedule-engine) — EXECUTING
-Plan: 6 of 8
+Plan: 7 of 8
 Status: Ready to execute
 Last activity: 2026-04-26
 
-Progress: [██████░░░░] 63%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -57,6 +57,7 @@ Progress: [██████░░░░] 63%
 | Phase 01-foundation-schedule-engine P03 | 3min | 2 tasks | 4 files |
 | Phase 01-foundation-schedule-engine P04 | 4min | 3 tasks | 3 files |
 | Phase 01-foundation-schedule-engine P06 | 6min | 3 tasks | 5 files |
+| Phase 01-foundation-schedule-engine P05 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,9 @@ Recent decisions affecting current work:
 - [Phase ?]: Plan 06: Persist machinery wired (Zustand persist, name='garden-gantt:plan', version=1, plan: null per D-02). Storage I/O boundary enforced — only src/data/storage.ts touches localStorage.
 - [Phase ?]: Plan 06: StoreWithPersist as structural interface (Mutate<StoreApi<T>, [['zustand/persist', unknown]]> collapses to never under exactOptionalPropertyTypes).
 - [Phase ?]: Plan 06: Storage mock pattern for happy-dom uses Object.defineProperty(window, 'localStorage', ...) — prototype spies fail because Storage routes setItem through internal proxy after first use.
+- [Phase 01]: Plan 05: Snapshot suite locks engine output (7 tests, 4 plants + DST/leap/rollover fixtures); .snap committed at tests/__snapshots__/, future drift surfaces as PR diff.
+- [Phase 01]: Plan 05: vite.config.ts resolveSnapshotPath centralizes all .snap files at tests/__snapshots__/ (single canonical location for all future test files).
+- [Phase 01]: Plan 05: SCH-04 unit tests cover all 3 branches of canMove (tender-before-frost clamps, tender-after-frost passes through, hardy passes through).
 
 ### Pending Todos
 
@@ -103,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-26T20:14:17.648Z
-Stopped at: Completed 01-06-PLAN.md
+Last session: 2026-04-26T20:21:48.341Z
+Stopped at: Completed 01-05-PLAN.md
 Resume file: 

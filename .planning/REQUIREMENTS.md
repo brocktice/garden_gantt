@@ -35,7 +35,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SCH-05**: Year-rollover crops (fall garlic, overwintered alliums) compute correctly across calendar boundaries
 - [ ] **SCH-06**: Engine supports succession planting — given an interval (days) and a season cutoff, it generates additional plantings of the same crop until none can reach harvest before first fall frost
 - [x] **SCH-07**: Engine emits auto-derived task events alongside lifecycle events (water seedlings during indoor phase, fertilize at flowering, harden off before transplant, etc.)
-- [ ] **SCH-08**: Snapshot tests cover known plants (tomato, lettuce, broccoli, garlic) plus DST-crossing and leap-year fixtures
+- [x] **SCH-08**: Snapshot tests cover known plants (tomato, lettuce, broccoli, garlic) plus DST-crossing and leap-year fixtures
 
 ### Gantt View
 
@@ -169,7 +169,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCH-05 | Phase 1 | Complete |
 | SCH-06 | Phase 2 | Pending |
 | SCH-07 | Phase 1 | Complete |
-| SCH-08 | Phase 1 | Pending |
+| SCH-08 | Phase 1 | Complete |
 | GANTT-01 | Phase 2 | Pending |
 | GANTT-02 | Phase 2 | Pending |
 | GANTT-03 | Phase 2 | Pending |
