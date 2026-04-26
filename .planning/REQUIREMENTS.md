@@ -149,73 +149,79 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LOC-01 | TBD | Pending |
-| LOC-02 | TBD | Pending |
-| LOC-03 | TBD | Pending |
-| LOC-04 | TBD | Pending |
-| LOC-05 | TBD | Pending |
-| CAT-01 | TBD | Pending |
-| CAT-02 | TBD | Pending |
-| CAT-03 | TBD | Pending |
-| CAT-04 | TBD | Pending |
-| CAT-05 | TBD | Pending |
-| CAT-06 | TBD | Pending |
-| CAT-07 | TBD | Pending |
-| CAT-08 | TBD | Pending |
-| SCH-01 | TBD | Pending |
-| SCH-02 | TBD | Pending |
-| SCH-03 | TBD | Pending |
-| SCH-04 | TBD | Pending |
-| SCH-05 | TBD | Pending |
-| SCH-06 | TBD | Pending |
-| SCH-07 | TBD | Pending |
-| SCH-08 | TBD | Pending |
-| GANTT-01 | TBD | Pending |
-| GANTT-02 | TBD | Pending |
-| GANTT-03 | TBD | Pending |
-| GANTT-04 | TBD | Pending |
-| GANTT-05 | TBD | Pending |
-| GANTT-06 | TBD | Pending |
-| GANTT-07 | TBD | Pending |
-| GANTT-08 | TBD | Pending |
-| GANTT-09 | TBD | Pending |
-| GANTT-10 | TBD | Pending |
-| CAL-01 | TBD | Pending |
-| CAL-02 | TBD | Pending |
-| CAL-03 | TBD | Pending |
-| CAL-04 | TBD | Pending |
-| TASK-01 | TBD | Pending |
-| TASK-02 | TBD | Pending |
-| TASK-03 | TBD | Pending |
-| TASK-04 | TBD | Pending |
-| TASK-05 | TBD | Pending |
-| TASK-06 | TBD | Pending |
-| DATA-01 | TBD | Pending |
-| DATA-02 | TBD | Pending |
-| DATA-03 | TBD | Pending |
-| DATA-04 | TBD | Pending |
-| DATA-05 | TBD | Pending |
-| DATA-06 | TBD | Pending |
-| DATA-07 | TBD | Pending |
-| POL-01 | TBD | Pending |
-| POL-02 | TBD | Pending |
-| POL-03 | TBD | Pending |
-| POL-04 | TBD | Pending |
-| POL-05 | TBD | Pending |
-| POL-06 | TBD | Pending |
-| POL-07 | TBD | Pending |
-| POL-08 | TBD | Pending |
-| POL-09 | TBD | Pending |
-| POL-10 | TBD | Pending |
-| DEPLOY-01 | TBD | Pending |
-| DEPLOY-02 | TBD | Pending |
-| DEPLOY-03 | TBD | Pending |
+| LOC-01 | Phase 2 | Pending |
+| LOC-02 | Phase 2 | Pending |
+| LOC-03 | Phase 2 | Pending |
+| LOC-04 | Phase 2 | Pending |
+| LOC-05 | Phase 2 | Pending |
+| CAT-01 | Phase 2 | Pending |
+| CAT-02 | Phase 2 | Pending |
+| CAT-03 | Phase 2 | Pending |
+| CAT-04 | Phase 2 | Pending |
+| CAT-05 | Phase 2 | Pending |
+| CAT-06 | Phase 2 | Pending |
+| CAT-07 | Phase 2 | Pending |
+| CAT-08 | Phase 2 | Pending |
+| SCH-01 | Phase 1 | Pending |
+| SCH-02 | Phase 1 | Pending |
+| SCH-03 | Phase 1 | Pending |
+| SCH-04 | Phase 1 | Pending |
+| SCH-05 | Phase 1 | Pending |
+| SCH-06 | Phase 2 | Pending |
+| SCH-07 | Phase 1 | Pending |
+| SCH-08 | Phase 1 | Pending |
+| GANTT-01 | Phase 2 | Pending |
+| GANTT-02 | Phase 2 | Pending |
+| GANTT-03 | Phase 2 | Pending |
+| GANTT-04 | Phase 3 | Pending |
+| GANTT-05 | Phase 3 | Pending |
+| GANTT-06 | Phase 3 | Pending |
+| GANTT-07 | Phase 3 | Pending |
+| GANTT-08 | Phase 3 | Pending |
+| GANTT-09 | Phase 3 | Pending |
+| GANTT-10 | Phase 3 | Pending |
+| CAL-01 | Phase 3 | Pending |
+| CAL-02 | Phase 3 | Pending |
+| CAL-03 | Phase 3 | Pending |
+| CAL-04 | Phase 4 | Pending |
+| TASK-01 | Phase 3 | Pending |
+| TASK-02 | Phase 3 | Pending |
+| TASK-03 | Phase 3 | Pending |
+| TASK-04 | Phase 3 | Pending |
+| TASK-05 | Phase 3 | Pending |
+| TASK-06 | Phase 3 | Pending |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| DATA-03 | Phase 1 | Pending |
+| DATA-04 | Phase 2 | Pending |
+| DATA-05 | Phase 2 | Pending |
+| DATA-06 | Phase 1 | Pending |
+| DATA-07 | Phase 1 | Pending |
+| POL-01 | Phase 4 | Pending |
+| POL-02 | Phase 4 | Pending |
+| POL-03 | Phase 4 | Pending |
+| POL-04 | Phase 4 | Pending |
+| POL-05 | Phase 4 | Pending |
+| POL-06 | Phase 4 | Pending |
+| POL-07 | Phase 4 | Pending |
+| POL-08 | Phase 4 | Pending |
+| POL-09 | Phase 4 | Pending |
+| POL-10 | Phase 4 | Pending |
+| DEPLOY-01 | Phase 4 | Pending |
+| DEPLOY-02 | Phase 1 | Pending |
+| DEPLOY-03 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 60 total
-- Mapped to phases: 0 (filled by roadmapper)
-- Unmapped: 60
+- v1 requirements: 61 total
+- Mapped to phases: 61
+- Unmapped: 0
+
+**Distribution by phase:**
+- Phase 1 (Foundation & Schedule Engine): 13 requirements
+- Phase 2 (Data Layer & First End-to-End): 19 requirements
+- Phase 3 (Drag, Cascade, Calendar & Tasks): 16 requirements
+- Phase 4 (Polish, Mobile & Ship): 13 requirements
 
 ---
 *Requirements defined: 2026-04-26*
-*Last updated: 2026-04-26 after initial definition*
+*Last updated: 2026-04-26 after roadmap creation (traceability filled)*
