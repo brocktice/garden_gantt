@@ -189,6 +189,11 @@ export function generateSchedule(
   for (const planting of plan.plantings) {
     const plant = catalog.get(planting.plantId);
     if (!plant) continue; // Missing plant: silently skip in Phase 1; Plan 05 doesn't exercise.
+    // Phase 2 (Pitfall D): defensive — skip plantings whose plant has malformed DTM
+    // (e.g., user-authored custom plant with daysToMaturity <= 0). Three layers of
+    // defense: Zod (Plan 02-01) rejects on import; modal validation (Plan 02-09)
+    // prevents save; this guard handles any leak through.
+    if (!plant.timing.daysToMaturity || plant.timing.daysToMaturity <= 0) continue;
     all.push(...eventsForPlanting(planting, plant, plan));
   }
   // Stable order: by start date asc, then by event type asc, then by id asc.
