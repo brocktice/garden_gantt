@@ -55,7 +55,19 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User toggling "succession" on a crop with `successionIntervalDays` (e.g. lettuce) sees additional planting rows appear automatically, capped at the season's first-fall-frost cutoff
   4. User clicking "Export plan" downloads a versioned JSON file; clicking "Import plan" with that same file shows a preview, validates against the current schema, and on confirm restores the exact same gantt
   5. User reloading the browser after any change (location, planting added, custom plant authored, Permapeople enrichment fetched) sees identical state — and Permapeople being unreachable does not block any core flow
-**Plans**: TBD
+**Plans**: 12 plans
+- [ ] 02-01-PLAN.md — Domain types + Zod schemas + dateWrappers helpers + migrations module (Wave 1)
+- [ ] 02-02-PLAN.md — ZIP→zone+frost data pipeline (build script + zones.ts client + 10 chunks) (Wave 1)
+- [ ] 02-03-PLAN.md — Cloudflare Worker proxy + permapeople.ts client + CORS spike evidence (Wave 1)
+- [ ] 02-04-PLAN.md — Catalog 4→50 plants + catalogStore + uiStore Phase 2 transient flags (Wave 2)
+- [ ] 02-05-PLAN.md — planStore Phase 2 setters + v1→v2 migration + sample-plan bootstrap (Wave 2)
+- [ ] 02-06-PLAN.md — Succession engine pre-pass + scheduler defensive guard + tests (Wave 2)
+- [ ] 02-07-PLAN.md — UI primitives (cn, Button, Input, Label, Select, Dialog, DropdownMenu, Switch, Toast, Card, Badge) + Tailwind v4 tokens (Wave 3)
+- [ ] 02-08-PLAN.md — Setup Wizard 3 steps (SetupWizard + SetupStepLocation + SetupStepReview + ZipInput + lookupLocation hook) (Wave 4)
+- [ ] 02-09-PLAN.md — Catalog browser + PlantCard + CustomPlantModal + MyPlanPill + MyPlanPanel + filters (Wave 4)
+- [ ] 02-10-PLAN.md — GanttView season-axis + succession rows + plan-source swap + AppShell pill + footer + App.tsx routes (Wave 5)
+- [ ] 02-11-PLAN.md — Settings page + exportPlan + importPlan + ImportPreviewModal + /settings route swap (Wave 6)
+- [ ] 02-12-PLAN.md — Component tests + Flow A integration test + final build verification (Wave 7)
 **UI hint**: yes
 
 ### Phase 3: Drag, Cascade, Calendar & Tasks
@@ -114,6 +126,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4. Decimal phases (e.g., 2.1)
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Schedule Engine | 1/8 | In Progress|  |
-| 2. Data Layer & First End-to-End | 0/TBD | Not started | - |
+| 2. Data Layer & First End-to-End | 0/12 | Planned | - |
 | 3. Drag, Cascade, Calendar & Tasks | 0/TBD | Not started | - |
 | 4. Polish, Mobile & Ship | 0/TBD | Not started | - |
