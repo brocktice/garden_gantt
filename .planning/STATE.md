@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-05-PLAN.md
-last_updated: "2026-04-26T20:21:48.358Z"
+stopped_at: Completed 01-07-PLAN.md
+last_updated: "2026-04-26T20:29:33.718Z"
 last_activity: 2026-04-26
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 8
-  completed_plans: 6
-  percent: 75
+  completed_plans: 7
+  percent: 88
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 01 (foundation-schedule-engine) — EXECUTING
-Plan: 7 of 8
+Plan: 8 of 8
 Status: Ready to execute
 Last activity: 2026-04-26
 
-Progress: [████████░░] 75%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Progress: [████████░░] 75%
 | Phase 01-foundation-schedule-engine P04 | 4min | 3 tasks | 3 files |
 | Phase 01-foundation-schedule-engine P06 | 6min | 3 tasks | 5 files |
 | Phase 01-foundation-schedule-engine P05 | 3min | 2 tasks | 4 files |
+| Phase 01-foundation-schedule-engine P07 | 2min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,10 @@ Recent decisions affecting current work:
 - [Phase 01]: Plan 05: Snapshot suite locks engine output (7 tests, 4 plants + DST/leap/rollover fixtures); .snap committed at tests/__snapshots__/, future drift surfaces as PR diff.
 - [Phase 01]: Plan 05: vite.config.ts resolveSnapshotPath centralizes all .snap files at tests/__snapshots__/ (single canonical location for all future test files).
 - [Phase 01]: Plan 05: SCH-04 unit tests cover all 3 branches of canMove (tender-before-frost clamps, tender-after-frost passes through, hardy passes through).
+- [Phase 01-foundation-schedule-engine]: Plan 07: HashRouter declarative API (not createHashRouter) for Phase 1 — smaller surface, data-router APIs deferred until loaders/actions become a need.
+- [Phase 01-foundation-schedule-engine]: Plan 07: AppShell uses plain anchor tags + window.hashchange listener for active-link state, not react-router NavLink — smaller coupling, isolated testability.
+- [Phase 01-foundation-schedule-engine]: Plan 07: Catch-all path='*' route renders the Plan-loading placeholder; mistyped/stale hashes recover gracefully instead of dead-ending.
+- [Phase 01-foundation-schedule-engine]: Plan 07: ErrorBoundary wraps AppShell at outer-most position; an error inside the header or banner cannot bubble past it.
 
 ### Pending Todos
 
@@ -107,6 +112,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-26T20:21:48.341Z
-Stopped at: Completed 01-05-PLAN.md
+Last session: 2026-04-26T20:29:33.461Z
+Stopped at: Completed 01-07-PLAN.md
 Resume file: 
+None

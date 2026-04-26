@@ -92,7 +92,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Deployment
 
 - [ ] **DEPLOY-01**: Static-site deploy to Cloudflare Pages with CI/CD on push to main
-- [ ] **DEPLOY-02**: Hash-based routing so deep links (`#/plan`, `#/setup`, `#/tasks`, `#/settings`) work after refresh on any static host
+- [x] **DEPLOY-02**: Hash-based routing so deep links (`#/plan`, `#/setup`, `#/tasks`, `#/settings`) work after refresh on any static host
 - [ ] **DEPLOY-03**: Hashed asset filenames; index.html uncached so deploys propagate without stale cache
 
 ## v2 Requirements
@@ -208,7 +208,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | POL-09 | Phase 4 | Pending |
 | POL-10 | Phase 4 | Pending |
 | DEPLOY-01 | Phase 4 | Pending |
-| DEPLOY-02 | Phase 1 | Pending |
+| DEPLOY-02 | Phase 1 | Complete |
 | DEPLOY-03 | Phase 4 | Pending |
 
 **Coverage:**

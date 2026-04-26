@@ -41,7 +41,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] 01-04-PLAN.md — Schedule engine + constraint registry + auto-task emitter
 - [x] 01-05-PLAN.md — Snapshot test suite (4 plants + DST + leap + year-rollover) + constraint unit tests
 - [x] 01-06-PLAN.md — Persistence layer: storage probe + multi-tab listener + Zustand persist + uiStore
-- [ ] 01-07-PLAN.md — Hash router shell + AppShell + iOS Private banner + ErrorBoundary
+- [x] 01-07-PLAN.md — Hash router shell + AppShell + iOS Private banner + ErrorBoundary
 - [ ] 01-08-PLAN.md — timeScale + bare-SVG GanttView + useDerivedSchedule selector + /plan route wiring
 **UI hint**: yes
 
