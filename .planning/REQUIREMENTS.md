@@ -68,13 +68,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Persistence & Portability
 
-- [ ] **DATA-01**: Plan state (location, plantings, custom plants, schedule edits, custom tasks, completed task ids, settings) persists to browser localStorage on every change
-- [ ] **DATA-02**: Persisted state carries a `schemaVersion`; migration framework runs registered migration functions on load
-- [ ] **DATA-03**: App detects when localStorage is unavailable (iOS Safari Private Browsing → quota=0) and surfaces a non-blocking banner explaining what won't persist
+- [x] **DATA-01**: Plan state (location, plantings, custom plants, schedule edits, custom tasks, completed task ids, settings) persists to browser localStorage on every change
+- [x] **DATA-02**: Persisted state carries a `schemaVersion`; migration framework runs registered migration functions on load
+- [x] **DATA-03**: App detects when localStorage is unavailable (iOS Safari Private Browsing → quota=0) and surfaces a non-blocking banner explaining what won't persist
 - [ ] **DATA-04**: User can export the entire plan to a JSON file (one click)
 - [ ] **DATA-05**: User can import a JSON file; import validates with Zod against the current schema and shows a preview before overwriting current state
-- [ ] **DATA-06**: Multi-tab `storage` events keep open tabs reconciled (no silent overwrites)
-- [ ] **DATA-07**: Bad/corrupt import shows a clear error without corrupting current state
+- [x] **DATA-06**: Multi-tab `storage` events keep open tabs reconciled (no silent overwrites)
+- [x] **DATA-07**: Bad/corrupt import shows a clear error without corrupting current state
 
 ### Polish & Share-Worthy v1
 
@@ -190,13 +190,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TASK-04 | Phase 3 | Pending |
 | TASK-05 | Phase 3 | Pending |
 | TASK-06 | Phase 3 | Pending |
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
 | DATA-04 | Phase 2 | Pending |
 | DATA-05 | Phase 2 | Pending |
-| DATA-06 | Phase 1 | Pending |
-| DATA-07 | Phase 1 | Pending |
+| DATA-06 | Phase 1 | Complete |
+| DATA-07 | Phase 1 | Complete |
 | POL-01 | Phase 4 | Pending |
 | POL-02 | Phase 4 | Pending |
 | POL-03 | Phase 4 | Pending |
