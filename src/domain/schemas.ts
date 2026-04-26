@@ -81,6 +81,10 @@ export const PlantingSchema = z.object({
   successionIndex: z.number().int().min(0),
   // Phase 2 (D-21): toggle for engine pre-pass succession expansion.
   successionEnabled: z.boolean().optional(),
+  // Phase 2 (Plan 02-10): per-planting day-offset applied to the engine anchor. Set by
+  // expandSuccessions on derived plantings; never user-input. Allow negatives in case a
+  // future feature stages succession backwards from the anchor.
+  startOffsetDays: z.number().int().optional(),
   notes: z.string().optional(),
 });
 

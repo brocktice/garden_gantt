@@ -76,6 +76,11 @@ export interface Planting {
   notes?: string;
   // Phase 2 (D-21): when true, expandSuccessions pre-pass derives additional plantings.
   successionEnabled?: boolean;
+  // Phase 2 (Plan 02-10 deviation — Rule 2): per-planting offset (in days) applied to the
+  // engine's lastFrost anchor. Used by expandSuccessions to stagger derived plantings by
+  // `successionIndex * successionIntervalDays` so each succession row plants on a distinct
+  // calendar date. Default 0 keeps Phase 1 snapshots byte-identical.
+  startOffsetDays?: number;
 }
 
 // 6 lifecycle event types from D-11 + 3 task event types from D-12.
