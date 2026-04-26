@@ -1,0 +1,2666 @@
+{
+  "version": 1,
+  "generatedAt": "2026-04-26T23:10:31.498Z",
+  "zips": {
+    "53001": {
+      "zone": "5a",
+      "lat": 43.62,
+      "lon": -87.94,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53002": {
+      "zone": "5a",
+      "lat": 43.47,
+      "lon": -88.35,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53004": {
+      "zone": "5a",
+      "lat": 43.5,
+      "lon": -87.85,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53005": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -88.11,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53006": {
+      "zone": "5a",
+      "lat": 43.61,
+      "lon": -88.49,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53007": {
+      "zone": "5a",
+      "lat": 43.1,
+      "lon": -88.07,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53010": {
+      "zone": "5a",
+      "lat": 43.59,
+      "lon": -88.28,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53011": {
+      "zone": "5a",
+      "lat": 43.65,
+      "lon": -88,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53012": {
+      "zone": "5a",
+      "lat": 43.29,
+      "lon": -87.98,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53013": {
+      "zone": "5a",
+      "lat": 43.56,
+      "lon": -87.82,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53014": {
+      "zone": "5a",
+      "lat": 44.02,
+      "lon": -88.16,
+      "lastSpringFrost50": "05-03",
+      "firstFallFrost50": "10-02"
+    },
+    "53015": {
+      "zone": "5a",
+      "lat": 43.91,
+      "lon": -87.75,
+      "lastSpringFrost50": "05-03",
+      "firstFallFrost50": "10-02"
+    },
+    "53017": {
+      "zone": "5a",
+      "lat": 43.2,
+      "lon": -88.25,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53018": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -88.39,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53019": {
+      "zone": "5a",
+      "lat": 43.69,
+      "lon": -88.36,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53020": {
+      "zone": "5a",
+      "lat": 43.83,
+      "lon": -88.01,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53021": {
+      "zone": "5a",
+      "lat": 43.46,
+      "lon": -87.95,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53022": {
+      "zone": "5a",
+      "lat": 43.23,
+      "lon": -88.12,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53023": {
+      "zone": "5a",
+      "lat": 43.79,
+      "lon": -88.04,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53024": {
+      "zone": "5a",
+      "lat": 43.31,
+      "lon": -87.95,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53027": {
+      "zone": "5a",
+      "lat": 43.32,
+      "lon": -88.38,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53029": {
+      "zone": "5a",
+      "lat": 43.09,
+      "lon": -88.34,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53032": {
+      "zone": "5a",
+      "lat": 43.44,
+      "lon": -88.63,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53033": {
+      "zone": "5a",
+      "lat": 43.23,
+      "lon": -88.24,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53034": {
+      "zone": "5a",
+      "lat": 43.34,
+      "lon": -88.6,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53035": {
+      "zone": "5a",
+      "lat": 43.39,
+      "lon": -88.53,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53036": {
+      "zone": "5a",
+      "lat": 43.16,
+      "lon": -88.58,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53037": {
+      "zone": "5a",
+      "lat": 43.32,
+      "lon": -88.16,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53038": {
+      "zone": "5a",
+      "lat": 43.07,
+      "lon": -88.77,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53039": {
+      "zone": "5a",
+      "lat": 43.4,
+      "lon": -88.7,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53040": {
+      "zone": "5a",
+      "lat": 43.52,
+      "lon": -88.23,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53042": {
+      "zone": "5a",
+      "lat": 43.91,
+      "lon": -88.03,
+      "lastSpringFrost50": "05-03",
+      "firstFallFrost50": "10-02"
+    },
+    "53044": {
+      "zone": "5a",
+      "lat": 43.73,
+      "lon": -87.77,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53045": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -88.11,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53046": {
+      "zone": "5a",
+      "lat": 43.15,
+      "lon": -88.16,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53048": {
+      "zone": "5a",
+      "lat": 43.58,
+      "lon": -88.44,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53049": {
+      "zone": "5a",
+      "lat": 43.88,
+      "lon": -88.28,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53050": {
+      "zone": "5a",
+      "lat": 43.49,
+      "lon": -88.54,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53051": {
+      "zone": "5a",
+      "lat": 43.14,
+      "lon": -88.12,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53057": {
+      "zone": "5a",
+      "lat": 43.82,
+      "lon": -88.24,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53058": {
+      "zone": "5a",
+      "lat": 43.09,
+      "lon": -88.4,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53059": {
+      "zone": "5a",
+      "lat": 43.3,
+      "lon": -88.51,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53061": {
+      "zone": "5a",
+      "lat": 43.94,
+      "lon": -88.09,
+      "lastSpringFrost50": "05-03",
+      "firstFallFrost50": "10-02"
+    },
+    "53063": {
+      "zone": "5a",
+      "lat": 43.99,
+      "lon": -87.73,
+      "lastSpringFrost50": "05-03",
+      "firstFallFrost50": "10-02"
+    },
+    "53065": {
+      "zone": "5a",
+      "lat": 43.68,
+      "lon": -88.54,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53066": {
+      "zone": "5a",
+      "lat": 43.1,
+      "lon": -88.49,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53069": {
+      "zone": "5a",
+      "lat": 43.11,
+      "lon": -88.43,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53070": {
+      "zone": "5a",
+      "lat": 43.62,
+      "lon": -87.79,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53072": {
+      "zone": "5a",
+      "lat": 43.08,
+      "lon": -88.25,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53073": {
+      "zone": "5a",
+      "lat": 43.74,
+      "lon": -87.97,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53074": {
+      "zone": "5a",
+      "lat": 43.39,
+      "lon": -87.87,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53075": {
+      "zone": "5a",
+      "lat": 43.55,
+      "lon": -87.95,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53076": {
+      "zone": "5a",
+      "lat": 43.27,
+      "lon": -88.21,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53078": {
+      "zone": "5a",
+      "lat": 43.31,
+      "lon": -88.45,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53079": {
+      "zone": "5a",
+      "lat": 43.82,
+      "lon": -88.16,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53080": {
+      "zone": "5a",
+      "lat": 43.38,
+      "lon": -87.94,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53081": {
+      "zone": "5a",
+      "lat": 43.7,
+      "lon": -87.74,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53083": {
+      "zone": "5a",
+      "lat": 43.82,
+      "lon": -87.75,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53085": {
+      "zone": "5a",
+      "lat": 43.72,
+      "lon": -87.82,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53086": {
+      "zone": "5a",
+      "lat": 43.33,
+      "lon": -88.28,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53089": {
+      "zone": "5a",
+      "lat": 43.13,
+      "lon": -88.21,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53090": {
+      "zone": "5a",
+      "lat": 43.42,
+      "lon": -88.18,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53091": {
+      "zone": "5a",
+      "lat": 43.51,
+      "lon": -88.45,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53092": {
+      "zone": "5a",
+      "lat": 43.23,
+      "lon": -87.97,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53093": {
+      "zone": "5a",
+      "lat": 43.67,
+      "lon": -87.94,
+      "lastSpringFrost50": "05-02",
+      "firstFallFrost50": "10-03"
+    },
+    "53094": {
+      "zone": "5a",
+      "lat": 43.19,
+      "lon": -88.72,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53095": {
+      "zone": "5a",
+      "lat": 43.42,
+      "lon": -88.18,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53097": {
+      "zone": "5a",
+      "lat": 43.23,
+      "lon": -87.98,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53098": {
+      "zone": "5a",
+      "lat": 43.19,
+      "lon": -88.72,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53099": {
+      "zone": "5a",
+      "lat": 43.41,
+      "lon": -88.45,
+      "lastSpringFrost50": "05-01",
+      "firstFallFrost50": "10-04"
+    },
+    "53103": {
+      "zone": "5b",
+      "lat": 42.88,
+      "lon": -88.2,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53104": {
+      "zone": "5b",
+      "lat": 42.54,
+      "lon": -88.02,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53105": {
+      "zone": "5b",
+      "lat": 42.67,
+      "lon": -88.27,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53108": {
+      "zone": "5b",
+      "lat": 42.82,
+      "lon": -87.93,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53110": {
+      "zone": "5b",
+      "lat": 42.94,
+      "lon": -87.86,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53114": {
+      "zone": "5b",
+      "lat": 42.6,
+      "lon": -88.71,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53115": {
+      "zone": "5b",
+      "lat": 42.62,
+      "lon": -88.63,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53118": {
+      "zone": "5a",
+      "lat": 43.01,
+      "lon": -88.47,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53119": {
+      "zone": "5b",
+      "lat": 42.87,
+      "lon": -88.47,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53120": {
+      "zone": "5b",
+      "lat": 42.78,
+      "lon": -88.39,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53121": {
+      "zone": "5b",
+      "lat": 42.67,
+      "lon": -88.54,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53122": {
+      "zone": "5a",
+      "lat": 43.04,
+      "lon": -88.08,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53125": {
+      "zone": "5b",
+      "lat": 42.54,
+      "lon": -88.55,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53126": {
+      "zone": "5b",
+      "lat": 42.79,
+      "lon": -87.99,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53128": {
+      "zone": "5b",
+      "lat": 42.5,
+      "lon": -88.32,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53129": {
+      "zone": "5b",
+      "lat": 42.93,
+      "lon": -88,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53130": {
+      "zone": "5b",
+      "lat": 42.94,
+      "lon": -88.04,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53132": {
+      "zone": "5b",
+      "lat": 42.88,
+      "lon": -88,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53137": {
+      "zone": "5a",
+      "lat": 43.01,
+      "lon": -88.71,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53139": {
+      "zone": "5b",
+      "lat": 42.7,
+      "lon": -88.12,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53140": {
+      "zone": "5b",
+      "lat": 42.58,
+      "lon": -87.85,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53142": {
+      "zone": "5b",
+      "lat": 42.58,
+      "lon": -87.85,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53143": {
+      "zone": "5b",
+      "lat": 42.58,
+      "lon": -87.85,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53144": {
+      "zone": "5b",
+      "lat": 42.58,
+      "lon": -87.85,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53146": {
+      "zone": "5b",
+      "lat": 42.97,
+      "lon": -88.12,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53147": {
+      "zone": "5b",
+      "lat": 42.58,
+      "lon": -88.42,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53149": {
+      "zone": "5b",
+      "lat": 42.86,
+      "lon": -88.33,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53150": {
+      "zone": "5b",
+      "lat": 42.89,
+      "lon": -88.12,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53151": {
+      "zone": "5b",
+      "lat": 42.97,
+      "lon": -88.12,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53153": {
+      "zone": "5b",
+      "lat": 42.93,
+      "lon": -88.39,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53154": {
+      "zone": "5b",
+      "lat": 42.88,
+      "lon": -87.89,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53156": {
+      "zone": "5b",
+      "lat": 42.87,
+      "lon": -88.58,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53158": {
+      "zone": "5b",
+      "lat": 42.52,
+      "lon": -87.88,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53168": {
+      "zone": "5b",
+      "lat": 42.6,
+      "lon": -88.12,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53170": {
+      "zone": "5b",
+      "lat": 42.55,
+      "lon": -88.16,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53172": {
+      "zone": "5b",
+      "lat": 42.91,
+      "lon": -87.86,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53177": {
+      "zone": "5b",
+      "lat": 42.7,
+      "lon": -87.89,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53178": {
+      "zone": "5a",
+      "lat": 43.01,
+      "lon": -88.58,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53179": {
+      "zone": "5b",
+      "lat": 42.51,
+      "lon": -88.13,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53181": {
+      "zone": "5b",
+      "lat": 42.51,
+      "lon": -88.25,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53182": {
+      "zone": "5b",
+      "lat": 42.68,
+      "lon": -88.05,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53183": {
+      "zone": "5a",
+      "lat": 43,
+      "lon": -88.37,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53184": {
+      "zone": "5b",
+      "lat": 42.53,
+      "lon": -88.59,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53185": {
+      "zone": "5b",
+      "lat": 42.76,
+      "lon": -88.21,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53186": {
+      "zone": "5a",
+      "lat": 43.01,
+      "lon": -88.23,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53188": {
+      "zone": "5a",
+      "lat": 43.01,
+      "lon": -88.23,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53189": {
+      "zone": "5a",
+      "lat": 43.01,
+      "lon": -88.23,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53190": {
+      "zone": "5b",
+      "lat": 42.83,
+      "lon": -88.73,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "53191": {
+      "zone": "5b",
+      "lat": 42.57,
+      "lon": -88.54,
+      "lastSpringFrost50": "04-28",
+      "firstFallFrost50": "10-07"
+    },
+    "53202": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53203": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53204": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53205": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53206": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53207": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53208": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53209": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53210": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53211": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53212": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53213": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53214": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53215": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53216": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53217": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53218": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53219": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53220": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53221": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53222": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53223": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53224": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53225": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53226": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53227": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53228": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53233": {
+      "zone": "5a",
+      "lat": 43.06,
+      "lon": -87.96,
+      "lastSpringFrost50": "04-30",
+      "firstFallFrost50": "10-05"
+    },
+    "53235": {
+      "zone": "5b",
+      "lat": 42.97,
+      "lon": -87.87,
+      "lastSpringFrost50": "04-29",
+      "firstFallFrost50": "10-06"
+    },
+    "55001": {
+      "zone": "5a",
+      "lat": 44.9,
+      "lon": -92.81,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55003": {
+      "zone": "4b",
+      "lat": 45.01,
+      "lon": -92.78,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55005": {
+      "zone": "4b",
+      "lat": 45.4,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55006": {
+      "zone": "4b",
+      "lat": 45.72,
+      "lon": -93.17,
+      "lastSpringFrost50": "05-09",
+      "firstFallFrost50": "09-26"
+    },
+    "55007": {
+      "zone": "4b",
+      "lat": 45.94,
+      "lon": -93.07,
+      "lastSpringFrost50": "05-10",
+      "firstFallFrost50": "09-25"
+    },
+    "55008": {
+      "zone": "4b",
+      "lat": 45.56,
+      "lon": -93.22,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55009": {
+      "zone": "5a",
+      "lat": 44.51,
+      "lon": -92.9,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55011": {
+      "zone": "4b",
+      "lat": 45.34,
+      "lon": -93.24,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55012": {
+      "zone": "4b",
+      "lat": 45.39,
+      "lon": -92.81,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55013": {
+      "zone": "4b",
+      "lat": 45.37,
+      "lon": -92.88,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55014": {
+      "zone": "4b",
+      "lat": 45.13,
+      "lon": -93.15,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55016": {
+      "zone": "5a",
+      "lat": 44.81,
+      "lon": -92.92,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55017": {
+      "zone": "4b",
+      "lat": 45.68,
+      "lon": -93.45,
+      "lastSpringFrost50": "05-09",
+      "firstFallFrost50": "09-26"
+    },
+    "55018": {
+      "zone": "5a",
+      "lat": 44.4,
+      "lon": -93.02,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55019": {
+      "zone": "5a",
+      "lat": 44.42,
+      "lon": -93.2,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55020": {
+      "zone": "5a",
+      "lat": 44.56,
+      "lon": -93.32,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55021": {
+      "zone": "5a",
+      "lat": 44.29,
+      "lon": -93.27,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55024": {
+      "zone": "5a",
+      "lat": 44.65,
+      "lon": -93.17,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55025": {
+      "zone": "4b",
+      "lat": 45.27,
+      "lon": -92.98,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55026": {
+      "zone": "5a",
+      "lat": 44.49,
+      "lon": -92.35,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55027": {
+      "zone": "5a",
+      "lat": 44.4,
+      "lon": -92.62,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55030": {
+      "zone": "4b",
+      "lat": 45.85,
+      "lon": -93.08,
+      "lastSpringFrost50": "05-09",
+      "firstFallFrost50": "09-26"
+    },
+    "55031": {
+      "zone": "5a",
+      "lat": 44.6,
+      "lon": -93,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55032": {
+      "zone": "4b",
+      "lat": 45.6,
+      "lon": -92.98,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55033": {
+      "zone": "5a",
+      "lat": 44.73,
+      "lon": -92.85,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55036": {
+      "zone": "4b",
+      "lat": 45.87,
+      "lon": -93.12,
+      "lastSpringFrost50": "05-09",
+      "firstFallFrost50": "09-26"
+    },
+    "55037": {
+      "zone": "4b",
+      "lat": 46.01,
+      "lon": -92.93,
+      "lastSpringFrost50": "05-10",
+      "firstFallFrost50": "09-25"
+    },
+    "55038": {
+      "zone": "4b",
+      "lat": 45.15,
+      "lon": -92.96,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55040": {
+      "zone": "4b",
+      "lat": 45.48,
+      "lon": -93.25,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55041": {
+      "zone": "5a",
+      "lat": 44.44,
+      "lon": -92.27,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55042": {
+      "zone": "5a",
+      "lat": 44.99,
+      "lon": -92.9,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55043": {
+      "zone": "5a",
+      "lat": 44.95,
+      "lon": -92.77,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55044": {
+      "zone": "5a",
+      "lat": 44.67,
+      "lon": -93.24,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55045": {
+      "zone": "4b",
+      "lat": 45.38,
+      "lon": -92.84,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55046": {
+      "zone": "5a",
+      "lat": 44.47,
+      "lon": -93.42,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55047": {
+      "zone": "4b",
+      "lat": 45.2,
+      "lon": -92.78,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55049": {
+      "zone": "5a",
+      "lat": 44.17,
+      "lon": -93.24,
+      "lastSpringFrost50": "05-03",
+      "firstFallFrost50": "10-02"
+    },
+    "55051": {
+      "zone": "4b",
+      "lat": 45.87,
+      "lon": -93.29,
+      "lastSpringFrost50": "05-09",
+      "firstFallFrost50": "09-26"
+    },
+    "55052": {
+      "zone": "5a",
+      "lat": 44.22,
+      "lon": -93.44,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55053": {
+      "zone": "5a",
+      "lat": 44.34,
+      "lon": -93.06,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55054": {
+      "zone": "5a",
+      "lat": 44.57,
+      "lon": -93.34,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55055": {
+      "zone": "5a",
+      "lat": 44.87,
+      "lon": -92.99,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55056": {
+      "zone": "4b",
+      "lat": 45.51,
+      "lon": -92.97,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55057": {
+      "zone": "5a",
+      "lat": 44.45,
+      "lon": -93.16,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55060": {
+      "zone": "5a",
+      "lat": 44.08,
+      "lon": -93.22,
+      "lastSpringFrost50": "05-03",
+      "firstFallFrost50": "10-02"
+    },
+    "55063": {
+      "zone": "4b",
+      "lat": 45.83,
+      "lon": -92.96,
+      "lastSpringFrost50": "05-09",
+      "firstFallFrost50": "09-26"
+    },
+    "55065": {
+      "zone": "5a",
+      "lat": 44.52,
+      "lon": -93.01,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55066": {
+      "zone": "5a",
+      "lat": 44.58,
+      "lon": -92.6,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55068": {
+      "zone": "5a",
+      "lat": 44.74,
+      "lon": -93.07,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55069": {
+      "zone": "4b",
+      "lat": 45.68,
+      "lon": -92.96,
+      "lastSpringFrost50": "05-09",
+      "firstFallFrost50": "09-26"
+    },
+    "55070": {
+      "zone": "4b",
+      "lat": 45.39,
+      "lon": -93.38,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55071": {
+      "zone": "5a",
+      "lat": 44.83,
+      "lon": -92.99,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55072": {
+      "zone": "4b",
+      "lat": 46.12,
+      "lon": -92.86,
+      "lastSpringFrost50": "05-10",
+      "firstFallFrost50": "09-25"
+    },
+    "55073": {
+      "zone": "4b",
+      "lat": 45.27,
+      "lon": -92.82,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55074": {
+      "zone": "4b",
+      "lat": 45.38,
+      "lon": -92.74,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55075": {
+      "zone": "5a",
+      "lat": 44.88,
+      "lon": -93.04,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55076": {
+      "zone": "5a",
+      "lat": 44.82,
+      "lon": -93.05,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55077": {
+      "zone": "5a",
+      "lat": 44.82,
+      "lon": -93.05,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55079": {
+      "zone": "4b",
+      "lat": 45.39,
+      "lon": -92.98,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55080": {
+      "zone": "4b",
+      "lat": 45.66,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-09",
+      "firstFallFrost50": "09-26"
+    },
+    "55082": {
+      "zone": "4b",
+      "lat": 45.05,
+      "lon": -92.82,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55084": {
+      "zone": "4b",
+      "lat": 45.41,
+      "lon": -92.66,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55087": {
+      "zone": "5a",
+      "lat": 44.23,
+      "lon": -93.34,
+      "lastSpringFrost50": "05-04",
+      "firstFallFrost50": "10-01"
+    },
+    "55088": {
+      "zone": "5a",
+      "lat": 44.5,
+      "lon": -93.34,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55089": {
+      "zone": "5a",
+      "lat": 44.59,
+      "lon": -92.71,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55092": {
+      "zone": "4b",
+      "lat": 45.33,
+      "lon": -92.99,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55101": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55102": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55103": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55104": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55105": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55106": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55107": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55108": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55109": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55110": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55111": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55112": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55113": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55114": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55115": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55116": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55117": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55118": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55119": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55120": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55121": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55122": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55123": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55124": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55125": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55126": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55127": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55128": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55129": {
+      "zone": "5a",
+      "lat": 44.94,
+      "lon": -93.1,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55130": {
+      "zone": "5a",
+      "lat": 44.97,
+      "lon": -93.08,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55301": {
+      "zone": "4b",
+      "lat": 45.23,
+      "lon": -93.66,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55302": {
+      "zone": "4b",
+      "lat": 45.26,
+      "lon": -94.11,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55303": {
+      "zone": "4b",
+      "lat": 45.21,
+      "lon": -93.39,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55304": {
+      "zone": "4b",
+      "lat": 45.25,
+      "lon": -93.33,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55305": {
+      "zone": "5a",
+      "lat": 44.92,
+      "lon": -93.4,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55306": {
+      "zone": "5a",
+      "lat": 44.76,
+      "lon": -93.27,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55307": {
+      "zone": "5a",
+      "lat": 44.6,
+      "lon": -94.07,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55308": {
+      "zone": "4b",
+      "lat": 45.37,
+      "lon": -93.87,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55309": {
+      "zone": "4b",
+      "lat": 45.33,
+      "lon": -93.74,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55310": {
+      "zone": "5a",
+      "lat": 44.76,
+      "lon": -94.89,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55311": {
+      "zone": "4b",
+      "lat": 45.11,
+      "lon": -93.39,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55312": {
+      "zone": "5a",
+      "lat": 44.73,
+      "lon": -94.35,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55313": {
+      "zone": "4b",
+      "lat": 45.17,
+      "lon": -93.86,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55314": {
+      "zone": "5a",
+      "lat": 44.73,
+      "lon": -94.61,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55315": {
+      "zone": "5a",
+      "lat": 44.76,
+      "lon": -93.62,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55316": {
+      "zone": "4b",
+      "lat": 45.16,
+      "lon": -93.38,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55317": {
+      "zone": "5a",
+      "lat": 44.85,
+      "lon": -93.55,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55318": {
+      "zone": "5a",
+      "lat": 44.82,
+      "lon": -93.6,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55319": {
+      "zone": "4b",
+      "lat": 45.44,
+      "lon": -93.99,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55320": {
+      "zone": "4b",
+      "lat": 45.41,
+      "lon": -94.04,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55321": {
+      "zone": "4b",
+      "lat": 45.07,
+      "lon": -94.18,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55322": {
+      "zone": "5a",
+      "lat": 44.77,
+      "lon": -93.78,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55324": {
+      "zone": "4b",
+      "lat": 45.09,
+      "lon": -94.4,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55325": {
+      "zone": "4b",
+      "lat": 45.08,
+      "lon": -94.3,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55327": {
+      "zone": "4b",
+      "lat": 45.18,
+      "lon": -93.47,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55328": {
+      "zone": "4b",
+      "lat": 45.04,
+      "lon": -93.78,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55329": {
+      "zone": "4b",
+      "lat": 45.32,
+      "lon": -94.54,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55330": {
+      "zone": "4b",
+      "lat": 45.33,
+      "lon": -93.56,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55331": {
+      "zone": "5a",
+      "lat": 44.9,
+      "lon": -93.56,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55332": {
+      "zone": "5a",
+      "lat": 44.52,
+      "lon": -94.72,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55333": {
+      "zone": "5a",
+      "lat": 44.53,
+      "lon": -94.88,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55334": {
+      "zone": "5a",
+      "lat": 44.55,
+      "lon": -94.21,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55335": {
+      "zone": "5a",
+      "lat": 44.53,
+      "lon": -94.52,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55336": {
+      "zone": "5a",
+      "lat": 44.76,
+      "lon": -94.14,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55337": {
+      "zone": "5a",
+      "lat": 44.76,
+      "lon": -93.27,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55338": {
+      "zone": "5a",
+      "lat": 44.67,
+      "lon": -94,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55339": {
+      "zone": "5a",
+      "lat": 44.73,
+      "lon": -93.96,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55340": {
+      "zone": "4b",
+      "lat": 45.07,
+      "lon": -93.58,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55341": {
+      "zone": "4b",
+      "lat": 45.15,
+      "lon": -93.65,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55342": {
+      "zone": "5a",
+      "lat": 44.74,
+      "lon": -94.71,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55343": {
+      "zone": "5a",
+      "lat": 44.92,
+      "lon": -93.4,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55344": {
+      "zone": "5a",
+      "lat": 44.84,
+      "lon": -93.45,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55345": {
+      "zone": "5a",
+      "lat": 44.93,
+      "lon": -93.46,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55346": {
+      "zone": "5a",
+      "lat": 44.84,
+      "lon": -93.45,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55347": {
+      "zone": "5a",
+      "lat": 44.84,
+      "lon": -93.45,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55349": {
+      "zone": "4b",
+      "lat": 45.05,
+      "lon": -94.06,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55350": {
+      "zone": "5a",
+      "lat": 44.88,
+      "lon": -94.37,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55352": {
+      "zone": "5a",
+      "lat": 44.66,
+      "lon": -93.63,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55353": {
+      "zone": "4b",
+      "lat": 45.31,
+      "lon": -94.3,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55354": {
+      "zone": "5a",
+      "lat": 44.88,
+      "lon": -94.03,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55355": {
+      "zone": "4b",
+      "lat": 45.11,
+      "lon": -94.52,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55356": {
+      "zone": "5a",
+      "lat": 44.98,
+      "lon": -93.56,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55357": {
+      "zone": "4b",
+      "lat": 45.05,
+      "lon": -93.63,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55358": {
+      "zone": "4b",
+      "lat": 45.23,
+      "lon": -94,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55359": {
+      "zone": "4b",
+      "lat": 45,
+      "lon": -93.66,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55360": {
+      "zone": "5a",
+      "lat": 44.88,
+      "lon": -93.88,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55362": {
+      "zone": "4b",
+      "lat": 45.3,
+      "lon": -93.8,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55363": {
+      "zone": "4b",
+      "lat": 45.06,
+      "lon": -93.91,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55364": {
+      "zone": "5a",
+      "lat": 44.93,
+      "lon": -93.66,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55367": {
+      "zone": "5a",
+      "lat": 44.88,
+      "lon": -93.97,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55368": {
+      "zone": "5a",
+      "lat": 44.76,
+      "lon": -93.92,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55369": {
+      "zone": "4b",
+      "lat": 45.11,
+      "lon": -93.39,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55370": {
+      "zone": "5a",
+      "lat": 44.77,
+      "lon": -94.03,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55371": {
+      "zone": "4b",
+      "lat": 45.57,
+      "lon": -93.59,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55372": {
+      "zone": "5a",
+      "lat": 44.72,
+      "lon": -93.43,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55373": {
+      "zone": "4b",
+      "lat": 45.08,
+      "lon": -93.73,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55374": {
+      "zone": "4b",
+      "lat": 45.19,
+      "lon": -93.55,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55375": {
+      "zone": "5a",
+      "lat": 44.9,
+      "lon": -93.74,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55376": {
+      "zone": "4b",
+      "lat": 45.21,
+      "lon": -93.66,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55378": {
+      "zone": "5a",
+      "lat": 44.75,
+      "lon": -93.35,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55379": {
+      "zone": "5a",
+      "lat": 44.77,
+      "lon": -93.47,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55381": {
+      "zone": "5a",
+      "lat": 44.9,
+      "lon": -94.19,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55382": {
+      "zone": "4b",
+      "lat": 45.29,
+      "lon": -94.21,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55384": {
+      "zone": "5a",
+      "lat": 44.93,
+      "lon": -93.63,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55385": {
+      "zone": "5a",
+      "lat": 44.72,
+      "lon": -94.48,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55386": {
+      "zone": "5a",
+      "lat": 44.86,
+      "lon": -93.65,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55387": {
+      "zone": "5a",
+      "lat": 44.84,
+      "lon": -93.79,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55388": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.84,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55389": {
+      "zone": "4b",
+      "lat": 45.31,
+      "lon": -94.4,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55390": {
+      "zone": "4b",
+      "lat": 45.06,
+      "lon": -93.96,
+      "lastSpringFrost50": "05-07",
+      "firstFallFrost50": "09-28"
+    },
+    "55391": {
+      "zone": "5a",
+      "lat": 44.97,
+      "lon": -93.51,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55395": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -94.04,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55396": {
+      "zone": "5a",
+      "lat": 44.54,
+      "lon": -94.36,
+      "lastSpringFrost50": "05-05",
+      "firstFallFrost50": "09-30"
+    },
+    "55397": {
+      "zone": "5a",
+      "lat": 44.78,
+      "lon": -93.91,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55398": {
+      "zone": "4b",
+      "lat": 45.44,
+      "lon": -93.59,
+      "lastSpringFrost50": "05-08",
+      "firstFallFrost50": "09-27"
+    },
+    "55401": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55402": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55403": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55404": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55405": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55406": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55407": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55408": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55409": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55410": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55411": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55412": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55413": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55414": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55415": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55416": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55417": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55418": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55419": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55420": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55421": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55422": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55423": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55424": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55425": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55426": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55427": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55428": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55429": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55430": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55431": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55432": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55433": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55434": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55435": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55436": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55437": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55438": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55439": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55441": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55442": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55443": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55444": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55445": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55446": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55447": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55448": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55449": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55450": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55454": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    },
+    "55455": {
+      "zone": "5a",
+      "lat": 44.96,
+      "lon": -93.26,
+      "lastSpringFrost50": "05-06",
+      "firstFallFrost50": "09-29"
+    }
+  }
+}

@@ -47,7 +47,15 @@ export default defineConfig([
   },
   {
     // Build-tool configs run in Node and may legitimately use `new Date()`.
-    files: ['vite.config.ts', 'vitest.config.ts', 'eslint.config.js'],
+    // scripts/**/*.ts are Node-only build scripts (Plan 02-02 acquire/build pipeline).
+    files: ['vite.config.ts', 'vitest.config.ts', 'eslint.config.js', 'scripts/**/*.ts'],
     rules: { 'no-restricted-syntax': 'off' },
+  },
+  {
+    // Node-only build scripts: relax browser-globals expectation.
+    files: ['scripts/**/*.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
   },
 ]);
