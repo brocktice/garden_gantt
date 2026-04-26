@@ -7,7 +7,7 @@ import { sampleCatalog } from '../../src/assets/catalog';
 import type { GardenPlan, ScheduleEvent } from '../../src/domain/types';
 
 const plan: GardenPlan = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   id: 'constraints-test',
   name: 'constraints test plan',
   createdAt: '2026-01-01T12:00:00.000Z',

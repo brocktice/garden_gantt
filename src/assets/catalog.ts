@@ -24,6 +24,7 @@ const tomato: Plant = {
     frostTolerance: 'tender',
     hasFlowering: true, // tomatoes flower → fertilize-at-flowering applies
     requiresHardening: true,
+    season: 'warm', // Phase 2 D-09 — used by catalog filter chips
   },
 };
 
@@ -44,6 +45,7 @@ const lettuce: Plant = {
     frostTolerance: 'hardy',
     hasFlowering: false, // bolting = end of harvest, not a fertilize event
     requiresHardening: false,
+    season: 'cool', // Phase 2 D-09 — used by catalog filter chips
   },
 };
 
@@ -64,6 +66,7 @@ const broccoli: Plant = {
     frostTolerance: 'half-hardy',
     hasFlowering: false, // we harvest the head BEFORE flowering opens
     requiresHardening: true,
+    season: 'cool', // Phase 2 D-09 — used by catalog filter chips
   },
 };
 
@@ -85,6 +88,7 @@ const garlic: Plant = {
     frostTolerance: 'hardy',
     hasFlowering: false, // garlic scapes harvested but no fertilize-at-flowering task
     requiresHardening: false,
+    season: 'cool', // Phase 2 D-09 — used by catalog filter chips
   },
 };
 

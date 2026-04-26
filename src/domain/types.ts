@@ -37,6 +37,8 @@ export interface PlantTiming {
   // Gates harden-off range emission for indoor-start plants. Required (no `?`).
   // Per RESEARCH.md §Pitfall 8 — Missing harden-off events.
   requiresHardening: boolean;
+  // Phase 2 (D-09): season classification used by catalog filter chips (Plan 02-09).
+  season: 'cool' | 'warm';
 }
 
 export interface Plant {
@@ -46,8 +48,9 @@ export interface Plant {
   scientificName?: string;
   category: PlantCategory;
   timing: PlantTiming;
-  // enrichment widens in Phase 2 (Permapeople); empty shape for Phase 1.
-  enrichment?: Record<string, never>;
+  // Phase 2: widened from Phase 1's `Record<string, never>` to allow Permapeople
+  // enrichment payloads (categories, descriptions, images, etc.).
+  enrichment?: Record<string, unknown>;
 }
 
 export interface Location {
@@ -57,6 +60,12 @@ export interface Location {
   firstFrostDate: string;
   source: 'lookup' | 'manual';
   lookupTimestamp?: string;
+  // Phase 2 (D-05): per-field override flags for manual overrides on derived values.
+  overrides?: {
+    zone?: boolean;
+    lastFrostDate?: boolean;
+    firstFrostDate?: boolean;
+  };
 }
 
 export interface Planting {
@@ -65,6 +74,8 @@ export interface Planting {
   label?: string;
   successionIndex: number;
   notes?: string;
+  // Phase 2 (D-21): when true, expandSuccessions pre-pass derives additional plantings.
+  successionEnabled?: boolean;
 }
 
 // 6 lifecycle event types from D-11 + 3 task event types from D-12.
@@ -136,7 +147,7 @@ export interface CustomTask extends Omit<Task, 'source' | 'plantingId'> {
 }
 
 export interface GardenPlan {
-  schemaVersion: 1;
+  schemaVersion: 2;
   id: string;
   name: string;
   createdAt: string;
