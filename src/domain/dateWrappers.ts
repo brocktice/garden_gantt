@@ -64,3 +64,35 @@ export function subDays(date: Date, days: number): UTCDate {
 export function differenceInDays(a: Date, b: Date): number {
   return differenceInDaysFns(a, b);
 }
+
+/**
+ * Current time as ISO string. The canonical "now" for updatedAt, exportedAt, lookupTimestamp.
+ * Replaces ad-hoc `new Date().toISOString()` sites elsewhere
+ * (per Phase 2 extension of SCH-03 — see RESEARCH.md §Pattern 4).
+ */
+export function nowISOString(): string {
+  // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (Phase 2 extension of SCH-03).
+  return new Date().toISOString();
+}
+
+/**
+ * Last calendar day of a given UTC year+month (month is 1-indexed: 1 = January).
+ * Used by GanttView season-axis bounds (D-24).
+ *
+ * Implementation: `Date.UTC(year, monthIndex, 0)` returns the last day of the PREVIOUS
+ * month relative to the JS month index, so passing the 1-indexed month directly yields
+ * the last day of THAT month — i.e., lastDayOfMonth(2024, 2) === 29.
+ */
+export function lastDayOfMonth(year: number, month: number): number {
+  // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (Phase 2 extension of SCH-03).
+  return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}
+
+/**
+ * Current UTC year. Used by SetupStepLocation to derive the lookup year, and by any
+ * other feature surfaces that need "the current calendar year" without a raw `new Date()`.
+ */
+export function currentYear(): number {
+  // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (Phase 2 extension of SCH-03).
+  return new Date().getUTCFullYear();
+}

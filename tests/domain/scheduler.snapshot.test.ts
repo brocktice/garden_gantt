@@ -19,7 +19,7 @@ const planFor = (
   plantId: string,
   locationOverrides: Partial<typeof baseLocation> = {},
 ): GardenPlan => ({
-  schemaVersion: 1,
+  schemaVersion: 2,
   id: 'snapshot-fixture',
   name: 'Snapshot test plan',
   createdAt: '2026-01-01T12:00:00.000Z',
