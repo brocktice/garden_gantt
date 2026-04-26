@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 01-07-PLAN.md
-last_updated: "2026-04-26T20:29:33.718Z"
+status: verifying
+stopped_at: Completed 01-08-PLAN.md
+last_updated: "2026-04-26T20:37:52.312Z"
 last_activity: 2026-04-26
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 8
-  completed_plans: 7
-  percent: 88
+  completed_plans: 8
+  percent: 100
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 
 Phase: 01 (foundation-schedule-engine) — EXECUTING
 Plan: 8 of 8
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-04-26
 
-Progress: [█████████░] 88%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Progress: [█████████░] 88%
 | Phase 01-foundation-schedule-engine P06 | 6min | 3 tasks | 5 files |
 | Phase 01-foundation-schedule-engine P05 | 3min | 2 tasks | 4 files |
 | Phase 01-foundation-schedule-engine P07 | 2min | 2 tasks | 5 files |
+| Phase 01-foundation-schedule-engine P08 | 4m 2s | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation-schedule-engine]: Plan 07: AppShell uses plain anchor tags + window.hashchange listener for active-link state, not react-router NavLink — smaller coupling, isolated testability.
 - [Phase 01-foundation-schedule-engine]: Plan 07: Catch-all path='*' route renders the Plan-loading placeholder; mistyped/stale hashes recover gracefully instead of dead-ending.
 - [Phase 01-foundation-schedule-engine]: Plan 07: ErrorBoundary wraps AppShell at outer-most position; an error inside the header or banner cannot bubble past it.
+- [Phase ?]: Bare-SVG gantt at /plan derived live via generateSchedule(); timeScale.ts locked as Phase 3 drag API (D-06)
+- [Phase ?]: Skip task events in Phase 1 gantt; lifecyclePalette narrowed to Partial<Record<EventType,string>> so render skips them automatically
+- [Phase ?]: ESLint new Date() allowlist widened from GanttView.tsx-only to features/gantt/** for the Today-indicator concern; engine-side directories still reject (T-01-36)
 
 ### Pending Todos
 
@@ -112,7 +116,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-26T20:29:33.461Z
-Stopped at: Completed 01-07-PLAN.md
+Last session: 2026-04-26T20:37:52.293Z
+Stopped at: Completed 01-08-PLAN.md
 Resume file: 
 None
