@@ -35,7 +35,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Refreshing or deep-linking to `#/setup`, `#/plan`, `#/tasks`, or `#/settings` resolves to the right route without a 404 on a static host
   5. `npm test` passes a snapshot test suite covering tomato, lettuce, broccoli, and garlic across DST-crossing, leap-year, and year-rollover fixtures
 **Plans**: 8 plans
-- [ ] 01-01-PLAN.md — Vite scaffold + Tailwind v4 tokens + lifecyclePalette + PlaceholderRoute + _redirects
+- [x] 01-01-PLAN.md — Vite scaffold + Tailwind v4 tokens + lifecyclePalette + PlaceholderRoute + _redirects
 - [ ] 01-02-PLAN.md — UTC-noon date primitive (`dateWrappers.ts`) + DST/leap/rollover unit tests
 - [ ] 01-03-PLAN.md — Domain types + ids + 4-plant catalog + hardcoded sample plan
 - [ ] 01-04-PLAN.md — Schedule engine + constraint registry + auto-task emitter
@@ -113,7 +113,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4. Decimal phases (e.g., 2.1)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Schedule Engine | 0/8 | Not started | - |
+| 1. Foundation & Schedule Engine | 1/8 | In Progress|  |
 | 2. Data Layer & First End-to-End | 0/TBD | Not started | - |
 | 3. Drag, Cascade, Calendar & Tasks | 0/TBD | Not started | - |
 | 4. Polish, Mobile & Ship | 0/TBD | Not started | - |

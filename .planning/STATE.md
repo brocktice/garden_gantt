@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 UI-SPEC approved
-last_updated: "2026-04-26T19:30:10.649Z"
-last_activity: 2026-04-26 -- Phase 01 planning complete
+stopped_at: Plan 01-01 complete
+last_updated: "2026-04-26T19:43:30.797Z"
+last_activity: 2026-04-26
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 8
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 13
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-26)
 
 **Core value:** Plug in your ZIP and your plants → get a correct, draggable lifecycle gantt for the season.
-**Current focus:** Phase 1 — Foundation & Schedule Engine
+**Current focus:** Phase 01 — foundation-schedule-engine
 
 ## Current Position
 
-Phase: 1 of 4 (Foundation & Schedule Engine)
-Plan: 0 of TBD in current phase
+Phase: 01 (foundation-schedule-engine) — EXECUTING
+Plan: 2 of 8
 Status: Ready to execute
-Last activity: 2026-04-26 -- Phase 01 planning complete
+Last activity: 2026-04-26
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 13%
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 01-foundation-schedule-engine P01 | 6min | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,11 @@ Recent decisions affecting current work:
 - Stack: React 19 + Vite 7 + TS 6, SVAR React Gantt 2.6 (Frappe fallback), date-fns v4 + UTC noon discipline (not Temporal)
 - Persistence: localStorage via Zustand persist for v1; IndexedDB only if 5MB budget breached
 - Permapeople: Enrichment-only, lazy, never blocks engine; CORS verification spiked in Phase 2
+- [Phase ?]: Plan 01-01: Vite scaffolded into temp dir + merged into repo root to preserve CLAUDE.md and .planning/
+- [Phase ?]: Plan 01-01: Single tsconfig.json (no project references); tsconfig.app.json removed; tsconfig.node.json kept for build-tool typing
+- [Phase ?]: Plan 01-01: Tailwind v4 wired CSS-first via @theme block (zero tailwind.config.* files per PITFALLS §9)
+- [Phase ?]: Plan 01-01: ESLint enforces SCH-03 via no-restricted-syntax with allowlist for dateWrappers.ts, GanttView.tsx, and build configs
+- [Phase ?]: Plan 01-01: passWithNoTests enabled in vite.config.ts test block so empty Phase 1 Wave 1 exits clean; Plan 02 writes the first tests
 
 ### Pending Todos
 
@@ -83,6 +89,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-26T18:39:23.811Z
-Stopped at: Phase 1 UI-SPEC approved
-Resume file: .planning/phases/01-foundation-schedule-engine/01-UI-SPEC.md
+Last session: 2026-04-26T19:43:30.781Z
+Stopped at: Plan 01-01 complete
+Resume file: .planning/phases/01-foundation-schedule-engine/01-02-PLAN.md
