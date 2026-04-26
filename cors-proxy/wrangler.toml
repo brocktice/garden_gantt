@@ -1,0 +1,10 @@
+name = "garden-gantt-permapeople-proxy"
+main = "src/index.ts"
+compatibility_date = "2026-04-26"
+
+[vars]
+ALLOWED_ORIGIN = "https://garden-gantt.pages.dev"
+
+# Secrets (NOT committed; set via wrangler at deploy time):
+#   wrangler secret put PERMAPEOPLE_KEY_ID
+#   wrangler secret put PERMAPEOPLE_KEY_SECRET
