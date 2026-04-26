@@ -15,6 +15,10 @@ coverage
 *.local
 *.tsbuildinfo
 
+# Cloudflare Worker (cors-proxy/) artifacts
+cors-proxy/.wrangler/
+cors-proxy/.dev.vars
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
