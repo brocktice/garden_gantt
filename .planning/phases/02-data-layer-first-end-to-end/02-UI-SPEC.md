@@ -62,7 +62,7 @@ Phase 1 tokens inherited verbatim (multiples of 4):
 | `--spacing-pill-h` | 36px | Floating "X plants added" counter pill height |
 | `--spacing-wizard-max-w` | 720px | Setup wizard centered column max-width |
 
-Exceptions: gantt internals continue to use raw SVG attrs (Phase 1 gantt-row-height=32, gantt-row-gap=8, gantt-bar-height=20, gantt-axis-height=32, gantt-label-width=140) — preserved unchanged. New gantt addition: **succession-row group accent strip** is 3px wide on the left edge of grouped rows.
+Exceptions: gantt internals continue to use raw SVG attrs (Phase 1 gantt-row-height=32, gantt-row-gap=8, gantt-bar-height=20, gantt-axis-height=32, gantt-label-width=140) — preserved unchanged. New gantt addition: **succession-row group accent strip** is 4px wide on the left edge of grouped rows.
 
 ---
 
@@ -79,13 +79,20 @@ Phase 1 4-role system inherited verbatim:
 
 ### Phase 2 additions for catalog/modal density
 
-| Role | Size | Weight | Line Height | Tailwind class | Used in |
-|------|------|--------|-------------|----------------|---------|
-| Caption | 12px | 400 | 1.4 | `text-xs font-normal leading-snug` | Card metadata (DTM, days), filter chip count, footer attribution, helper text under modal inputs |
-| Badge | 11px | 600 | 1.0 | `text-[11px] font-semibold uppercase tracking-wide` | Frost-tolerance badges, season badges, "Custom" badge, "Permapeople" indicator |
-| Pill counter | 14px | 600 | 1.0 | `text-sm font-semibold` | "5 plants added" floating header pill |
+**No new sizes are introduced.** Phase 2 reuses Phase 1's 4 sizes (14 / 16 / 20 / 28) for every surface. Captions, badges, and the floating-pill counter all reuse the **Label 14px** role; secondary emphasis is signalled by **color** (`text-stone-600` / `text-stone-500`) and **treatment** (uppercase + tracking) — never by shrinking the font below 14px.
 
-**Weights still constrained to 2 + 1 medium exception** (Phase 1 rule preserved): 400 regular for body/captions, 600 semibold for headings/labels-as-emphasis/badges. 500 medium reserved for compact labels and nav.
+| Surface | Size | Weight | Tailwind class | Notes |
+|---------|------|--------|----------------|-------|
+| Card metadata (DTM, days) | 14 (Label) | 400 | `text-sm font-normal text-stone-600` | Color, not size, signals secondary |
+| Helper text under modal inputs | 14 (Label) | 400 | `text-sm font-normal text-stone-600` | Same — de-emphasised by color |
+| Filter chip label | 14 (Label) | 500 | `text-sm font-medium` | Same as nav-style labels |
+| Footer attribution | 14 (Label) | 400 | `text-sm font-normal text-stone-500` | Stone-500 is the most de-emphasised text allowed (still ≥4.5:1 on white) |
+| Frost-tolerance / season / Custom / Permapeople badges | 14 (Label) | 600 | `text-sm font-semibold uppercase tracking-wider` | Uppercase + tracking gives "badge feel" at the same 14px base size |
+| Floating-pill counter ("5 plants added") | 14 (Label) | 600 | `text-sm font-semibold` | Reuses Label 14/600; was previously a dedicated role — now consolidated |
+| Form inline error text | 14 (Label) | 400 | `text-sm font-normal text-red-700` | Same size as helper, distinguished by color |
+| Gantt succession end-cap label | 14 (Label) | 500 | `text-sm font-medium fill-stone-500` | SVG `<text>` reuses the Label size — was previously a 10px exception, now consolidated |
+
+**Sizes total: 4** (14 Label, 16 Body, 20 Heading, 28 Display) — matches Phase 1 baseline. **Weights total: 3** (400 regular, 500 medium, 600 semibold) — matches Phase 1's documented "2 + 1 medium exception" rule. No new sizes, no new weights, no new exceptions are introduced in Phase 2.
 
 ---
 
@@ -134,7 +141,7 @@ Phase 1 60/30/10 inherited verbatim. **Accent (`green-700` `#15803D`) remains re
 | Custom badge bg | `#E5E5E5` | `neutral-200` | "Custom" badge bg (neutral, distinct from frost colors) |
 | Custom badge text | `#262626` | `neutral-800` | "Custom" badge text |
 | Permapeople icon tint | `#7C3AED` | `violet-600` | The small leaf/info icon next to plants whose description came from Permapeople (per D-19) |
-| Succession accent bar | `#A8A29E` | `stone-400` | The 3px left-edge strip on grouped succession gantt rows |
+| Succession accent bar | `#A8A29E` | `stone-400` | The 4px left-edge strip on grouped succession gantt rows |
 
 **WCAG AA verified:** all badge text on its bg meets ≥4.5:1 contrast. Tender (red-800 on red-100) = 7.6:1; hardy (green-900 on green-100) = 9.4:1; cool (blue-900 on blue-100) = 11:1; warm (orange-900 on orange-100) = 8.2:1; custom (neutral-800 on neutral-200) = 9.7:1.
 
@@ -233,7 +240,7 @@ The Phase 2 surface is large enough to enumerate every component contract. Each 
 4. **Empty filter state** — when search/filter combination yields zero matches, render a centered block in the grid area: heading `text-lg font-semibold` `No plants match those filters.`; body `text-sm text-stone-600 mt-xs` `Try removing a filter, or clear your search.`; CTA `Clear filters` button (ghost, green-700).
 
 **Filter chip visual state:**
-- Default: `bg-white border border-stone-200 text-stone-700 px-sm py-xs rounded-full text-xs font-medium`. Hover: `border-stone-400`.
+- Default: `bg-white border border-stone-200 text-stone-700 px-sm py-xs rounded-full text-sm font-medium`. Hover: `border-stone-400`.
 - Active: `bg-green-700 border-green-700 text-white`. Hover: `bg-green-800`.
 
 **Search input height:** 40px (Tailwind `h-10`). Filter chip height: 28px. Card min-width: 240px. Card height: auto, ~180px typical.
@@ -252,9 +259,9 @@ The Phase 2 surface is large enough to enumerate every component contract. Each 
 │ [icon]                  [tender]    │  ← header row: lucide icon left, frost-tolerance badge right
 │                                     │
 │ Tomato — Cherokee Purple            │  ← plant name (text-base font-semibold text-stone-900)
-│ Solanum lycopersicum                │  ← scientific name (text-xs text-stone-500 italic)
+│ Solanum lycopersicum                │  ← scientific name (text-sm text-stone-500 italic)
 │                                     │
-│ [warm] · 80 days to maturity        │  ← season badge + DTM caption (text-xs text-stone-600)
+│ [warm] · 80 days to maturity        │  ← season badge + DTM caption (text-sm text-stone-600)
 │                                     │
 │ ┌─────────────────────────────────┐ │
 │ │  + Add to plan                  │ │  ← Button (primary, full-width inside card)
@@ -282,7 +289,7 @@ The Phase 2 surface is large enough to enumerate every component contract. Each 
 │                                     │
 │         Add custom plant            │  ← text-base font-semibold text-stone-700
 │                                     │
-│   Author your own with timing       │  ← text-xs text-stone-500
+│   Author your own with timing       │  ← text-sm text-stone-500
 │   that matches your seed packet     │
 │                                     │
 └─────────────────────────────────────┘
@@ -382,7 +389,7 @@ Implementation note: planner should verify each icon exists in the installed `lu
      - `Description` (textarea, 4 rows). Helper: `Notes for yourself — varieties, sources, growing tips.`
 4. **Permapeople enrich block** (D-18) — appears below the form, above the action bar:
    - Heading: `text-sm font-semibold` `Enrich from Permapeople (optional)`
-   - Caption: `text-xs text-stone-600` `Pull botanical info, family, and a description from Permapeople.org. Doesn't change timing — those stay yours.`
+   - Caption: `text-sm text-stone-600` `Pull botanical info, family, and a description from Permapeople.org. Doesn't change timing — those stay yours.`
    - Button: `Enrich from Permapeople` (secondary, ghost border, `lucide-react` `Sparkles` icon).
    - Loading state (after click, while fetch in flight): button text becomes `Looking up…` + `Loader2 animate-spin` icon. Button disabled.
    - Success state: button text becomes `Re-fetch from Permapeople` + `Check` icon (green-700). A new section appears below: `Permapeople found:` + populated description preview + `Family: Solanaceae` + `Genus: Solanum` (whatever the API returned). Each field has a `Use this` button that copies into the form's matching field.
@@ -394,7 +401,7 @@ Implementation note: planner should verify each icon exists in the installed `lu
 - Days to maturity is ≥1.
 - All other numeric fields are within their declared min/max.
 
-**Form errors render inline** under each input as `text-xs text-red-700 mt-xs`.
+**Form errors render inline** under each input as `text-sm text-red-700 mt-xs`.
 
 **Copywriting summary for modal:**
 | Element | Copy |
@@ -454,7 +461,7 @@ Implementation note: planner should verify each icon exists in the installed `lu
 
 1. **Time axis spans the user's actual season (D-24).** Replace Phase 1's hardcoded sample-plan dates with: `axisStart = startOfMonth(min(indoor-start across plantings))`; `axisEnd = endOfMonth(max(harvest-window.end across plantings))`. Both fall back to `lastFrostDate ± 90d` if plantings array is empty (defensive).
 2. **Weekly subticks** — already declared in Phase 1 visual spec but rendered shorter here (4px vertical line, opacity 0.3) so monthly ticks remain dominant on a 6-8-month axis.
-3. **Succession row grouping (D-22).** Plantings with the same base `plantId` and `successionIndex > 0` get a 3px-wide left-edge accent strip (`stone-400`) drawn from the top of the first row to the bottom of the last row in that group. Strip is rendered in a separate `<g class="succession-groups">` layer behind the rows. The strip has a tiny end-cap label `<text>` reading `Succession of {plant.name}` placed in the row-label column area, styled as `text-[10px] fill-stone-500`.
+3. **Succession row grouping (D-22).** Plantings with the same base `plantId` and `successionIndex > 0` get a 4px-wide left-edge accent strip (`stone-400`) drawn from the top of the first row to the bottom of the last row in that group. Strip is rendered in a separate `<g class="succession-groups">` layer behind the rows. The strip has an end-cap label `<text>` reading `Succession of {plant.name}` placed in the row-label column area, styled as `text-sm font-medium fill-stone-500` (Label 14/500 — color, not size, de-emphasises the cap).
 4. **Lifecycle palette boundaries (D-25)** — adjacent phase rects within a single planting row are rendered with a 1px gap (gap is the row's white background showing through) — clearer than a hairline divider for the bare-SVG palette.
 5. **Today indicator** — Phase 1's locked treatment; on `/plan` the indicator is rendered fresh on each route entry (not memoized) so users opening the app on a new day see the line move.
 6. **Empty plot state** — when `planStore.plan.plantings.length === 0` (e.g., user came directly to `/plan` with an empty plan): render a centered hero block (replaces Phase 1's "No plantings to display." minimum):
@@ -478,7 +485,7 @@ Implementation note: planner should verify each icon exists in the installed `lu
    - Sub-heading `text-xl font-semibold` `Export your plan`.
    - Body `text-base text-stone-600` `Download your full plan as a JSON file. Use this to back up your work or move it to another browser.`
    - Button: `Export plan` (primary green-700, `lucide-react` `Download` icon). Click → triggers download of `garden-gantt-plan-{YYYY-MM-DD}.json`.
-   - Caption `text-xs text-stone-500 mt-sm`: `Last exported: never` OR `Last exported: {relative time, e.g. "3 hours ago"}` (tracked via in-memory ui state — does NOT persist).
+   - Caption `text-sm text-stone-500 mt-sm`: `Last exported: never` OR `Last exported: {relative time, e.g. "3 hours ago"}` (tracked via in-memory ui state — does NOT persist).
 3. **Import section** (`<section>` with `py-lg`):
    - Sub-heading `text-xl font-semibold` `Import a plan`.
    - Body `text-base text-stone-600` `Replace your current plan with one from a JSON file. We'll show you a preview first.`
@@ -509,7 +516,7 @@ Implementation note: planner should verify each icon exists in the installed `lu
 
 1. **Floating "X plants added" pill** — rendered by AppShell, top-right, persistent across routes (described in §5). Hidden ONLY on `/setup` Step 1 when plan is null (to avoid distracting the user before they have anything to count). On all other routes/steps the pill is visible.
 2. **Header `/setup` link is always visible** (D-02) — Phase 1 already wired all 4 hash routes; Phase 2 just confirms `/setup` is not hidden behind a "first run" gate.
-3. **Permapeople CC BY-SA attribution footer** (D-19) — a thin footer line at the bottom of every route that displays Permapeople-sourced data (i.e., `/catalog` if any custom plant has Permapeople-sourced fields; `/plan` if any planting's plant has them). Not on `/setup` Step 1 (no plant data shown). Copy: `text-xs text-stone-500 text-center py-md border-t border-stone-100`: `Some plant data enriched from Permapeople.org (CC BY-SA 4.0).` The footer is conditionally rendered — when no Permapeople-enriched plant is currently visible, the footer is not in the DOM.
+3. **Permapeople CC BY-SA attribution footer** (D-19) — a thin footer line at the bottom of every route that displays Permapeople-sourced data (i.e., `/catalog` if any custom plant has Permapeople-sourced fields; `/plan` if any planting's plant has them). Not on `/setup` Step 1 (no plant data shown). Copy: `text-sm text-stone-500 text-center py-md border-t border-stone-100`: `Some plant data enriched from Permapeople.org (CC BY-SA 4.0).` The footer is conditionally rendered — when no Permapeople-enriched plant is currently visible, the footer is not in the DOM.
 
 ---
 
@@ -581,7 +588,7 @@ Lettuce has timing.successionIntervalDays = 14 → succession toggle is rendered
 User flips toggle on.
 Caption updates live: "Adds 6 more plantings every 14 days, ending before first fall frost."
 planStore.plan.plantings is updated: lettuce planting gains successionEnabled: true.
-GanttView re-derives: 7 lettuce rows now appear, visually grouped with a 3px stone-400 left strip.
+GanttView re-derives: 7 lettuce rows now appear, visually grouped with a 4px stone-400 left strip.
 The first row's left strip has end-cap label "Succession of Lettuce — Black Seeded Simpson".
 ```
 
@@ -656,7 +663,7 @@ Phase 1 baselines inherited (focus rings, color contrast, keyboard nav, banner A
 **WCAG AA compliance check matrix** (color/contrast):
 - Body text on `stone-50`: ✅ `stone-900 / stone-50` = 16.6:1
 - Helper text on white: ✅ `stone-600 / white` = 7.2:1
-- Caption on white: ✅ `stone-500 / white` = 5.2:1 (passes AA for normal text)
+- Footer attribution / de-emphasised Label 14 on white: ✅ `stone-500 / white` = 5.2:1 (passes AA for normal text — applies to footer attribution and other 14px de-emphasised surfaces)
 - Green-700 button on white: ✅ 4.7:1 for text; 5.5:1 for the button bg surrounding white text
 - Red-700 destructive button on white: ✅ 5.4:1
 - All badge text/bg pairs: verified above (≥7:1 each).
