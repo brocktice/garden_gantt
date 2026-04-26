@@ -9,6 +9,9 @@ import {
   addDays,
   subDays,
   differenceInDays,
+  nowISOString,
+  lastDayOfMonth,
+  currentYear,
 } from '../../src/domain/dateWrappers';
 
 describe('parseDate — coerce date-only to UTC noon (SCH-03)', () => {
@@ -76,5 +79,53 @@ describe('subDays — canonical "6 weeks before last frost" (PITFALLS §1)', () 
 describe('differenceInDays — exact whole-day count', () => {
   it('Apr 15 - Mar 4 == 42 days', () => {
     expect(differenceInDays(parseDate('2026-04-15'), parseDate('2026-03-04'))).toBe(42);
+  });
+});
+
+describe('nowISOString — canonical "current time" site (Phase 2 extension of SCH-03)', () => {
+  it('returns full-precision UTC ISO string (YYYY-MM-DDTHH:mm:ss.sssZ)', () => {
+    expect(nowISOString()).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+  });
+
+  it('two consecutive calls are within 5 seconds of each other', () => {
+    const a = Date.parse(nowISOString());
+    const b = Date.parse(nowISOString());
+    expect(Math.abs(b - a)).toBeLessThan(5_000);
+  });
+});
+
+describe('lastDayOfMonth — month-boundary helper (D-24 gantt season axis)', () => {
+  it('February 2024 (leap year) → 29', () => {
+    expect(lastDayOfMonth(2024, 2)).toBe(29);
+  });
+
+  it('February 2026 (non-leap) → 28', () => {
+    expect(lastDayOfMonth(2026, 2)).toBe(28);
+  });
+
+  it('January 2026 → 31', () => {
+    expect(lastDayOfMonth(2026, 1)).toBe(31);
+  });
+
+  it('April 2026 → 30', () => {
+    expect(lastDayOfMonth(2026, 4)).toBe(30);
+  });
+
+  it('December 2026 → 31', () => {
+    expect(lastDayOfMonth(2026, 12)).toBe(31);
+  });
+});
+
+describe('currentYear — canonical "current calendar year" site', () => {
+  it('returns a finite integer', () => {
+    const y = currentYear();
+    expect(Number.isInteger(y)).toBe(true);
+    expect(Number.isFinite(y)).toBe(true);
+  });
+
+  it('returns a year in the plausible Garden Gantt operating window', () => {
+    const y = currentYear();
+    expect(y).toBeGreaterThanOrEqual(2026);
+    expect(y).toBeLessThanOrEqual(2100);
   });
 });
