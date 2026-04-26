@@ -24,7 +24,7 @@ describe('usePlanStore — persist wiring (DATA-01, DATA-02)', () => {
       persist: { getOptions: () => { name: string; version: number } };
     }).persist.getOptions();
     expect(options.name).toBe('garden-gantt:plan');
-    expect(options.version).toBe(1);
+    expect(options.version).toBe(2);
   });
 });
 
