@@ -1,19 +1,32 @@
 // src/features/gantt/GanttView.tsx
-// Bare hand-rolled SVG — read-only Phase 1 render per UI-SPEC §Gantt Visual Treatment (D-05).
+// Bare hand-rolled SVG — read-only Phase 2 render per UI-SPEC §Gantt Visual Treatment (D-05, D-23, D-26).
 // Phase 1 success criterion #1: gantt rendered from generateSchedule() with NO hardcoded events.
-// Phase 1 success criterion #2: changing samplePlan.location.lastFrostDate moves bars on reload.
-// Phase 3 spike picks the final library; this implementation is intentionally throwaway (D-07).
+// Phase 2 (Plan 02-10): reads from usePlanStore (not samplePlan), wires expandSuccessions through
+// useDerivedSchedule, computes season-spanning axis bounds from actual events, renders a 4px
+// stone-400 left-edge accent strip on succession-derived rows, falls back to <EmptyGanttState/>
+// when plan is null or plantings.length === 0.
+//
+// D-23: still hand-rolled bare-SVG (no SVAR / no Frappe / no @dnd-kit) — Phase 3 spike picks the
+// final gantt library.
+// D-26: read-only in Phase 2 (no drag bindings) but data-event-id, data-event-type, and
+// data-planting-id attributes are preserved on every rect so Phase 3 has the handles ready.
 //
 // Source: [CITED: .planning/phases/01-foundation-schedule-engine/01-UI-SPEC.md §Gantt Visual Treatment]
 //         [CITED: .planning/phases/01-foundation-schedule-engine/01-CONTEXT.md D-05, D-06, D-07]
-//         [CITED: .planning/phases/01-foundation-schedule-engine/01-RESEARCH.md §Pattern 1]
+//         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-UI-SPEC.md §Component Inventory item 8]
+//         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-RESEARCH.md §Code Example D lines 1252-1283]
+//         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-CONTEXT.md D-22, D-23, D-24, D-25, D-26]
 
 import { useMemo } from 'react';
 import { useDerivedSchedule } from './useDerivedSchedule';
 import { createTimeScale } from './timeScale';
 import { lifecyclePalette } from './lifecyclePalette';
-import { sampleCatalog } from '../../assets/catalog';
-import { samplePlan } from '../../samplePlan';
+import { EmptyGanttState } from './EmptyGanttState';
+import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
+import { usePlanStore } from '../../stores/planStore';
+import { lastDayOfMonth } from '../../domain/dateWrappers';
+import { expandSuccessions } from '../../domain/succession';
+import type { GardenPlan, Plant, ScheduleEvent } from '../../domain/types';
 
 // UI-SPEC §Gantt Visual Treatment §Visual specifications — pixel constants
 const ROW_HEIGHT = 32;
@@ -25,28 +38,80 @@ const LABEL_WIDTH = 140;
 const PX_PER_DAY = 3;
 const MIN_PLOT_WIDTH = 720;
 
-export function GanttView() {
-  const events = useDerivedSchedule();
-  const plantings = samplePlan.plantings;
+/**
+ * Compute axis bounds (start/end ISO YYYY-MM-DD strings) snapped to month boundaries.
+ *
+ * D-24: span min(event.start) → max(event.end), rounded down to month start and up to
+ *   month end so the axis aligns with the monthly tick labels.
+ * Empty-events fallback: span Jan 1 → Dec 31 of the lastFrostDate's calendar year.
+ *
+ * Source: [CITED: 02-RESEARCH.md §Code Example D lines 1252-1283]
+ */
+function computeAxisBounds(
+  events: ScheduleEvent[],
+  plan: GardenPlan,
+): { start: string; end: string } {
+  if (events.length === 0) {
+    const year = parseInt(plan.location.lastFrostDate.slice(0, 4), 10);
+    return { start: `${year}-01-01`, end: `${year}-12-31` };
+  }
+  let minStart = events[0]!.start;
+  let maxEnd = events[0]!.end;
+  for (const e of events) {
+    if (e.start < minStart) minStart = e.start;
+    if (e.end > maxEnd) maxEnd = e.end;
+  }
+  const startStr = `${minStart.slice(0, 7)}-01`;
+  const endYear = parseInt(maxEnd.slice(0, 4), 10);
+  const endMonth = parseInt(maxEnd.slice(5, 7), 10);
+  const lastDay = lastDayOfMonth(endYear, endMonth);
+  const endStr = `${maxEnd.slice(0, 7)}-${String(lastDay).padStart(2, '0')}`;
+  return { start: startStr, end: endStr };
+}
 
-  // Time scale spans Jan 1 of lastFrost.year through Dec 31 of (year+1) so the garlic
-  // year-rollover (Oct 2026 → Jul 2027) fits in a single view per CONTEXT.md D-17.
-  const lastFrostYear = parseInt(samplePlan.location.lastFrostDate.slice(0, 4), 10);
+export function GanttView() {
+  const plan = usePlanStore((s) => s.plan);
+  const merged = useCatalogStore(selectMerged);
+  const events = useDerivedSchedule();
+
+  // Empty state: no plan OR plan with no plantings.
+  if (!plan || plan.plantings.length === 0) {
+    return <EmptyGanttState />;
+  }
+
+  // Build the row list from the SAME expansion the engine sees so succession-derived
+  // rows render with their own labels + accent strips. Keep this cheap — expandSuccessions
+  // is pure and re-runs whenever plan/catalog change (matched by useDerivedSchedule deps).
+  return <GanttViewInner plan={plan} events={events} merged={merged} />;
+}
+
+interface GanttViewInnerProps {
+  plan: GardenPlan;
+  events: ScheduleEvent[];
+  merged: ReadonlyMap<string, Plant>;
+}
+
+function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
+  // Re-derive expanded plantings inline so we can render one row per derived planting.
+  // expandSuccessions is the same pure call used by useDerivedSchedule.
+  const plantings = useMemo(() => {
+    return expandSuccessions(plan, merged).plantings;
+  }, [plan, merged]);
+
+  const { start: axisStart, end: axisEnd } = useMemo(
+    () => computeAxisBounds(events, plan),
+    [events, plan],
+  );
   const scale = useMemo(
-    () =>
-      createTimeScale({
-        start: `${lastFrostYear}-01-01`,
-        end: `${lastFrostYear + 1}-12-31`,
-        pxPerDay: PX_PER_DAY,
-      }),
-    [lastFrostYear],
+    () => createTimeScale({ start: axisStart, end: axisEnd, pxPerDay: PX_PER_DAY }),
+    [axisStart, axisEnd],
   );
   const plotWidth = Math.max(MIN_PLOT_WIDTH, scale.totalWidth);
   const totalHeight = AXIS_HEIGHT + plantings.length * (ROW_HEIGHT + ROW_GAP);
 
   // Group events by plantingId for row rendering.
   const eventsByPlanting = useMemo(() => {
-    const map = new Map<string, typeof events>();
+    const map = new Map<string, ScheduleEvent[]>();
     for (const e of events) {
       const list = map.get(e.plantingId) ?? [];
       list.push(e);
@@ -68,7 +133,11 @@ export function GanttView() {
         >
           <div style={{ height: AXIS_HEIGHT }} />
           {plantings.map((p, i) => {
-            const plant = sampleCatalog.get(p.plantId);
+            const plant = merged.get(p.plantId);
+            const isDerived = (p.successionIndex ?? 0) > 0;
+            const label = isDerived
+              ? `${plant?.name ?? p.plantId} #${(p.successionIndex ?? 0) + 1}`
+              : (plant?.name ?? p.plantId);
             return (
               <div
                 key={p.id}
@@ -78,7 +147,7 @@ export function GanttView() {
                 }}
                 className="flex items-center px-3 text-xs font-medium text-stone-900"
               >
-                {plant?.name ?? p.plantId}
+                {label}
               </div>
             );
           })}
@@ -88,7 +157,7 @@ export function GanttView() {
         <div className="overflow-x-auto flex-1">
           <svg
             role="img"
-            aria-label={`Garden gantt chart for ${samplePlan.name}`}
+            aria-label={`Garden gantt chart for ${plan.name}`}
             width={plotWidth}
             height={totalHeight}
             viewBox={`0 0 ${plotWidth} ${totalHeight}`}
@@ -131,17 +200,43 @@ export function GanttView() {
               ))}
             </g>
 
+            {/* Succession-row visual grouping (D-22): 4px stone-400 left-edge accent
+                rendered BEHIND the row rects. Only derived plantings (successionIndex > 0)
+                get the accent strip. */}
+            <g className="succession-groups">
+              {plantings.map((p, i) => {
+                if ((p.successionIndex ?? 0) === 0) return null;
+                const rowY = AXIS_HEIGHT + i * (ROW_HEIGHT + ROW_GAP);
+                return (
+                  <rect
+                    key={p.id + '-accent'}
+                    x={0}
+                    y={rowY + 4}
+                    width={4}
+                    height={ROW_HEIGHT - 8}
+                    fill="#A8A29E"
+                    aria-hidden="true"
+                  />
+                );
+              })}
+            </g>
+
             {/* Rows: one <g> per planting, one <rect> per lifecycle event */}
             <g className="rows">
               {plantings.map((p, i) => {
-                const plant = sampleCatalog.get(p.plantId);
+                const plant = merged.get(p.plantId);
                 const rowY = AXIS_HEIGHT + i * (ROW_HEIGHT + ROW_GAP);
                 const rowEvents = eventsByPlanting.get(p.id) ?? [];
+                const isDerived = (p.successionIndex ?? 0) > 0;
+                const aLabel = isDerived
+                  ? `Succession ${(p.successionIndex ?? 0) + 1} of ${plant?.name ?? p.plantId}`
+                  : (plant?.name ?? p.plantId);
 
                 return (
                   <g
                     key={p.id}
                     data-planting-id={p.id}
+                    aria-label={aLabel}
                     transform={`translate(0, ${rowY})`}
                   >
                     {rowEvents.map((e) => {
@@ -209,3 +304,4 @@ export function GanttView() {
     </div>
   );
 }
+

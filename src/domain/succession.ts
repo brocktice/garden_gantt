@@ -80,6 +80,11 @@ export function expandSuccessions(
         ...planting,
         id: `${planting.id}-s${i}`,
         successionIndex: i,
+        // Plan 02-10 (Rule 2 deviation): stagger derived plantings by i * interval days.
+        // The engine reads startOffsetDays and shifts its lastFrost anchor; downstream
+        // events (indoor-start, transplant, harvest, etc.) all shift in lockstep so each
+        // succession row plants on a distinct calendar date (D-22 visual goal).
+        startOffsetDays: (planting.startOffsetDays ?? 0) + i * interval,
         // successionEnabled stays true so visual grouping works
       });
     }

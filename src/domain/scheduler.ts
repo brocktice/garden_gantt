@@ -20,7 +20,11 @@ function eventsForPlanting(
   plant: Plant,
   plan: GardenPlan,
 ): ScheduleEvent[] {
-  const lastFrost = parseDate(plan.location.lastFrostDate);
+  // Phase 2 (Plan 02-10): apply per-planting startOffsetDays to the lastFrost anchor.
+  // Default 0 ⇒ identity. Used by expandSuccessions to stagger derived plantings so
+  // each succession row plants on a distinct calendar date (D-22).
+  const baseLastFrost = parseDate(plan.location.lastFrostDate);
+  const lastFrost = addDays(baseLastFrost, planting.startOffsetDays ?? 0);
   const out: ScheduleEvent[] = [];
   const anchors: PlantingAnchors = {
     // populated below
