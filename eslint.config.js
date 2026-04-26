@@ -58,4 +58,12 @@ export default defineConfig([
       globals: globals.node,
     },
   },
+  {
+    // shadcn-style UI primitives in src/ui/** re-export Radix primitives directly
+    // (e.g., `export const Dialog = DialogPrimitive.Root`). The react-refresh rule
+    // flags any non-component export, but these passthroughs are inert references
+    // to upstream components — Fast Refresh works fine. Disable the rule for src/ui.
+    files: ['src/ui/**/*.{ts,tsx}'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
 ]);
