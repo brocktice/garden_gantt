@@ -16,6 +16,14 @@
   --spacing-gantt-bar-height: 20px;
   --spacing-gantt-axis-height: 32px;
   --spacing-gantt-label-width: 140px;
+
+  /* Phase 2 additions — UI-SPEC §Spacing */
+  --spacing-card-min: 240px;
+  --spacing-card-gap: 16px;
+  --spacing-modal-max-w: 640px;
+  --spacing-panel-w: 400px;
+  --spacing-pill-h: 36px;
+  --spacing-wizard-max-w: 720px;
 }
 
 /* Body baseline — UI-SPEC §Typography */
