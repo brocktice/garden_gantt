@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Plan 01-01 complete
-last_updated: "2026-04-26T19:43:30.797Z"
+last_updated: "2026-04-26T19:49:44.971Z"
 last_activity: 2026-04-26
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 8
-  completed_plans: 1
-  percent: 13
+  completed_plans: 2
+  percent: 25
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 01 (foundation-schedule-engine) — EXECUTING
-Plan: 2 of 8
+Plan: 3 of 8
 Status: Ready to execute
 Last activity: 2026-04-26
 
-Progress: [█░░░░░░░░░] 13%
+Progress: [███░░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [█░░░░░░░░░] 13%
 
 *Updated after each plan completion*
 | Phase 01-foundation-schedule-engine P01 | 6min | 2 tasks | 13 files |
+| Phase 01 P02 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,7 @@ Recent decisions affecting current work:
 - [Phase ?]: Plan 01-01: Tailwind v4 wired CSS-first via @theme block (zero tailwind.config.* files per PITFALLS §9)
 - [Phase ?]: Plan 01-01: ESLint enforces SCH-03 via no-restricted-syntax with allowlist for dateWrappers.ts, GanttView.tsx, and build configs
 - [Phase ?]: Plan 01-01: passWithNoTests enabled in vite.config.ts test block so empty Phase 1 Wave 1 exits clean; Plan 02 writes the first tests
+- [Phase ?]: Plan 01-02: dateWrappers.ts is the single allowed new Date(string) site; UTC-noon storage discipline pinned by 12 vitest assertions
 
 ### Pending Todos
 
@@ -89,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-26T19:43:30.781Z
+Last session: 2026-04-26T19:49:11.960Z
 Stopped at: Plan 01-01 complete
-Resume file: .planning/phases/01-foundation-schedule-engine/01-02-PLAN.md
+Resume file: None
