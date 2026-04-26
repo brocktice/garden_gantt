@@ -36,9 +36,13 @@ export default defineConfig([
     },
   },
   {
-    // Allow `new Date()` (no-arg "today" reads) in features/gantt/GanttView.tsx
-    // for the Today-indicator render concern only. Plan 08 documents this exception.
-    files: ['src/features/gantt/GanttView.tsx'],
+    // Allow `new Date()` (no-arg "today" reads) in features/gantt/** for the
+    // Today-indicator render concern only (timeScale.todayX, GanttView's render-time
+    // today read). Widened from GanttView.tsx-only to features/gantt/** in Plan 08
+    // because timeScale.ts also performs the same UI-only today read per the locked
+    // API surface (RESEARCH.md §Open Questions Q5). Engine-side code (src/domain/,
+    // src/data/, src/stores/) still rejects `new Date()` (T-01-36 mitigation).
+    files: ['src/features/gantt/**/*.{ts,tsx}'],
     rules: { 'no-restricted-syntax': 'off' },
   },
   {
