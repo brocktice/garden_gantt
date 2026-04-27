@@ -80,7 +80,15 @@ export function watchQuotaExceeded(onFull: () => void): () => void {
         (err.name === 'QuotaExceededError' ||
           (err as DOMException & { code?: number }).code === 22)
       ) {
-        onFull();
+        // WR-05 (REVIEW Phase 4): defensively guard onFull so a notifier
+        // crash cannot replace the original QuotaExceededError that downstream
+        // (zustand persist) is expecting. Log the notifier failure separately.
+        try {
+          onFull();
+        } catch (notifyErr) {
+          // eslint-disable-next-line no-console -- intentional: notifier failure must surface
+          console.error('watchQuotaExceeded onFull threw:', notifyErr);
+        }
       }
       throw err;
     }
