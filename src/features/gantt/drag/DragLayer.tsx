@@ -33,7 +33,6 @@ import { makeClampModifier } from './clampModifier';
 import { useTransientSchedule } from './useTransientSchedule';
 import type { Plant, ScheduleEvent } from '../../../domain/types';
 import { getActiveScale } from './scaleHandoff';
-import { ConstraintTooltip } from '../tooltip/ConstraintTooltip';
 import {
   handleDragStart,
   handleDragMove,
@@ -98,9 +97,9 @@ export function DragLayer() {
           <ActiveBarOverlay activeId={activeId} events={transientSchedule} />
         ) : null}
       </DragOverlay>
-      {/* Phase 3 ships the ConstraintTooltip mount inside DragLayer for in-plan testing.
-          Plan 03-06 will move the mount into AppShell. */}
-      <ConstraintTooltip />
+      {/* Plan 03-06 moved the <ConstraintTooltip /> mount up to AppShell so the portal
+          survives view changes (per UI-SPEC §4 placement note). DragLayer no longer
+          mounts it. */}
     </DndContext>
   );
 }

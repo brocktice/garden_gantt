@@ -37,6 +37,8 @@ import { useDragBar } from './drag/useDragBar';
 import { GhostOverlay } from './drag/GhostOverlay';
 import { useTransientSchedule } from './drag/useTransientSchedule';
 import { setActiveScale } from './drag/scaleHandoff';
+import { LockToggle } from './lock/LockToggle';
+import { cn } from '../../ui/cn';
 
 // UI-SPEC §Gantt Visual Treatment §Visual specifications — pixel constants
 const ROW_HEIGHT = 32;
@@ -272,6 +274,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                       const fill = lifecyclePalette[e.type];
                       // Skip task events (water-seedlings, harden-off-day, fertilize-at-flowering).
                       if (!fill || !plant) return null;
+                      const isLocked = p.locks?.[e.type] === true;
                       return (
                         <DraggableBar
                           key={e.id}
@@ -281,6 +284,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                           plantLabel={plant.name}
                           fill={fill}
                           scale={scale}
+                          isLocked={isLocked}
                         />
                       );
                     })}
@@ -336,6 +340,7 @@ interface DraggableBarProps {
   plantLabel: string;
   fill: string;
   scale: TimeScale;
+  isLocked: boolean;
 }
 
 /**
@@ -346,6 +351,24 @@ interface DraggableBarProps {
  * Memoized re-render: useDragBar reads transform from useDraggable's internal state and
  * applies it as an SVG transform on the wrapper <g> so React only re-renders this single
  * bar during its own drag (per CONTEXT D-21).
+ *
+ * Phase 3 (Plan 03-06):
+ * - Outer <g> uses Tailwind `group` so the LockToggle's `group-hover:opacity-100` reveals
+ *   the icon on hover.
+ * - When the (plantingId, eventType) is locked, a 2px stone-700 outline ring rect is drawn
+ *   on top of the fill rect (UI-SPEC §"Gantt Visual Treatment — Lock outline ring").
+ * - LockToggle is rendered inside a <foreignObject> at top-right of the bar (per
+ *   UI-SPEC §"Gantt Visual Treatment — Lock icon": -8px above bar top, -2px inside right edge).
+ *   Per RESEARCH §Pitfall 9, LockToggle is rendered on ALL lifecycle event types (including
+ *   derived non-draggable bars like harden-off and germination-window) — locking holds them
+ *   fixed during cascade reflow.
+ *
+ * Z-order trade-off (UI-SPEC §"Z-order in the gantt SVG" calls for "Lock icons (top-most,
+ * ALWAYS visible above ghost)"). For Phase 3 this is best-effort: the foreignObject is the
+ * LAST child of the per-bar <g>, so it draws above this bar's fill+ring. The committed bars'
+ * <g> renders BEFORE the GhostOverlay <g>, so during drag the ghost overlay can momentarily
+ * cover the lock icon. Phase 4 may extract a separate top-most <LockToggleLayer> <g> if
+ * user testing surfaces confusion. Documented in 03-06-SUMMARY.md.
  */
 function DraggableBar({
   event,
@@ -354,6 +377,7 @@ function DraggableBar({
   plantLabel,
   fill,
   scale,
+  isLocked,
 }: DraggableBarProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDragBar({
     event,
@@ -374,11 +398,16 @@ function DraggableBar({
     ? 'cursor-grab active:cursor-grabbing'
     : 'cursor-default';
 
+  // Lock icon position per UI-SPEC §"Gantt Visual Treatment — Lock icon".
+  // foreignObject hosts an HTML <button> inside the SVG.
+  const lockX = x + width - 24 - 2; // -2px inside right edge; -24 = hit-target width
+  const lockY = BAR_Y_OFFSET - 8; // -8px from top of bar
+
   return (
     <g
       ref={setNodeRef as unknown as (el: SVGGElement | null) => void}
       transform={`translate(${dx}, ${dy})`}
-      className={cursorClass}
+      className={cn('group', cursorClass)}
       style={{ touchAction: 'none', opacity: isDragging ? 0.4 : 1 }}
       data-planting-id={plantingId}
       {...attributes}
@@ -399,6 +428,36 @@ function DraggableBar({
           {plantLabel} — {event.type} — {dateLabel}
         </title>
       </rect>
+      {/* Phase 3 Plan 03-06: lock outline ring (UI-SPEC §"Gantt Visual Treatment — Lock outline ring"). */}
+      {isLocked && (
+        <rect
+          x={x}
+          y={BAR_Y_OFFSET}
+          width={width}
+          height={BAR_HEIGHT}
+          fill="none"
+          stroke="var(--color-lifecycle-locked)"
+          strokeWidth={2}
+          rx={3}
+          pointerEvents="none"
+        />
+      )}
+      {/* Phase 3 Plan 03-06: LockToggle in foreignObject for HTML-in-SVG.
+          Last child of <g> → drawn above the fill+ring. */}
+      <foreignObject
+        x={lockX}
+        y={lockY}
+        width={24}
+        height={24}
+        className="overflow-visible"
+      >
+        <LockToggle
+          plantingId={plantingId}
+          eventType={event.type}
+          locked={isLocked}
+          plantName={plantLabel}
+        />
+      </foreignObject>
     </g>
   );
 }

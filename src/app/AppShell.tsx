@@ -3,15 +3,31 @@
 // Phase 2 (Plan 02-10): adds /catalog nav link, MyPlanPill (top-right of header), MyPlanPanel
 // drawer (Radix portal), and PermapeopleAttributionFooter (CC BY-SA 4.0; conditional).
 //
+// Phase 3 (Plan 03-06):
+// - Mounts useHistoryKeybindings (Cmd-Z / Cmd-Shift-Z / Ctrl-Y) at the shell level (D-18).
+// - Mounts useLockKeybinding (document Alt-click → toggle lock) at the shell level (D-11).
+// - Renders Undo / Redo header buttons on /plan and /tasks routes (UI-SPEC §11) — disabled
+//   when the respective stack is empty. Native `title` tooltip is used for hover hint;
+//   the Radix Tooltip 200ms-delay polish per UI-SPEC §11 is a Phase 4 follow-up.
+// - Mounts <ConstraintTooltip /> at the top level (portaled — outlives any route mount).
+//   Replaces the temporary mount inside DragLayer.tsx from Plan 03-03.
+//
 // Source: [CITED: 02-UI-SPEC.md §Component Inventory item 10]
 //         [CITED: 02-PATTERNS.md src/app/AppShell.tsx (EXTEND)]
 //         [CITED: 02-10-PLAN.md Task 2 Step 2]
+//         [CITED: 03-CONTEXT.md D-11, D-18]
+//         [CITED: 03-UI-SPEC.md §11 Header undo/redo affordance]
 import { useEffect, useState, type ReactNode } from 'react';
+import { Undo2, Redo2 } from 'lucide-react';
 import { Banner } from './Banner';
 import { MyPlanPill } from '../features/catalog/MyPlanPill';
 import { MyPlanPanel } from '../features/catalog/MyPlanPanel';
 import { PermapeopleAttributionFooter } from './PermapeopleAttributionFooter';
-import { usePlanStore } from '../stores/planStore';
+import { usePlanStore, useTemporalStore, getTemporal } from '../stores/planStore';
+import { useHistoryKeybindings } from '../stores/historyBindings';
+import { useLockKeybinding } from '../features/gantt/lock/useLockKeybinding';
+import { ConstraintTooltip } from '../features/gantt/tooltip/ConstraintTooltip';
+import { cn } from '../ui/cn';
 
 interface NavLink {
   href: string;
@@ -47,9 +63,23 @@ export function AppShell({ children }: AppShellProps) {
   const currentHash = useCurrentHash();
   const plan = usePlanStore((s) => s.plan);
 
+  // Phase 3 Plan 03-06: mount global keybindings + Alt-click lock listener once.
+  useHistoryKeybindings();
+  useLockKeybinding();
+
   // UI-SPEC §10 line 517: hide MyPlanPill on /setup when plan === null (first-run).
   // Once a plan exists (Step 1 done) OR the user is anywhere outside the wizard, show it.
   const hideMyPlanPill = plan === null && currentHash.startsWith('#/setup');
+
+  // Phase 3 Plan 03-06 — UI-SPEC §11: visible Undo/Redo only on /plan and /tasks routes.
+  const showHistoryButtons =
+    currentHash.startsWith('#/plan') || currentHash.startsWith('#/tasks');
+  const canUndo = useTemporalStore((s) => s.pastStates.length > 0);
+  const canRedo = useTemporalStore((s) => s.futureStates.length > 0);
+  const isMac =
+    typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
+  const undoHint = isMac ? 'Undo (⌘Z)' : 'Undo (Ctrl+Z)';
+  const redoHint = isMac ? 'Redo (⌘⇧Z)' : 'Redo (Ctrl+Shift+Z)';
 
   return (
     <>
@@ -80,6 +110,42 @@ export function AppShell({ children }: AppShellProps) {
                 })}
               </ul>
             </nav>
+            {showHistoryButtons && (
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => getTemporal().undo()}
+                  disabled={!canUndo}
+                  aria-label="Undo last change"
+                  title={undoHint}
+                  className={cn(
+                    'inline-flex items-center justify-center w-9 h-9 rounded-md',
+                    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700',
+                    canUndo
+                      ? 'text-stone-700 hover:text-stone-900 hover:bg-stone-100'
+                      : 'text-stone-400 cursor-not-allowed',
+                  )}
+                >
+                  <Undo2 className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => getTemporal().redo()}
+                  disabled={!canRedo}
+                  aria-label="Redo last change"
+                  title={redoHint}
+                  className={cn(
+                    'inline-flex items-center justify-center w-9 h-9 rounded-md',
+                    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700',
+                    canRedo
+                      ? 'text-stone-700 hover:text-stone-900 hover:bg-stone-100'
+                      : 'text-stone-400 cursor-not-allowed',
+                  )}
+                >
+                  <Redo2 className="w-4 h-4" />
+                </button>
+              </div>
+            )}
             {!hideMyPlanPill && <MyPlanPill />}
           </div>
         </div>
@@ -90,6 +156,9 @@ export function AppShell({ children }: AppShellProps) {
       {/* Radix Dialog portals to body — placement here is conventional */}
       <MyPlanPanel />
       <PermapeopleAttributionFooter />
+      {/* Phase 3 Plan 03-06: top-level ConstraintTooltip mount (portaled).
+          Replaces the temporary in-DragLayer mount from Plan 03-03. */}
+      <ConstraintTooltip />
     </>
   );
 }
