@@ -25,15 +25,16 @@ function ev(partial: Partial<ScheduleEvent> & Pick<ScheduleEvent, 'type' | 'star
 }
 
 function task(partial: Partial<Task> & Pick<Task, 'id' | 'title' | 'dueDate'>): Task {
-  return {
+  const t: Task = {
     id: partial.id,
     source: partial.source ?? 'auto',
-    plantingId: partial.plantingId,
     title: partial.title,
     category: partial.category ?? 'water',
     dueDate: partial.dueDate,
     completed: partial.completed ?? false,
   };
+  if (partial.plantingId !== undefined) t.plantingId = partial.plantingId;
+  return t;
 }
 
 describe('selectEventsForCalendar (Phase 3 Plan 03-04 Task 1)', () => {
@@ -65,8 +66,8 @@ describe('selectEventsForCalendar (Phase 3 Plan 03-04 Task 1)', () => {
     });
     const out = selectEventsForCalendar([e], []);
     expect(out).toHaveLength(1);
-    expect(out[0].start).toBe('2026-08-01');
-    expect(out[0].end).toBe('2026-08-16');
+    expect(out[0]!.start).toBe('2026-08-01');
+    expect(out[0]!.end).toBe('2026-08-16');
   });
 
   it('Test 3: auto-task event types skipped from lifecycle loop', () => {
@@ -88,8 +89,8 @@ describe('selectEventsForCalendar (Phase 3 Plan 03-04 Task 1)', () => {
     });
     const out = selectEventsForCalendar([e], []);
     expect(out).toHaveLength(1);
-    expect(out[0].extendedProps.eventType).toBe('germination-window');
-    expect(out[0].backgroundColor).toBe(lifecyclePalette['germination-window']);
+    expect(out[0]!.extendedProps.eventType).toBe('germination-window');
+    expect(out[0]!.backgroundColor).toBe(lifecyclePalette['germination-window']);
   });
 
   it('Test 5: harden-off included as multi-day range (end-exclusive)', () => {
@@ -101,9 +102,9 @@ describe('selectEventsForCalendar (Phase 3 Plan 03-04 Task 1)', () => {
     });
     const out = selectEventsForCalendar([e], []);
     expect(out).toHaveLength(1);
-    expect(out[0].start).toBe('2026-04-20');
-    expect(out[0].end).toBe('2026-04-27'); // 26 + 1 day
-    expect(out[0].extendedProps.eventType).toBe('harden-off');
+    expect(out[0]!.start).toBe('2026-04-20');
+    expect(out[0]!.end).toBe('2026-04-27'); // 26 + 1 day
+    expect(out[0]!.extendedProps.eventType).toBe('harden-off');
   });
 
   it('Test 6: tasks → CalendarEventInput with kind=task and id=task:T.id', () => {
@@ -115,7 +116,7 @@ describe('selectEventsForCalendar (Phase 3 Plan 03-04 Task 1)', () => {
     });
     const out = selectEventsForCalendar([], [t]);
     expect(out).toHaveLength(1);
-    const r = out[0];
+    const r = out[0]!;
     expect(r.id).toBe('task:T1');
     expect(r.extendedProps.kind).toBe('task');
     expect(r.extendedProps.taskId).toBe('T1');
@@ -129,9 +130,9 @@ describe('selectEventsForCalendar (Phase 3 Plan 03-04 Task 1)', () => {
     const out = selectEventsForCalendar([], [t]);
     expect(out).toHaveLength(1);
     const lifecycleHexes = Object.values(lifecyclePalette);
-    expect(lifecycleHexes).not.toContain(out[0].backgroundColor);
+    expect(lifecycleHexes).not.toContain(out[0]!.backgroundColor);
     // Stone-100 per UI-SPEC §6 / RESEARCH §Pattern 6
-    expect(out[0].backgroundColor).toBe('#f5f5f4');
+    expect(out[0]!.backgroundColor).toBe('#f5f5f4');
   });
 
   it('Test 8: empty inputs return []', () => {
