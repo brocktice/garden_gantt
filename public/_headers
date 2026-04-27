@@ -1,0 +1,11 @@
+# Cloudflare Pages cache headers — DEPLOY-03
+# Source: https://developers.cloudflare.com/pages/configuration/headers/
+
+# index.html must NOT cache so a deploy is reflected on the next page load.
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Vite emits hashed filenames in /assets/ by default (e.g. index-A1b2C3.js).
+# Content-addressed → safe to cache aggressively + immutably.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
