@@ -28,13 +28,14 @@ export function SettingsPanel() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewResult, setPreviewResult] = useState<SuccessResult | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
-  const [lastExport, setLastExport] = useState<string | null>(null);
   const [clearPlanOpen, setClearPlanOpen] = useState(false);
+  // WR-07 (REVIEW Phase 4): read lastExportedAt from uiStore so it survives
+  // navigation. exportPlan() already calls setLastExportedAt on success.
+  const lastExportedAt = useUIStore((s) => s.exportReminder.lastExportedAt);
 
   const handleExport = () => {
     const r = exportPlan();
     if (r.ok) {
-      setLastExport(r.filename);
       setImportError(null);
     } else {
       setImportError(r.reason);
@@ -78,7 +79,9 @@ export function SettingsPanel() {
           <Download className="h-4 w-4" /> Export plan
         </Button>
         <p className="mt-2 text-sm text-stone-500">
-          {lastExport ? `Last exported: ${lastExport}` : 'Last exported: never'}
+          {lastExportedAt
+            ? `Last exported: ${lastExportedAt.slice(0, 10)}`
+            : 'Last exported: never'}
         </p>
       </section>
 
