@@ -44,6 +44,7 @@
 // passthrough for the common no-locks case (tested via deep-equal).
 
 import { generateSchedule } from './scheduler';
+import { nowISOString } from './dateWrappers';
 import type { EventType, GardenPlan, Plant, ScheduleEdit, ScheduleEvent } from './types';
 
 // Event types whose dates are consumed from plan.edits[] by the engine.
@@ -99,7 +100,7 @@ export function generateScheduleWithLocks(
 
   // 2. Synthesize lock-anchor edits for every active lock without an explicit edit.
   const augmentedEdits: ScheduleEdit[] = [...existingEdits];
-  const now = new Date().toISOString();
+  const now = nowISOString();
 
   for (const planting of plan.plantings) {
     const locks = planting.locks ?? {};

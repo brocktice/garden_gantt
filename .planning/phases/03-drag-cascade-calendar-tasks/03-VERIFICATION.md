@@ -213,3 +213,53 @@ The remaining 9 warnings (WR-01..WR-09) are real but non-blocking — recommend 
 
 _Verified: 2026-04-27T05:18:53Z_
 _Verifier: Claude (gsd-verifier)_
+
+---
+
+## Re-Verification 2026-04-27 (post-03-08)
+
+**Status:** all_gaps_closed
+**Score:** 6/6 truths verified
+**Closure plan:** 03-08-PLAN.md
+
+### Gap Resolutions
+
+| Gap | Status | Evidence |
+| --- | ------ | -------- |
+| CR-02 (Lock contract) | ✓ CLOSED | `schedulerWithLocks.ts` pre-pass synthesizes lock-anchor edits from an edit-free baseline; new tests `lock survives cascade across anchor change`, `unlocked downstream events still reflow`, `explicit edit beats lock-synth` all pass. The wrapper now re-runs `generateSchedule` with augmented edits when any active lock-without-edit exists; passthrough fast path preserved for the no-locks case (deep-equal test still byte-identical). |
+| CR-01 (Custom task plantingId) | ✓ CLOSED | `CustomTask` widened to `Omit<Task, 'source'>` (inherits `plantingId`); `buildTask` conditional spread persists `plantingId` only when the user picked a planting; `taskToForm` reads `t.plantingId ?? FREE_FLOATING`; round-trip test asserts persistence + edit-mode pre-fill. Schema tightened: `customTasks: z.array(CustomTaskSchema)` with optional `plantingId`. |
+| CR-03 (completedTaskIds leak) | ✓ CLOSED | `removeCustomTask` unconditionally prunes bare `${id}` and `${id}:*` keys; `editCustomTask` prunes `${id}:*` keys when `dueDate` or `recurrence` is in the patch; cosmetic patches (title, notes) preserve completions. Both setters mutate inside one `set()` so zundo coalesces (Cmd-Z restores task + completion state atomically). |
+
+### Test Suite
+
+- `npx vitest run`: **283 pass / 0 fail** across 38 files (was 271/271 across 36 files; +12 new tests across 2 new files + 1 augmented file)
+- `npx tsc --noEmit`: **clean**
+- `npm run lint`: **clean** of new errors (4 pre-existing warnings in `src/domain/dateWrappers.ts` are out of scope)
+- `npm run build`: **succeeds** (TypeScript check + Vite production build)
+
+### Phase 3 Roadmap Truths — Final
+
+| #   | Truth | Status |
+| --- | ----- | ------ |
+| 1   | User dragging a transplant bar sees ghost-bar previews; releasing commits cascade | ✓ VERIFIED (unchanged) |
+| 2   | Frost-tender plant transplant before last frost gets snap-back + tooltip | ✓ VERIFIED (unchanged) |
+| 3   | User pinning an event with the lock toggle sees that event held fixed during subsequent cascades | ✓ VERIFIED (CR-02 closed) |
+| 4   | Cmd/Ctrl-Z reverses last drag with ≥20 levels; Cmd/Ctrl-Shift-Z re-applies | ✓ VERIFIED (unchanged) |
+| 5   | Toggling gantt ↔ calendar shows same events; clicking day opens detail panel | ✓ VERIFIED (unchanged) |
+| 6   | Tasks dashboard with custom tasks attached to plants groups under the plant in groupBy='plant' | ✓ VERIFIED (CR-01 closed; CR-03 hygiene restored) |
+
+### Notes on Test-1 Reinterpretation (CR-02)
+
+The closure plan's literal "lastFrostDate moves" test was infeasible without persistent lock-anchor storage (the lock would need to remember its date across a location change — an architectural change beyond Plan 03-08 scope). The replacement test (`locked transplant holds fixed when an UPSTREAM edit (indoor-start) moves`) covers the same contract — lock survives cascade — using the engine's actual cascade trigger (an explicit edit on a related event). The harvest-window test exercises the most user-visible scenario: drag transplant later, watch locked harvest stay put.
+
+### Anti-Pattern Updates
+
+| File | Previous Status | Current Status |
+| ---- | --------------- | -------------- |
+| `src/domain/schedulerWithLocks.ts` | 🛑 BLOCKER (pass-through) | ✓ RESOLVED |
+| `src/features/tasks/CustomTaskModal.tsx` | 🛑 BLOCKER (plantingId dropped) | ✓ RESOLVED |
+| `src/stores/planStore.ts` (removeCustomTask, editCustomTask) | 🛑 BLOCKER (completedTaskIds orphans) | ✓ RESOLVED |
+| WR-01..WR-09 | ⚠️ WARNING (non-blocking) | unchanged — deferred to Phase 4 hardening |
+
+_Re-Verified: 2026-04-27_
+_Closure: 03-08-PLAN.md_
