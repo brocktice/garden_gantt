@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-drag-cascade-calendar-tasks/03 (drag layer interactive)
-last_updated: "2026-04-27T04:19:06.418Z"
+stopped_at: Completed 03-drag-cascade-calendar-tasks/04 (calendar view + drawer + tabs)
+last_updated: "2026-04-27T04:31:43.040Z"
 last_activity: 2026-04-27
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 27
-  completed_plans: 23
-  percent: 85
+  completed_plans: 24
+  percent: 89
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 03 (drag-cascade-calendar-tasks) — EXECUTING
-Plan: 2 of 7
+Plan: 5 of 7
 Status: Ready to execute
 Last activity: 2026-04-27
 
-Progress: [█████████░] 85%
+Progress: [█████████░] 89%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [█████████░] 85%
 | Phase 01-foundation-schedule-engine P07 | 2min | 2 tasks | 5 files |
 | Phase 01-foundation-schedule-engine P08 | 4m 2s | 2 tasks | 7 files |
 | Phase 03-drag-cascade-calendar-tasks P03 | 11min | 3 tasks | 17 files |
+| Phase 03-drag-cascade-calendar-tasks P04 | 8min | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,10 @@ Recent decisions affecting current work:
 - [Phase ?]: Phase 3 P03: drag handlers extracted to dragHandlers.ts so DragLayer.tsx exports only the component (Fast Refresh / react-refresh/only-export-components)
 - [Phase ?]: Phase 3 P03: ConstraintTooltip ships both Mode A (cursor-tracking) + Mode B (bar-anchored sticky); mounted from inside DragLayer until Plan 03-06 moves mount to AppShell
 - [Phase ?]: Phase 3 P03: DragLayer wired into App.tsx routes (/, /plan, *) AND SetupStepReview.tsx — drag is the default behavior wherever the gantt renders
+- [Phase ?]: Phase 3 P04: end-exclusive +1 day handled in selectEventsForCalendar via dateWrappers; calendar/ NOT in no-restricted-syntax allowlist so date-fns format composes via parseDate
+- [Phase ?]: Phase 3 P04: CalendarView is default export so React.lazy in Plan 03-07 can code-split the FullCalendar bundle cleanly
+- [Phase ?]: Phase 3 P04: drawer/tab tokens (--spacing-drawer-w 400px, --spacing-tab-strip-h 44px) shipped via comment-fenced @theme region; Plan 03-06 must NOT re-add
+- [Phase ?]: Phase 3 P04: Tasks parameter passed [] to selectEventsForCalendar + DayDetailDrawer; Plan 03-07 wires real Task[] consumer via useExpandedTasks once Plan 03-05 lands
 
 ### Pending Todos
 
@@ -122,7 +127,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27T04:18:54.917Z
-Stopped at: Completed 03-drag-cascade-calendar-tasks/03 (drag layer interactive)
+Last session: 2026-04-27T04:31:43.022Z
+Stopped at: Completed 03-drag-cascade-calendar-tasks/04 (calendar view + drawer + tabs)
 Resume file: 
-None

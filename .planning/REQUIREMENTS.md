@@ -52,9 +52,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Calendar View
 
-- [ ] **CAL-01**: User can toggle between gantt timeline view and calendar view; both views read from the same underlying schedule events
-- [ ] **CAL-02**: Calendar offers month and week views
-- [ ] **CAL-03**: Clicking a day shows all schedule events and tasks for that day in a detail panel
+- [x] **CAL-01**: User can toggle between gantt timeline view and calendar view; both views read from the same underlying schedule events
+- [x] **CAL-02**: Calendar offers month and week views
+- [x] **CAL-03**: Clicking a day shows all schedule events and tasks for that day in a detail panel
 - [ ] **CAL-04**: Calendar is the default view on narrow (mobile) viewports
 
 ### Tasks
@@ -180,9 +180,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GANTT-08 | Phase 3 | Pending |
 | GANTT-09 | Phase 3 | Complete |
 | GANTT-10 | Phase 3 | Pending |
-| CAL-01 | Phase 3 | Pending |
-| CAL-02 | Phase 3 | Pending |
-| CAL-03 | Phase 3 | Pending |
+| CAL-01 | Phase 3 | Complete |
+| CAL-02 | Phase 3 | Complete |
+| CAL-03 | Phase 3 | Complete |
 | CAL-04 | Phase 4 | Pending |
 | TASK-01 | Phase 3 | Pending |
 | TASK-02 | Phase 3 | Pending |
