@@ -50,6 +50,7 @@ export function PlanViewTabs() {
     >
       {TABS.map(({ id, label, Icon }) => {
         const active = view === id;
+        const dataCoachTarget = id === 'calendar' ? 'calendar-tab' : undefined;
         return (
           <button
             key={id}
@@ -57,6 +58,7 @@ export function PlanViewTabs() {
             role="tab"
             aria-selected={active}
             onClick={() => setView(id)}
+            data-coach-target={dataCoachTarget}
             className={cn(
               'inline-flex items-center gap-1 text-sm font-medium h-full -mb-px',
               active

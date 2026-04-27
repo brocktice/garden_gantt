@@ -145,6 +145,7 @@ export function MyPlanPanel() {
                   variant="primary"
                   className="mt-4"
                   onClick={() => navigate('#/catalog')}
+                  data-coach-target="catalog-button"
                 >
                   Browse plants
                 </Button>
@@ -218,6 +219,7 @@ export function MyPlanPanel() {
                   variant="primary"
                   className="flex-1"
                   onClick={() => navigate('#/catalog')}
+                  data-coach-target="catalog-button"
                 >
                   Add more plants
                 </Button>

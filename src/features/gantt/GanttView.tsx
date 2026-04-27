@@ -288,11 +288,14 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                     aria-label={aLabel}
                     transform={`translate(0, ${rowY})`}
                   >
-                    {rowEvents.map((e) => {
+                    {rowEvents.map((e, ei) => {
                       const fill = lifecyclePalette[e.type];
                       // Skip task events (water-seedlings, harden-off-day, fertilize-at-flowering).
                       if (!fill || !plant) return null;
                       const isLocked = p.locks?.[e.type] === true;
+                      // Phase 4 Plan 04-04 (D-05): the first lifecycle bar of the first
+                      // planting row becomes the anchor for coach marks 2 (drag) + 3 (lock).
+                      const isFirstBar = i === 0 && ei === 0;
                       const mobileTapProps = isMobile
                         ? {
                             isMobile: true,
@@ -313,6 +316,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                           fill={fill}
                           scale={scale}
                           isLocked={isLocked}
+                          isFirstBar={isFirstBar}
                           {...mobileTapProps}
                         />
                       );
@@ -387,6 +391,10 @@ interface DraggableBarProps {
    *  the bar to open EditPlantingModal via onTapMobile. */
   isMobile?: boolean;
   onTapMobile?: () => void;
+  /** Phase 4 Plan 04-04 (D-05): true on the very first lifecycle bar (row 0, event 0).
+   *  Adds `data-coach-target="first-bar"` to the wrapping <g> and propagates `isFirst`
+   *  to the LockToggle so coach marks 2 (drag) + 3 (lock) can find their anchors. */
+  isFirstBar?: boolean;
 }
 
 /**
@@ -426,6 +434,7 @@ function DraggableBar({
   isLocked,
   isMobile,
   onTapMobile,
+  isFirstBar,
 }: DraggableBarProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDragBar({
     event,
@@ -461,6 +470,7 @@ function DraggableBar({
       className={cn('group', cursorClass)}
       style={{ touchAction: 'none', opacity: isDragging ? 0.4 : 1 }}
       data-planting-id={plantingId}
+      data-coach-target={isFirstBar ? 'first-bar' : undefined}
       {...attributes}
       {...effectiveListeners}
     >
@@ -528,6 +538,7 @@ function DraggableBar({
           eventType={event.type}
           locked={isLocked}
           plantName={plantLabel}
+          isFirst={isFirstBar === true}
         />
       </foreignObject>
     </g>

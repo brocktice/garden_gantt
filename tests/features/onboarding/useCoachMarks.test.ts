@@ -146,7 +146,11 @@ describe('useCoachMarks — advance + dismiss', () => {
     const { result } = renderHook(() => useCoachMarks('/plan'));
     act(() => {
       result.current.advance(); // 0 -> 1
+    });
+    act(() => {
       result.current.advance(); // 1 -> 2
+    });
+    act(() => {
       result.current.advance(); // 2 -> 3
     });
     expect(result.current.currentIndex).toBe(3);
@@ -163,7 +167,11 @@ describe('useCoachMarks — advance + dismiss', () => {
     expect(result.current.isLast).toBe(false);
     act(() => {
       result.current.advance();
+    });
+    act(() => {
       result.current.advance();
+    });
+    act(() => {
       result.current.advance();
     });
     expect(result.current.isLast).toBe(true);

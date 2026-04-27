@@ -24,9 +24,18 @@ interface LockToggleProps {
   eventType: EventType;
   locked: boolean;
   plantName: string;
+  /** Phase 4 Plan 04-04 (D-05): when true, this lock toggle is the anchor for
+   *  coach mark 3. Desktop-only since LockToggle returns null on mobile. */
+  isFirst?: boolean;
 }
 
-export function LockToggle({ plantingId, eventType, locked, plantName }: LockToggleProps) {
+export function LockToggle({
+  plantingId,
+  eventType,
+  locked,
+  plantName,
+  isFirst = false,
+}: LockToggleProps) {
   const setLock = usePlanStore((s) => s.setLock);
   const isMobile = useIsMobile();
   // Phase 4 Plan 04-02 (D-03): hover-revealed lock toggle is desktop-only at <640px.
@@ -43,6 +52,7 @@ export function LockToggle({ plantingId, eventType, locked, plantName }: LockTog
         e.stopPropagation();
         setLock(plantingId, eventType, !locked);
       }}
+      data-coach-target={isFirst ? 'first-lock-toggle' : undefined}
       aria-label={locked ? `Unlock ${plantName} ${eventType}` : `Lock ${plantName} ${eventType}`}
       className={cn(
         // 24x24 hit-target (per D-11) — w-6 h-6
