@@ -54,3 +54,39 @@ export function withStorageDOMEvents(store: StoreWithPersist): () => void {
   window.addEventListener('storage', callback);
   return () => window.removeEventListener('storage', callback);
 }
+
+/**
+ * Patch `localStorage.setItem` so that any QuotaExceededError thrown during a write
+ * fires `onFull()` once before the error propagates. (D-10 storage-full banner.)
+ *
+ * Single-call invariant: main.tsx wires this once at boot — before any other module
+ * has a chance to write. The returned teardown restores the original setItem and
+ * is intended for test cleanup.
+ *
+ * The wrapped setItem MUST re-throw so that downstream consumers (e.g. zustand persist)
+ * see the same failure semantics they would without the watcher.
+ *
+ * Source: .planning/phases/04-polish-mobile-ship/04-RESEARCH.md §Pitfall 6
+ *         .planning/phases/04-polish-mobile-ship/04-PATTERNS.md §src/data/storage.ts
+ */
+export function watchQuotaExceeded(onFull: () => void): () => void {
+  const original = localStorage.setItem.bind(localStorage);
+  function patched(this: Storage, key: string, value: string): void {
+    try {
+      original(key, value);
+    } catch (err) {
+      if (
+        err instanceof DOMException &&
+        (err.name === 'QuotaExceededError' ||
+          (err as DOMException & { code?: number }).code === 22)
+      ) {
+        onFull();
+      }
+      throw err;
+    }
+  }
+  localStorage.setItem = patched;
+  return () => {
+    localStorage.setItem = original;
+  };
+}

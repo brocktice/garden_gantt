@@ -5,10 +5,6 @@
 //
 // Source: [CITED: .planning/phases/04-polish-mobile-ship/04-PATTERNS.md §src/ui/Skeleton.tsx]
 //         [CITED: .planning/phases/04-polish-mobile-ship/04-UI-SPEC.md §Loading states]
-//
-// Dependency note: Plan 01 (wave 0) is the canonical home for this primitive; this
-// worktree (Plan 03, wave 1) ships it locally because Plan 01 has not yet merged into
-// the parallel branch base. The shape contract matches the Plan 01 spec exactly.
 
 import { cn } from './cn';
 
