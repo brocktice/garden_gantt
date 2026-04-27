@@ -40,6 +40,7 @@ import { setActiveScale } from './drag/scaleHandoff';
 import { LockToggle } from './lock/LockToggle';
 import { useIsMobile } from '../mobile/useIsMobile';
 import { EditPlantingModal } from '../mobile/EditPlantingModal';
+import { useKeyboardBarDrag } from '../keyboard-drag/useKeyboardBarDrag';
 import { cn } from '../../ui/cn';
 
 // UI-SPEC §Gantt Visual Treatment §Visual specifications — pixel constants
@@ -110,6 +111,11 @@ interface GanttViewInnerProps {
 }
 
 function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
+  // Phase 4 Plan 04-06: Linear-style keyboard drag controller. Single document-level
+  // listener; bars are roving-tabindex focusable with [data-event-id] etc. The hook
+  // reads delegated focus and stages/commits via planStore (POL-08).
+  useKeyboardBarDrag();
+
   const plantings = useMemo(() => {
     return expandSuccessions(plan, merged).plantings;
   }, [plan, merged]);
@@ -458,6 +464,12 @@ function DraggableBar({
     ? 'cursor-grab active:cursor-grabbing'
     : 'cursor-default';
 
+  // Phase 4 Plan 04-06 — POL-08 a11y label per UI-SPEC §Accessibility Contract.
+  const phaseLabel = event.type.replace(/-/g, ' ');
+  const startShort = event.start.slice(0, 10);
+  const endShort = event.end.slice(0, 10);
+  const ariaLabel = `${plantLabel} ${phaseLabel} from ${startShort} to ${endShort}. Press arrow keys to adjust, L to lock, Enter to commit, Escape to cancel.`;
+
   // Lock icon position per UI-SPEC §"Gantt Visual Treatment — Lock icon".
   // foreignObject hosts an HTML <button> inside the SVG.
   const lockX = x + width - 24 - 2; // -2px inside right edge; -24 = hit-target width
@@ -467,12 +479,26 @@ function DraggableBar({
     <g
       ref={setNodeRef as unknown as (el: SVGGElement | null) => void}
       transform={`translate(${dx}, ${dy})`}
-      className={cn('group', cursorClass)}
+      className={cn(
+        'group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700',
+        cursorClass,
+      )}
       style={{ touchAction: 'none', opacity: isDragging ? 0.4 : 1 }}
       data-planting-id={plantingId}
       data-coach-target={isFirstBar ? 'first-bar' : undefined}
+      data-event-id={event.id}
+      data-event-type={event.type}
+      data-event-start={event.start}
       {...attributes}
       {...effectiveListeners}
+      // Phase 4 Plan 04-06 — these MUST come AFTER {...attributes} so they win
+      // (dnd-kit's attributes include role/tabIndex defaults; we override per
+      // RESEARCH Pitfall 4 and UI-SPEC §Accessibility Contract). Roving tabindex:
+      // only the first bar gets tabIndex=0 so Tab lands on the gantt once;
+      // arrow keys then handle within-gantt navigation.
+      tabIndex={isFirstBar ? 0 : -1}
+      role="button"
+      aria-label={ariaLabel}
     >
       <rect
         data-event-id={event.id}
