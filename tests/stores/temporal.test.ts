@@ -31,6 +31,15 @@ function makePlanting(id: string, plantId: string): Planting {
   return { id, plantId, successionIndex: 0 };
 }
 
+// Flush rAF-debounced handleSet so temporal pastStates is observable. Pitfall 4:
+// the rAF coalesce is production-correct (one history entry per drag stream); tests
+// must await rAF to see the materialized history.
+async function flushRAF(): Promise<void> {
+  await new Promise<void>((resolve) => {
+    requestAnimationFrame(() => resolve());
+  });
+}
+
 describe('planStore — middleware order (persist OUTER, temporal INNER)', () => {
   beforeEach(() => {
     window.localStorage.clear();
@@ -66,9 +75,11 @@ describe('planStore — temporal undo/redo (D-15 plan-wide undo scope)', () => {
   it('undo reverses addPlanting; redo restores it', async () => {
     const { usePlanStore, getTemporal } = await import('../../src/stores/planStore');
     usePlanStore.getState().setLocation(sampleLocation);
+    await flushRAF();
     getTemporal().clear();
 
     usePlanStore.getState().addPlanting(makePlanting('p-tomato', 'tomato'));
+    await flushRAF();
     expect(usePlanStore.getState().plan!.plantings).toHaveLength(1);
 
     getTemporal().undo();
@@ -82,11 +93,13 @@ describe('planStore — temporal undo/redo (D-15 plan-wide undo scope)', () => {
   it('limit caps pastStates at 20 entries (oldest dropped)', async () => {
     const { usePlanStore, getTemporal } = await import('../../src/stores/planStore');
     usePlanStore.getState().setLocation(sampleLocation);
+    await flushRAF();
     getTemporal().clear();
 
-    // 25 distinct mutations
+    // 25 distinct mutations, each separated by a frame so rAF debounce records each.
     for (let i = 0; i < 25; i++) {
       usePlanStore.getState().addPlanting(makePlanting(`p-${i}`, 'tomato'));
+      await flushRAF();
     }
     expect(getTemporal().pastStates.length).toBe(20);
   });

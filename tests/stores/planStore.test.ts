@@ -364,6 +364,15 @@ describe('usePlanStore — Phase 3 setters (Plan 03-02)', () => {
     vi.resetModules();
   });
 
+  // Flush the rAF-debounced handleSet so temporal pastStates is observable. Pitfall 4:
+  // production-correct rAF debounce means writes batch into one history entry per frame —
+  // tests must await rAF to see the materialized history.
+  async function flushRAF(): Promise<void> {
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
+  }
+
   function makeEdit(plantingId: string, eventType: ScheduleEdit['eventType'], startOverride: string): ScheduleEdit {
     return {
       plantingId,
@@ -393,6 +402,7 @@ describe('usePlanStore — Phase 3 setters (Plan 03-02)', () => {
     getTemporal().clear();
     const edit = makeEdit('p-tomato', 'transplant', '2026-05-20T12:00:00.000Z');
     usePlanStore.getState().commitEdit(edit);
+    await flushRAF();
 
     const plan = usePlanStore.getState().plan!;
     expect(plan.edits).toHaveLength(1);
@@ -434,6 +444,7 @@ describe('usePlanStore — Phase 3 setters (Plan 03-02)', () => {
     getTemporal().clear();
     const task = makeCustomTask('task-1', 'Water seedlings', '2026-05-15T12:00:00.000Z');
     usePlanStore.getState().addCustomTask(task);
+    await flushRAF();
     const plan = usePlanStore.getState().plan!;
     expect(plan.customTasks).toHaveLength(1);
     expect(plan.customTasks[0]).toEqual(task);
@@ -444,9 +455,11 @@ describe('usePlanStore — Phase 3 setters (Plan 03-02)', () => {
     const { usePlanStore, getTemporal } = await import('../../src/stores/planStore');
     usePlanStore.getState().setLocation(sampleLocation);
     usePlanStore.getState().addCustomTask(makeCustomTask('task-1', 'Original', '2026-05-15T12:00:00.000Z'));
+    await flushRAF();
     getTemporal().clear();
 
     usePlanStore.getState().editCustomTask('task-1', { title: 'Renamed', notes: 'note' });
+    await flushRAF();
     const plan = usePlanStore.getState().plan!;
     expect(plan.customTasks[0]!.title).toBe('Renamed');
     expect(plan.customTasks[0]!.notes).toBe('note');
@@ -458,10 +471,13 @@ describe('usePlanStore — Phase 3 setters (Plan 03-02)', () => {
     const { usePlanStore, getTemporal } = await import('../../src/stores/planStore');
     usePlanStore.getState().setLocation(sampleLocation);
     usePlanStore.getState().addCustomTask(makeCustomTask('task-1', 'A', '2026-05-15T12:00:00.000Z'));
+    await flushRAF();
     usePlanStore.getState().addCustomTask(makeCustomTask('task-2', 'B', '2026-05-16T12:00:00.000Z'));
+    await flushRAF();
     getTemporal().clear();
 
     usePlanStore.getState().removeCustomTask('task-1');
+    await flushRAF();
     const plan = usePlanStore.getState().plan!;
     expect(plan.customTasks).toHaveLength(1);
     expect(plan.customTasks[0]!.id).toBe('task-2');
