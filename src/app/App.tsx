@@ -12,8 +12,8 @@
 // Pitfall 6 (RESEARCH): React.lazy + Suspense + the existing top-level ErrorBoundary
 // covers stale-cache chunk-load failure. Phase 4 polish may add a calendar-specific
 // "Calendar didn't load — switch to Gantt" recovery UI per UI-SPEC §Error states.
-import { lazy, Suspense } from 'react';
-import { Route, Routes, useSearchParams } from 'react-router';
+import { lazy, Suspense, type ReactNode } from 'react';
+import { Navigate, Route, Routes, useSearchParams } from 'react-router';
 import { AppShell } from './AppShell';
 import { ErrorBoundary } from './ErrorBoundary';
 import { PlanViewTabs } from './PlanViewTabs';
@@ -22,6 +22,7 @@ import { SetupWizard } from '../features/setup/SetupWizard';
 import { CatalogBrowser } from '../features/catalog/CatalogBrowser';
 import { SettingsPanel } from '../features/settings/SettingsPanel';
 import { TasksDashboard } from '../features/tasks/TasksDashboard';
+import { usePlanStore } from '../stores/planStore';
 
 // Lazy-loaded calendar — Vite emits a separate chunk so first /plan paint stays small.
 const CalendarView = lazy(() => import('../features/calendar/CalendarView'));
@@ -39,6 +40,17 @@ function CalendarSkeleton() {
       </div>
     </div>
   );
+}
+
+// First-run gate: redirect to /setup until the user has set a location.
+// /setup and /settings stay open (settings hosts the import-plan path that
+// can also produce a non-null plan).
+function RequireSetup({ children }: { children: ReactNode }) {
+  const plan = usePlanStore((s) => s.plan);
+  if (plan === null) {
+    return <Navigate to="/setup" replace />;
+  }
+  return <>{children}</>;
 }
 
 function PlanRoute() {
@@ -64,15 +76,17 @@ export function App() {
     <ErrorBoundary>
       <AppShell>
         <Routes>
-          {/* Default + /plan: Phase 3 PlanRoute (tabs + view-conditional Gantt | Calendar). */}
-          <Route path="/" element={<PlanRoute />} />
-          <Route path="/plan" element={<PlanRoute />} />
+          {/* Default + /plan: Phase 3 PlanRoute (tabs + view-conditional Gantt | Calendar).
+              Guarded by RequireSetup so first-time users land on /setup. */}
+          <Route path="/" element={<RequireSetup><PlanRoute /></RequireSetup>} />
+          <Route path="/plan" element={<RequireSetup><PlanRoute /></RequireSetup>} />
           <Route path="/setup" element={<SetupWizard />} />
-          <Route path="/catalog" element={<CatalogBrowser />} />
-          <Route path="/tasks" element={<TasksDashboard />} />
+          <Route path="/catalog" element={<RequireSetup><CatalogBrowser /></RequireSetup>} />
+          <Route path="/tasks" element={<RequireSetup><TasksDashboard /></RequireSetup>} />
+          {/* /settings stays open: import-plan flow can run before setup. */}
           <Route path="/settings" element={<SettingsPanel />} />
-          {/* Catch-all → PlanRoute */}
-          <Route path="*" element={<PlanRoute />} />
+          {/* Catch-all → PlanRoute (also guarded). */}
+          <Route path="*" element={<RequireSetup><PlanRoute /></RequireSetup>} />
         </Routes>
       </AppShell>
     </ErrorBoundary>
