@@ -16,6 +16,7 @@
 import { Lock, LockOpen } from 'lucide-react';
 import { usePlanStore } from '../../../stores/planStore';
 import { cn } from '../../../ui/cn';
+import { useIsMobile } from '../../mobile/useIsMobile';
 import type { EventType } from '../../../domain/types';
 
 interface LockToggleProps {
@@ -27,6 +28,11 @@ interface LockToggleProps {
 
 export function LockToggle({ plantingId, eventType, locked, plantName }: LockToggleProps) {
   const setLock = usePlanStore((s) => s.setLock);
+  const isMobile = useIsMobile();
+  // Phase 4 Plan 04-02 (D-03): hover-revealed lock toggle is desktop-only at <640px.
+  // The bar's filled-lock outline ring (Phase 3 D-12) still renders for status; the
+  // edit affordance moves to EditPlantingModal's Switch row on phones.
+  if (isMobile) return null;
   const Icon = locked ? Lock : LockOpen;
 
   return (
