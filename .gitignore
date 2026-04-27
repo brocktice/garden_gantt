@@ -13,6 +13,7 @@ dist-ssr
 .vite
 coverage
 *.local
+.env
 *.tsbuildinfo
 
 # Cloudflare Worker (cors-proxy/) artifacts
