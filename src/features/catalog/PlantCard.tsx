@@ -7,6 +7,7 @@
 
 import { type ComponentType } from 'react';
 import {
+  AlertTriangle,
   Apple,
   Carrot,
   CheckCircle2,
@@ -131,6 +132,39 @@ export function PlantCard({
             · {plant.timing.daysToMaturity} days to maturity
           </span>
         </p>
+        {plant.provenance && (
+          <p
+            className={cn(
+              'mt-2 text-xs flex items-start gap-1.5',
+              plant.provenance.verified ? 'text-stone-500' : 'text-amber-700',
+            )}
+          >
+            {!plant.provenance.verified && (
+              <AlertTriangle
+                className="h-3.5 w-3.5 mt-0.5 shrink-0"
+                aria-hidden="true"
+              />
+            )}
+            <span>
+              {plant.provenance.verified ? 'Source: ' : 'Pending verification — '}
+              {plant.provenance.url ? (
+                <a
+                  href={plant.provenance.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-stone-700"
+                >
+                  {plant.provenance.source}
+                </a>
+              ) : (
+                plant.provenance.source
+              )}
+              {plant.provenance.publication && (
+                <span className="italic"> · {plant.provenance.publication}</span>
+              )}
+            </span>
+          </p>
+        )}
       </CardBody>
       <CardFooter>
         {added ? (

@@ -30,3 +30,6 @@ cors-proxy/.dev.vars
 *.njsproj
 *.sln
 *.sw?
+
+# Generated catalog (re-run `npm run import:catalog` to regenerate)
+src/assets/catalog.generated.ts

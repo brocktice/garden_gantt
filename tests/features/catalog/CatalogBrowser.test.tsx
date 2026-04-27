@@ -5,11 +5,26 @@
 // Phase 2 component test — search + filter chip semantics + add planting flow.
 // Source: [CITED: 02-12-PLAN.md Task 1 Step 4]
 //         [CITED: 02-UI-SPEC.md §Component Inventory item 3]
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import type { Location } from '../../../src/domain/types';
+
+// Inject the legacy variety entries as the curated catalog for this test only.
+// The live catalog has been narrowed to 4 species-level entries pending
+// extension-publication verification (see src/assets/catalog.ts header), but
+// this test asserts CatalogBrowser search behavior over multiple Tomato
+// variants — it needs the richer fixture set to be meaningful.
+vi.mock('../../../src/assets/catalog', async () => {
+  const fixture = await vi.importActual<
+    typeof import('../../../src/assets/catalog.unverified')
+  >('../../../src/assets/catalog.unverified');
+  return {
+    curatedCatalog: fixture.unverifiedFixtureCatalog,
+    sampleCatalog: fixture.unverifiedFixtureSampleCatalog,
+  };
+});
 
 const sampleLocation: Location = {
   zip: '20001',

@@ -41,6 +41,33 @@ export interface PlantTiming {
   season: 'cool' | 'warm';
 }
 
+/**
+ * Provenance metadata for a curated plant entry. Required for any plant whose
+ * `source === 'curated'` — we MUST be able to cite where the timing values
+ * came from. Custom and Permapeople-derived plants do not need this.
+ *
+ * `verified: true` means a human has cross-checked the timing values against
+ * the cited publication. `verified: false` is permitted but surfaced as a
+ * "pending verification" badge in the UI.
+ */
+export interface PlantProvenance {
+  verified: boolean;
+  /** Publishing institution, e.g. "Utah State University Extension". */
+  source: string;
+  /** Specific publication title, e.g. "Vegetable Planting Guide 2023". */
+  publication?: string;
+  /** Direct URL to the publication. */
+  url?: string;
+  /** ISO date the source was retrieved/cited. */
+  retrieved?: string;
+  /** Page number or section anchor inside the publication. */
+  page?: string | number;
+  /** Free-form license / redistribution note from the source. */
+  license?: string;
+  /** Free-form note when verified=false (e.g., reason it's pending). */
+  note?: string;
+}
+
 export interface Plant {
   id: string;
   source: PlantSource;
@@ -51,6 +78,9 @@ export interface Plant {
   // Phase 2: widened from Phase 1's `Record<string, never>` to allow Permapeople
   // enrichment payloads (categories, descriptions, images, etc.).
   enrichment?: Record<string, unknown>;
+  // v1.1: every curated entry MUST carry provenance — we don't ship unverified
+  // values silently. Optional only because custom/permapeople sources don't have it.
+  provenance?: PlantProvenance;
 }
 
 export interface Location {

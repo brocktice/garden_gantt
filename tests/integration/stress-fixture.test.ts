@@ -9,7 +9,11 @@ import { describe, it, expect } from 'vitest';
 import { stressFixture } from '../fixtures/200-event-stress';
 import { generateSchedule } from '../../src/domain/scheduler';
 import { expandSuccessions } from '../../src/domain/succession';
-import { sampleCatalog } from '../../src/assets/catalog';
+// Stress fixture references variety-level plant ids (e.g. tomato-cherokee-purple)
+// that live in the quarantined unverified catalog. The fixture is itself a
+// test artifact, not production data — it's appropriate to source plant
+// definitions from the quarantined file in this scope.
+import { unverifiedFixtureSampleCatalog as sampleCatalog } from '../../src/assets/catalog.unverified';
 
 describe('200-event stress fixture', () => {
   it('expands and generates a non-trivial schedule (400-700 events)', () => {

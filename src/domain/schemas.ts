@@ -46,6 +46,17 @@ export const PlantTimingSchema = z.object({
   season: SeasonSchema,
 });
 
+export const PlantProvenanceSchema = z.object({
+  verified: z.boolean(),
+  source: z.string().min(1),
+  publication: z.string().optional(),
+  url: z.string().optional(),
+  retrieved: z.string().optional(),
+  page: z.union([z.string(), z.number()]).optional(),
+  license: z.string().optional(),
+  note: z.string().optional(),
+});
+
 export const PlantSchema = z.object({
   id: z.string().min(1),
   source: PlantSourceSchema,
@@ -55,6 +66,8 @@ export const PlantSchema = z.object({
   timing: PlantTimingSchema,
   // Phase 2 widens beyond Phase 1's empty {} so Permapeople enrichment can flow through.
   enrichment: z.record(z.string(), z.unknown()).optional(),
+  // v1.1: provenance metadata for curated entries (not required for custom/permapeople).
+  provenance: PlantProvenanceSchema.optional(),
 });
 
 export const LocationSchema = z.object({

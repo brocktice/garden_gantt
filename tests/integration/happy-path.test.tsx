@@ -15,6 +15,20 @@ import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 
+// Inject the legacy variety entries as the curated catalog. The live catalog
+// has been narrowed to 4 species-level entries pending extension-publication
+// verification, but this happy-path test exercises the full setup flow with
+// 5 plants — needs the richer fixture set.
+vi.mock('../../src/assets/catalog', async () => {
+  const fixture = await vi.importActual<
+    typeof import('../../src/assets/catalog.unverified')
+  >('../../src/assets/catalog.unverified');
+  return {
+    curatedCatalog: fixture.unverifiedFixtureCatalog,
+    sampleCatalog: fixture.unverifiedFixtureSampleCatalog,
+  };
+});
+
 const ZONES_FIXTURE = {
   version: 1,
   generatedAt: '2026-04-26T00:00:00.000Z',

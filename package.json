@@ -13,7 +13,8 @@
     "test": "vitest",
     "lint": "eslint .",
     "acquire:data": "tsx scripts/acquire-zone-data.ts",
-    "build:data": "tsx scripts/build-zone-data.ts"
+    "build:data": "tsx scripts/build-zone-data.ts",
+    "import:catalog": "tsx scripts/import-all.ts"
   },
   "dependencies": {
     "@date-fns/utc": "^2.1.1",
