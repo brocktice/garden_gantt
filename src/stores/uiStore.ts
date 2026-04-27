@@ -47,6 +47,10 @@ interface UIState {
   setLastConstraintViolation: (v: UIState['lastConstraintViolation']) => void;
   setTaskGroupBy: (g: 'plant' | 'category') => void;
   incrementAltClickTipDismiss: () => void;
+  // Phase 4 (Plan 01) — storage-full mid-session signal (D-10). Memory-only;
+  // resets on reload. Plan 04-03 ships StorageFullBanner that reads this.
+  isStorageFull: boolean;
+  setStorageFull: (v: boolean) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -77,4 +81,7 @@ export const useUIStore = create<UIState>((set) => ({
   setTaskGroupBy: (g) => set({ taskGroupBy: g }),
   incrementAltClickTipDismiss: () =>
     set((s) => ({ altClickTipDismissCount: s.altClickTipDismissCount + 1 })),
+  // Phase 4 defaults
+  isStorageFull: false,
+  setStorageFull: (v) => set({ isStorageFull: v }),
 }));

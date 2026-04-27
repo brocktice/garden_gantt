@@ -76,6 +76,11 @@ interface PlanState {
   // toggleTaskCompletion: idempotent toggle on completedTaskIds (D-36). Composite key for
   // recurring tasks `${taskId}:${ISODate}`; bare taskId for one-off tasks.
   toggleTaskCompletion: (compositeKey: string) => void;
+  // Phase 4 (Plan 04-03) — destructive setters with modal-confirm + toast-with-undo.
+  // clearPlan: resets plan to null. Modal-confirm gated in SettingsPanel.
+  clearPlan: () => void;
+  // clearCompletedTaskIds: empties completedTaskIds array. Toast-with-undo gated in TasksDashboard.
+  clearCompletedTaskIds: () => void;
 }
 
 const SCHEMA_VERSION = CURRENT_SCHEMA_VERSION;
@@ -348,6 +353,27 @@ export const usePlanStore = create<PlanState>()(
               },
             };
           }),
+
+        // Phase 4 (Plan 04-03): destructive setters.
+        // clearPlan: resets plan to null. Caller (SettingsPanel) gates with a modal-confirm
+        // Dialog (D-09 irreversible). Tracked by zundo so a Cmd-Z still works to recover
+        // immediately, but the UI presents this as irreversible to set expectations.
+        clearPlan: () => set({ plan: null }),
+
+        // clearCompletedTaskIds: empties the completion array. Reversible — caller
+        // (TasksDashboard) wires a toast-with-undo around getTemporal().undo() (D-09).
+        clearCompletedTaskIds: () =>
+          set((s) =>
+            s.plan
+              ? {
+                  plan: {
+                    ...s.plan,
+                    completedTaskIds: [],
+                    updatedAt: nowISOString(),
+                  },
+                }
+              : s,
+          ),
       }),
       {
         // Per CONTEXT D-14 + D-16:
