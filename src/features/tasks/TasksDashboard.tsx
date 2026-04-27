@@ -14,7 +14,7 @@ import { useTodayWeekOverdue } from './useTodayWeekOverdue';
 import { TaskGroup } from './TaskGroup';
 import { CustomTaskModal } from './CustomTaskModal';
 import { pushToast } from '../../ui/toast/useToast';
-import { nowISOString, toISODate, parseDate } from '../../domain/dateWrappers';
+import { todayLocalYMD } from '../../domain/dateWrappers';
 import type { CustomTask } from '../../domain/types';
 
 export function TasksDashboard() {
@@ -28,7 +28,10 @@ export function TasksDashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<CustomTask | null>(null);
 
-  const todayISO = toISODate(parseDate(nowISOString())).slice(0, 10);
+  // WR-04 (REVIEW Phase 4): use local-calendar "today" so PST/Asia-east users
+  // don't see tomorrow's date bucket fire prematurely. "Today" is a display
+  // concept, not stored; goes through todayLocalYMD() in dateWrappers.
+  const todayISO = todayLocalYMD();
 
   const isEmpty = today.length === 0 && thisWeek.length === 0 && overdue.length === 0;
 

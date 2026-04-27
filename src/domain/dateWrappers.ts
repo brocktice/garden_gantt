@@ -116,3 +116,25 @@ export function ymdToISONoon(ymd: string): string {
 export function isoNoonToYMD(iso: string): string {
   return iso.slice(0, 10);
 }
+
+/**
+ * "Today" in the user's local timezone, formatted YYYY-MM-DD.
+ *
+ * WR-04 (REVIEW Phase 4): use this for display-time "today" comparisons (e.g.
+ * Tasks dashboard "Today/Overdue/Upcoming" bucketing). The previous pattern of
+ * `toISODate(parseDate(nowISOString())).slice(0,10)` returns the UTC calendar
+ * date, which is wrong for any user whose local date differs from UTC at the
+ * moment of computation (e.g. PST users between local 4pm and midnight see
+ * tomorrow's date as "today").
+ *
+ * "Today" is a display concept, not a stored datum — this helper does NOT
+ * violate the SCH-03 noon-UTC storage invariant.
+ */
+export function todayLocalYMD(): string {
+  // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (Phase 4 extension of SCH-03).
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+}

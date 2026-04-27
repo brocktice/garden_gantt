@@ -41,7 +41,7 @@ import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
 import { getTemporal } from '../../stores/planStore';
 import { pushToast } from '../../ui/toast/useToast';
 import { usePlanStore } from '../../stores/planStore';
-import { nowISOString, parseDate, toISODate } from '../../domain/dateWrappers';
+import { nowISOString, todayLocalYMD } from '../../domain/dateWrappers';
 import type {
   CustomTask,
   TaskCategory,
@@ -95,7 +95,10 @@ function newTaskId(): string {
 }
 
 function todayDate(): string {
-  return toISODate(parseDate(nowISOString())).slice(0, 10);
+  // WR-04 (REVIEW Phase 4): local-calendar "today" for default due-date and
+  // form validation. Previously this returned UTC-today which was off-by-one
+  // for users in negative UTC offsets after their local 4pm.
+  return todayLocalYMD();
 }
 
 function defaultForm(initialPlantingId?: string): FormState {
