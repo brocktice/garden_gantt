@@ -15,9 +15,9 @@ describe('Skeleton (D-08)', () => {
     const { container } = render(<Skeleton />);
     const div = container.firstElementChild as HTMLElement;
     expect(div.tagName).toBe('DIV');
-    expect(div).toHaveClass('animate-pulse');
-    expect(div).toHaveClass('bg-stone-200');
-    expect(div).toHaveClass('rounded');
+    expect(div.classList.contains('animate-pulse')).toBe(true);
+    expect(div.classList.contains('bg-stone-200')).toBe(true);
+    expect(div.classList.contains('rounded')).toBe(true);
   });
 
   it('applies role=presentation and aria-hidden=true', () => {
@@ -30,22 +30,22 @@ describe('Skeleton (D-08)', () => {
   it('shape="circle" applies rounded-full', () => {
     const { container } = render(<Skeleton shape="circle" />);
     const div = container.firstElementChild as HTMLElement;
-    expect(div).toHaveClass('rounded-full');
+    expect(div.classList.contains('rounded-full')).toBe(true);
   });
 
   it('shape="text" applies rounded AND h-4', () => {
     const { container } = render(<Skeleton shape="text" />);
     const div = container.firstElementChild as HTMLElement;
-    expect(div).toHaveClass('rounded');
-    expect(div).toHaveClass('h-4');
+    expect(div.classList.contains('rounded')).toBe(true);
+    expect(div.classList.contains('h-4')).toBe(true);
   });
 
   it('merges className via cn (extra classes preserved)', () => {
     const { container } = render(<Skeleton shape="circle" className="w-8 h-8" />);
     const div = container.firstElementChild as HTMLElement;
-    expect(div).toHaveClass('rounded-full');
-    expect(div).toHaveClass('w-8');
-    expect(div).toHaveClass('h-8');
+    expect(div.classList.contains('rounded-full')).toBe(true);
+    expect(div.classList.contains('w-8')).toBe(true);
+    expect(div.classList.contains('h-8')).toBe(true);
   });
 
   it('passes through arbitrary HTML attributes (data-testid)', () => {

@@ -38,6 +38,14 @@
   --color-lifecycle-locked: #44403C;       /* stone-700 */
   --spacing-lock-icon: 16px;
   --spacing-lock-hit: 24px;
+
+  /* Phase 4 (Plan 04-01) — UI-SPEC §Spacing Scale Phase 4 tokens */
+  --spacing-touch-target-min: 44px;        /* WCAG 2.5.5 minimum hit target */
+  --spacing-sticky-plant-col: 112px;       /* mobile gantt sticky-left plant column */
+  --spacing-coach-mark-callout: 280px;     /* D-06 coach-mark callout max width */
+  --spacing-coach-mark-arrow: 8px;         /* coach-mark arrow tip size */
+  --spacing-banner-h: 48px;                /* D-10 / iOS Private banner height */
+  --spacing-skeleton-radius: 4px;          /* D-08 skeleton corner radius */
 }
 
 /* Phase 3 (Plan 03-03): ghost overlay subtle pulse — applied via .ghost-pulse if Phase 4
