@@ -104,10 +104,13 @@ export function CoachMarks() {
         onClick={dismiss}
         aria-hidden="true"
       />
-      {/* Callout */}
+      {/* Callout. WR-11 (REVIEW Phase 4): coach marks are advisory non-blocking
+          UI (Esc/click-backdrop dismiss). Drop aria-modal="true" since we do
+          not actually trap focus — leaving it would lie to screen readers
+          about modality. role="dialog" alone is correct for an advisory
+          callout. */}
       <div
         role="dialog"
-        aria-modal="true"
         aria-labelledby="coach-mark-heading"
         className="fixed z-50 bg-white rounded-md border border-stone-200 shadow-lg p-4"
         style={{

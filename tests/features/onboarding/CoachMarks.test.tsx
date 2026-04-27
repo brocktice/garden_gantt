@@ -77,7 +77,9 @@ describe('CoachMarks — Mark 1 (catalog-button)', () => {
       </Wrapper>,
     );
     const dialog = screen.getByRole('dialog');
-    expect(dialog.getAttribute('aria-modal')).toBe('true');
+    // WR-11 (REVIEW Phase 4): coach marks are non-blocking advisory UI;
+    // aria-modal was dropped because we never actually trap focus.
+    expect(dialog.getAttribute('aria-modal')).toBeNull();
     expect(screen.getByText('Pick your plants here')).toBeTruthy();
     expect(
       screen.getByText(
