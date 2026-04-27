@@ -47,6 +47,20 @@ interface UIState {
   setLastConstraintViolation: (v: UIState['lastConstraintViolation']) => void;
   setTaskGroupBy: (g: 'plant' | 'category') => void;
   incrementAltClickTipDismiss: () => void;
+  // Phase 4 Plan 04-05 (D-15) — export-reminder bookkeeping slice.
+  // NOTE: Plan 04-01 (Wave 0) wraps this slice in Zustand `persist` middleware.
+  // This wave-1 plan ships only the slice + setters surface so D-12/D-13/D-14/D-15
+  // wiring can land in parallel. The slice is memory-only until Plan 04-01 merges
+  // and adds `partialize: (s) => ({ exportReminder: s.exportReminder, ... })`.
+  exportReminder: {
+    lastExportedAt: string | null;
+    dirtySinceExport: number;
+    snoozedUntil: string | null;
+  };
+  setLastExportedAt: (iso: string) => void;
+  incrementDirty: () => void;
+  resetDirty: () => void;
+  setSnoozedUntil: (iso: string | null) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -77,4 +91,23 @@ export const useUIStore = create<UIState>((set) => ({
   setTaskGroupBy: (g) => set({ taskGroupBy: g }),
   incrementAltClickTipDismiss: () =>
     set((s) => ({ altClickTipDismissCount: s.altClickTipDismissCount + 1 })),
+  // Phase 4 Plan 04-05 — export-reminder slice (D-15).
+  exportReminder: {
+    lastExportedAt: null,
+    dirtySinceExport: 0,
+    snoozedUntil: null,
+  },
+  setLastExportedAt: (iso) =>
+    set((s) => ({ exportReminder: { ...s.exportReminder, lastExportedAt: iso } })),
+  incrementDirty: () =>
+    set((s) => ({
+      exportReminder: {
+        ...s.exportReminder,
+        dirtySinceExport: s.exportReminder.dirtySinceExport + 1,
+      },
+    })),
+  resetDirty: () =>
+    set((s) => ({ exportReminder: { ...s.exportReminder, dirtySinceExport: 0 } })),
+  setSnoozedUntil: (iso) =>
+    set((s) => ({ exportReminder: { ...s.exportReminder, snoozedUntil: iso } })),
 }));
