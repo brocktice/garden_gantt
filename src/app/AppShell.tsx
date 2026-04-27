@@ -36,6 +36,22 @@ import { useLockKeybinding } from '../features/gantt/lock/useLockKeybinding';
 import { ConstraintTooltip } from '../features/gantt/tooltip/ConstraintTooltip';
 import { cn } from '../ui/cn';
 
+// Plan 04-07 Task 2 — POL-07 perf-checkpoint loader.
+// Dev-only `?stress=1` URL hook: imports the 200-event stress fixture and
+// replaces the planStore so DevTools Performance traces have a realistic
+// stress surface (~500 schedule events). Tree-shaken from production builds
+// via the import.meta.env.DEV gate. The dynamic import keeps tests/ out of
+// the production bundle entirely.
+if (
+  import.meta.env.DEV &&
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).has('stress')
+) {
+  void import('../../tests/fixtures/200-event-stress').then(({ stressFixture }) => {
+    usePlanStore.getState().replacePlan(stressFixture);
+  });
+}
+
 interface NavLink {
   href: string;
   label: string;
