@@ -84,7 +84,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 7 plans
 - [x] 03-01-PLAN.md — Schema v2→v3 + engine consumes plan.edits[] + lock-aware wrapper + new constraint rules (Wave 1)
 - [x] 03-02-PLAN.md — planStore zundo wrap + commitEdit/setLock/task setters + dragStore + historyBindings + uiStore extensions (Wave 1)
-- [ ] 03-03-PLAN.md — Gantt drag mechanics: DragLayer + clampModifier + GhostOverlay + ConstraintTooltip + DraggableBar + drag tokens (Wave 2)
+- [x] 03-03-PLAN.md — Gantt drag mechanics: DragLayer + clampModifier + GhostOverlay + ConstraintTooltip + DraggableBar + drag tokens (Wave 2)
 - [ ] 03-04-PLAN.md — Calendar: FullCalendar wrapper + selectEventsForCalendar + DayDetailDrawer + PlanViewTabs (Wave 2)
 - [ ] 03-05-PLAN.md — Tasks: TasksDashboard + CustomTaskModal + deriveTasks + expandRecurringTasks + useTodayWeekOverdue (Wave 2)
 - [ ] 03-06-PLAN.md — Lock UI: LockToggle + useLockKeybinding + AppShell undo/redo buttons + ConstraintTooltip top-level mount + remaining @theme tokens (Wave 3)

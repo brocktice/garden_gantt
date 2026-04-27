@@ -42,12 +42,12 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **GANTT-01**: Plan renders as a horizontal-bar gantt chart with one row per planting (succession plantings get their own rows)
 - [ ] **GANTT-02**: Each plant bar is segmented by lifecycle phase (indoor / harden-off / transplant→establish / harvest), color-coded
 - [ ] **GANTT-03**: Time axis spans the gardening season for the user's location with sensible default zoom
-- [ ] **GANTT-04**: User can drag any phase boundary or whole-bar to adjust dates
-- [ ] **GANTT-05**: Drag respects constraints: cannot drag transplant of frost-tender plant before last frost; harden-off must precede transplant; harvest must follow transplant by at least DTM
-- [ ] **GANTT-06**: Drag shows a ghost/preview of affected downstream events during the drag (cascade preview)
-- [ ] **GANTT-07**: Releasing a drag commits a sparse `ScheduleEdit`; downstream events that weren't manually pinned reflow accordingly
+- [x] **GANTT-04**: User can drag any phase boundary or whole-bar to adjust dates
+- [x] **GANTT-05**: Drag respects constraints: cannot drag transplant of frost-tender plant before last frost; harden-off must precede transplant; harvest must follow transplant by at least DTM
+- [x] **GANTT-06**: Drag shows a ghost/preview of affected downstream events during the drag (cascade preview)
+- [x] **GANTT-07**: Releasing a drag commits a sparse `ScheduleEdit`; downstream events that weren't manually pinned reflow accordingly
 - [ ] **GANTT-08**: User can lock individual events (pin) so cascade reflow won't move them
-- [ ] **GANTT-09**: When a drag would violate a constraint, the bar snaps to the constraint boundary and surfaces a tooltip explaining why
+- [x] **GANTT-09**: When a drag would violate a constraint, the bar snaps to the constraint boundary and surfaces a tooltip explaining why
 - [ ] **GANTT-10**: Undo (Cmd/Ctrl-Z, ≥20 levels) reverses any drag or schedule edit; redo (Cmd/Ctrl-Shift-Z) re-applies it
 
 ### Calendar View
@@ -173,12 +173,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GANTT-01 | Phase 2 | Pending |
 | GANTT-02 | Phase 2 | Pending |
 | GANTT-03 | Phase 2 | Pending |
-| GANTT-04 | Phase 3 | Pending |
-| GANTT-05 | Phase 3 | Pending |
-| GANTT-06 | Phase 3 | Pending |
-| GANTT-07 | Phase 3 | Pending |
+| GANTT-04 | Phase 3 | Complete |
+| GANTT-05 | Phase 3 | Complete |
+| GANTT-06 | Phase 3 | Complete |
+| GANTT-07 | Phase 3 | Complete |
 | GANTT-08 | Phase 3 | Pending |
-| GANTT-09 | Phase 3 | Pending |
+| GANTT-09 | Phase 3 | Complete |
 | GANTT-10 | Phase 3 | Pending |
 | CAL-01 | Phase 3 | Pending |
 | CAL-02 | Phase 3 | Pending |

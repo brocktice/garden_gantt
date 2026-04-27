@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 UI-SPEC approved
-last_updated: "2026-04-27T03:40:02.878Z"
-last_activity: 2026-04-27 -- Phase 03 execution started
+stopped_at: Completed 03-drag-cascade-calendar-tasks/03 (drag layer interactive)
+last_updated: "2026-04-27T04:19:06.418Z"
+last_activity: 2026-04-27
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 27
-  completed_plans: 20
-  percent: 74
+  completed_plans: 23
+  percent: 85
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 03 (drag-cascade-calendar-tasks) — EXECUTING
-Plan: 1 of 7
-Status: Executing Phase 03
-Last activity: 2026-04-27 -- Phase 03 execution started
+Plan: 2 of 7
+Status: Ready to execute
+Last activity: 2026-04-27
 
-Progress: [██████████] 100%
+Progress: [█████████░] 85%
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [██████████] 100%
 | Phase 01-foundation-schedule-engine P05 | 3min | 2 tasks | 4 files |
 | Phase 01-foundation-schedule-engine P07 | 2min | 2 tasks | 5 files |
 | Phase 01-foundation-schedule-engine P08 | 4m 2s | 2 tasks | 7 files |
+| Phase 03-drag-cascade-calendar-tasks P03 | 11min | 3 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -98,6 +99,11 @@ Recent decisions affecting current work:
 - [Phase ?]: Bare-SVG gantt at /plan derived live via generateSchedule(); timeScale.ts locked as Phase 3 drag API (D-06)
 - [Phase ?]: Skip task events in Phase 1 gantt; lifecyclePalette narrowed to Partial<Record<EventType,string>> so render skips them automatically
 - [Phase ?]: ESLint new Date() allowlist widened from GanttView.tsx-only to features/gantt/** for the Today-indicator concern; engine-side directories still reject (T-01-36)
+- [Phase ?]: Phase 3 P03: dispatcher modifier on DndContext (dnd-kit v6 has no per-draggable modifier API); single context-level modifier reads active.data.current and forwards to per-event makeClampModifier
+- [Phase ?]: Phase 3 P03: scaleHandoff.ts module-level singleton (single-writer GanttView, single-reader DragLayer modifier) — dnd-kit modifier args have no user-data slot; canonical workaround that keeps timeScale.ts API locked
+- [Phase ?]: Phase 3 P03: drag handlers extracted to dragHandlers.ts so DragLayer.tsx exports only the component (Fast Refresh / react-refresh/only-export-components)
+- [Phase ?]: Phase 3 P03: ConstraintTooltip ships both Mode A (cursor-tracking) + Mode B (bar-anchored sticky); mounted from inside DragLayer until Plan 03-06 moves mount to AppShell
+- [Phase ?]: Phase 3 P03: DragLayer wired into App.tsx routes (/, /plan, *) AND SetupStepReview.tsx — drag is the default behavior wherever the gantt renders
 
 ### Pending Todos
 
@@ -116,7 +122,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27T01:56:30.102Z
-Stopped at: Phase 3 UI-SPEC approved
+Last session: 2026-04-27T04:18:54.917Z
+Stopped at: Completed 03-drag-cascade-calendar-tasks/03 (drag layer interactive)
 Resume file: 
-.planning/phases/03-drag-cascade-calendar-tasks/03-UI-SPEC.md
+None
