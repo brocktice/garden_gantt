@@ -13,11 +13,14 @@ import userEvent from '@testing-library/user-event';
 const PERMAPEOPLE_FIXTURE = {
   plants: [
     {
+      name: 'Green Zebra',
       description: 'A red fruit traditionally grown as an annual.',
       scientific_name: 'Solanum lycopersicum',
       data: [
         { key: 'Family', value: 'Solanaceae' },
         { key: 'Genus', value: 'Solanum' },
+        { key: 'When to start indoors (weeks)', value: '6' },
+        { key: 'Days to harvest', value: '80-90' },
       ],
       image_url: 'https://example.com/img.jpg',
     },
@@ -78,7 +81,7 @@ describe('CustomPlantModal', () => {
 
     const nameInput = screen.getByLabelText(/plant name/i);
     await user.type(nameInput, 'Tomato');
-    const enrich = screen.getByRole('button', { name: /enrich from permapeople/i });
+    const enrich = screen.getByRole('button', { name: /enrich only/i });
     await user.click(enrich);
 
     await waitFor(
@@ -87,6 +90,41 @@ describe('CustomPlantModal', () => {
     );
     expect(screen.getByText(/Family: Solanaceae/i)).toBeTruthy();
     expect(screen.getByText(/Genus: Solanum/i)).toBeTruthy();
+  });
+
+  it('Add from Permapeople fills matching name, botanical, and timing fields', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
+      const u = typeof url === 'string' ? url : (url as Request | URL).toString();
+      if (u.includes('/permapeople-proxy/search')) {
+        return new Response(JSON.stringify(PERMAPEOPLE_FIXTURE), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      return new Response('Not found', { status: 404 });
+    });
+
+    const user = userEvent.setup();
+    await renderModal();
+
+    await user.type(screen.getByLabelText(/plant name/i), 'green zebra tomato');
+    await user.click(screen.getByRole('button', { name: /add from permapeople/i }));
+
+    await waitFor(() =>
+      expect((screen.getByLabelText(/plant name/i) as HTMLInputElement).value).toBe(
+        'Green Zebra',
+      ),
+    );
+    expect((screen.getByLabelText(/scientific name/i) as HTMLInputElement).value).toBe(
+      'Solanum lycopersicum',
+    );
+    expect((screen.getByLabelText(/days to maturity/i) as HTMLInputElement).value).toBe(
+      '80',
+    );
+    expect(
+      (screen.getByLabelText(/weeks indoors before last frost/i) as HTMLInputElement)
+        .value,
+    ).toBe('6');
   });
 
   it('Permapeople fetch fail shows D-10 inline pill (replaces legacy multi-line block); Save stays enabled (CAT-07 + Plan 04-03 Task 4)', async () => {
@@ -104,7 +142,7 @@ describe('CustomPlantModal', () => {
     const save = screen.getByRole('button', { name: /save plant/i }) as HTMLButtonElement;
     expect(save.disabled).toBe(false);
 
-    const enrich = screen.getByRole('button', { name: /enrich from permapeople/i });
+    const enrich = screen.getByRole('button', { name: /enrich only/i });
     await user.click(enrich);
 
     // D-10 pill copy + role=status + aria-live=polite.
@@ -139,7 +177,7 @@ describe('CustomPlantModal', () => {
     const nameInput = screen.getByLabelText(/plant name/i);
     await user.type(nameInput, 'Tomato');
     await user.click(
-      screen.getByRole('button', { name: /enrich from permapeople/i }),
+      screen.getByRole('button', { name: /add from permapeople/i }),
     );
 
     // The loading variant of the button: disabled + animate-spin + "Looking up…" text.
@@ -271,7 +309,7 @@ describe('CustomPlantModal', () => {
     await user.type(nameInput, 'Tomato');
 
     const enrich1 = screen.getByRole('button', {
-      name: /enrich from permapeople/i,
+      name: /enrich only/i,
     });
     await user.click(enrich1);
     await waitFor(
@@ -281,7 +319,7 @@ describe('CustomPlantModal', () => {
 
     // Re-click: the Enrich button is still rendered + clickable.
     const enrich2 = screen.getByRole('button', {
-      name: /enrich from permapeople/i,
+      name: /enrich only/i,
     });
     expect((enrich2 as HTMLButtonElement).disabled).toBe(false);
     await user.click(enrich2);

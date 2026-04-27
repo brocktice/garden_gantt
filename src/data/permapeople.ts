@@ -13,11 +13,16 @@ const PERMAPEOPLE_BASE_URL: string =
 const TIMEOUT_MS = 8000;
 
 export type EnrichmentFields = {
+  matchedName?: string;
   description?: string;
   scientificName?: string;
   family?: string;
   genus?: string;
   imageUrl?: string;
+  daysToMaturity?: number;
+  weeksIndoorBeforeLastFrost?: number;
+  harvestWindowDays?: number;
+  startMethod?: 'direct-sow' | 'indoor-start' | 'either';
 };
 
 export type PermapeopleResult =
@@ -105,12 +110,44 @@ function mapPermapeopleToEnrichment(p: unknown): EnrichmentFields {
     }
   }
   const out: EnrichmentFields = {};
+  if (typeof obj.name === 'string') out.matchedName = obj.name;
   if (typeof obj.description === 'string') out.description = obj.description;
   if (typeof obj.scientific_name === 'string') out.scientificName = obj.scientific_name;
   if (typeof obj.image_url === 'string') out.imageUrl = obj.image_url;
   if (typeof dataMap['Family'] === 'string') out.family = dataMap['Family'];
   if (typeof dataMap['Genus'] === 'string') out.genus = dataMap['Genus'];
+  const maturity = firstInt(
+    dataMap['Days to maturity'] ??
+      dataMap['Days to harvest'] ??
+      dataMap['Time to harvest'],
+  );
+  if (maturity !== undefined) out.daysToMaturity = maturity;
+  const indoorWeeks = firstInt(
+    dataMap['When to start indoors (weeks)'] ??
+      dataMap['Weeks before last frost'] ??
+      dataMap['Start seeds indoors (weeks)'],
+  );
+  if (indoorWeeks !== undefined) out.weeksIndoorBeforeLastFrost = indoorWeeks;
+  const harvestWindow = firstInt(
+    dataMap['Harvest window'] ?? dataMap['Harvest window days'],
+  );
+  if (harvestWindow !== undefined) out.harvestWindowDays = harvestWindow;
+  const transplantText = dataMap['Propagation - Transplanting'] ?? '';
+  const directText = dataMap['Propagation - Direct sowing'] ?? '';
+  if (indoorWeeks !== undefined || /indoors/i.test(transplantText)) {
+    out.startMethod = 'indoor-start';
+  } else if (directText) {
+    out.startMethod = 'direct-sow';
+  }
   return out;
+}
+
+function firstInt(value: string | undefined): number | undefined {
+  if (!value) return undefined;
+  const match = value.match(/\d+/);
+  if (!match) return undefined;
+  const n = Number(match[0]);
+  return Number.isInteger(n) && n > 0 ? n : undefined;
 }
 
 function directAuthHeadersIfDev(): Record<string, string> {

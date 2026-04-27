@@ -33,6 +33,7 @@ describe('searchPlant (CAT-06 / CAT-07)', () => {
       jsonResponse({
         plants: [
           {
+            name: 'Green Zebra',
             description: 'A common garden tomato.',
             scientific_name: 'Solanum lycopersicum',
             image_url: 'https://example.com/tomato.jpg',
@@ -40,6 +41,8 @@ describe('searchPlant (CAT-06 / CAT-07)', () => {
               { key: 'Family', value: 'Solanaceae' },
               { key: 'Genus', value: 'Solanum' },
               { key: 'Light', value: 'Full sun' },
+              { key: 'Days to harvest', value: '80-90' },
+              { key: 'When to start indoors (weeks)', value: '6' },
             ],
           },
         ],
@@ -49,11 +52,15 @@ describe('searchPlant (CAT-06 / CAT-07)', () => {
     expect(result).toEqual({
       status: 'ok',
       data: {
+        matchedName: 'Green Zebra',
         description: 'A common garden tomato.',
         scientificName: 'Solanum lycopersicum',
         family: 'Solanaceae',
         genus: 'Solanum',
         imageUrl: 'https://example.com/tomato.jpg',
+        daysToMaturity: 80,
+        weeksIndoorBeforeLastFrost: 6,
+        startMethod: 'indoor-start',
       },
     });
   });

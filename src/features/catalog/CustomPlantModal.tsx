@@ -86,6 +86,35 @@ const CATEGORIES: PlantCategory[] = [
   'other',
 ];
 
+function inferPlantDefaults(
+  data: EnrichmentFields,
+  fallbackName: string,
+): Partial<Pick<FormState, 'category' | 'frostTolerance' | 'season'>> {
+  const text = `${data.matchedName ?? ''} ${fallbackName} ${data.scientificName ?? ''}`.toLowerCase();
+  if (/\b(tomato|pepper|eggplant|cucumber|squash|melon|pumpkin|okra)\b/.test(text)) {
+    return { category: 'fruiting-vegetable', frostTolerance: 'tender', season: 'warm' };
+  }
+  if (/\b(basil|cilantro|dill|parsley|sage|thyme|oregano|rosemary)\b/.test(text)) {
+    return { category: 'herb' };
+  }
+  if (/\b(lettuce|spinach|kale|chard|arugula)\b/.test(text)) {
+    return { category: 'leafy-green', frostTolerance: 'hardy', season: 'cool' };
+  }
+  if (/\b(carrot|beet|radish|turnip|parsnip)\b/.test(text)) {
+    return { category: 'root', frostTolerance: 'hardy', season: 'cool' };
+  }
+  if (/\b(onion|garlic|leek|shallot)\b/.test(text)) {
+    return { category: 'allium', frostTolerance: 'hardy', season: 'cool' };
+  }
+  if (/\b(broccoli|cabbage|cauliflower|brussels|collard)\b/.test(text)) {
+    return { category: 'brassica', frostTolerance: 'hardy', season: 'cool' };
+  }
+  if (/\b(bean|pea|lentil)\b/.test(text)) {
+    return { category: 'legume' };
+  }
+  return {};
+}
+
 function defaultForm(): FormState {
   return {
     name: '',
@@ -192,14 +221,45 @@ function CustomPlantModalInner({
   };
 
   const handleEnrich = async () => {
+    await runPermapeopleLookup(false);
+  };
+
+  const handleAddFromPermapeople = async () => {
+    await runPermapeopleLookup(true);
+  };
+
+  const runPermapeopleLookup = async (applyResult: boolean) => {
     if (!form.name.trim()) return;
     setEnrich({ status: 'loading' });
     const result = await searchPlant(form.name.trim());
     if (result.status === 'ok') {
       setEnrich({ status: 'success', data: result.data });
+      if (applyResult) applyPermapeopleResult(result.data);
     } else {
       setEnrich({ status: 'error' });
     }
+  };
+
+  const applyPermapeopleResult = (data: EnrichmentFields) => {
+    setForm((f) => {
+      const next: FormState = { ...f };
+      if (data.matchedName) next.name = data.matchedName;
+      if (data.scientificName) next.scientificName = data.scientificName;
+      if (data.description) next.description = data.description;
+      if (data.daysToMaturity) next.daysToMaturity = data.daysToMaturity;
+      if (data.weeksIndoorBeforeLastFrost) {
+        next.weeksIndoorBeforeLastFrost = data.weeksIndoorBeforeLastFrost;
+      }
+      if (data.harvestWindowDays) next.harvestWindowDays = data.harvestWindowDays;
+      if (data.startMethod) {
+        next.startMethod = data.startMethod;
+      }
+      const inferred = inferPlantDefaults(data, f.name);
+      next.category = inferred.category ?? next.category;
+      next.frostTolerance = inferred.frostTolerance ?? next.frostTolerance;
+      next.season = inferred.season ?? next.season;
+      return next;
+    });
   };
 
   const applyEnrichField = (field: keyof EnrichmentFields) => {
@@ -241,6 +301,7 @@ function CustomPlantModalInner({
     if (form.description) enrichment.description = form.description;
     if (enrich.status === 'success') {
       enrichment.source = 'permapeople';
+      if (enrich.data.matchedName) enrichment.permapeopleName = enrich.data.matchedName;
       if (enrich.data.family) enrichment.family = enrich.data.family;
       if (enrich.data.genus) enrichment.genus = enrich.data.genus;
       if (enrich.data.imageUrl) enrichment.imageUrl = enrich.data.imageUrl;
@@ -645,19 +706,29 @@ function CustomPlantModalInner({
           </h4>
           <p className="text-sm text-stone-600 mt-1">
             Pull botanical info, family, and a description from Permapeople.org.
-            Doesn&apos;t change timing — those stay yours.
+            Add from Permapeople also fills matching timing fields when available.
           </p>
           <div className="mt-3">
             {enrich.status === 'idle' && (
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleEnrich}
-                disabled={!form.name.trim()}
-              >
-                <Sparkles className="h-4 w-4" />
-                Enrich from Permapeople
-              </Button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={handleAddFromPermapeople}
+                  disabled={!form.name.trim()}
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Add from Permapeople
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleEnrich}
+                  disabled={!form.name.trim()}
+                >
+                  Enrich only
+                </Button>
+              </div>
             )}
             {enrich.status === 'loading' && (
               <Button type="button" variant="secondary" disabled>
@@ -698,6 +769,36 @@ function CustomPlantModalInner({
                       </Button>
                     </div>
                   )}
+                  {(enrich.data.matchedName ||
+                    enrich.data.daysToMaturity ||
+                    enrich.data.weeksIndoorBeforeLastFrost ||
+                    enrich.data.startMethod) && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-stone-700">
+                        {[
+                          enrich.data.matchedName
+                            ? `Name: ${enrich.data.matchedName}`
+                            : null,
+                          enrich.data.daysToMaturity
+                            ? `Maturity: ${enrich.data.daysToMaturity} days`
+                            : null,
+                          enrich.data.weeksIndoorBeforeLastFrost
+                            ? `Indoor start: ${enrich.data.weeksIndoorBeforeLastFrost} weeks`
+                            : null,
+                        ]
+                          .filter(Boolean)
+                          .join(' · ')}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => applyPermapeopleResult(enrich.data)}
+                      >
+                        Use result
+                      </Button>
+                    </div>
+                  )}
                   {enrich.data.description && (
                     <div className="mt-2">
                       <p className="text-stone-700 line-clamp-3">
@@ -721,9 +822,17 @@ function CustomPlantModalInner({
               // amber multi-line block. Pill sits adjacent to the Enrich button
               // (UI-SPEC: "on the enrichment row"). Button remains clickable for retry.
               <div className="flex items-center gap-3 flex-wrap">
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={handleAddFromPermapeople}
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Add from Permapeople
+                </Button>
                 <Button type="button" variant="secondary" onClick={handleEnrich}>
                   <Sparkles className="h-4 w-4" />
-                  Enrich from Permapeople
+                  Enrich only
                 </Button>
                 <span
                   role="status"
