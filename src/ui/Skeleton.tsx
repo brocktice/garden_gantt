@@ -6,15 +6,15 @@
 // Source: [CITED: .planning/phases/04-polish-mobile-ship/04-PATTERNS.md §src/ui/Skeleton.tsx]
 //         [CITED: .planning/phases/04-polish-mobile-ship/04-UI-SPEC.md §Loading states]
 
+import type { HTMLAttributes } from 'react';
 import { cn } from './cn';
 
-export interface SkeletonProps {
+export interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
   shape?: 'rect' | 'text' | 'circle' | 'card';
   variant?: 'line' | 'rect' | 'card';
   w?: string;
   h?: string;
   count?: number;
-  className?: string;
 }
 
 /**
@@ -30,6 +30,8 @@ export function Skeleton({
   h,
   count = 1,
   className,
+  style,
+  ...rest
 }: SkeletonProps) {
   // `variant` is an alias accepted by some call sites; map onto shape.
   const effectiveShape =
@@ -41,6 +43,13 @@ export function Skeleton({
           ? 'rect'
           : shape;
 
+  const shapeClass =
+    effectiveShape === 'circle'
+      ? 'rounded-full'
+      : effectiveShape === 'card'
+        ? 'rounded-md'
+        : 'rounded';
+
   const items = Array.from({ length: count }).map((_, i) => (
     <div
       key={i}
@@ -48,7 +57,7 @@ export function Skeleton({
       aria-hidden="true"
       className={cn(
         'bg-stone-200 animate-pulse',
-        effectiveShape === 'circle' ? 'rounded-full' : 'rounded-md',
+        shapeClass,
         // Sensible defaults that callers usually override via className.
         effectiveShape === 'text' && 'h-4 w-full',
         effectiveShape === 'rect' && 'h-5 w-full',
@@ -56,8 +65,9 @@ export function Skeleton({
         effectiveShape === 'circle' && 'h-8 w-8',
         className,
       )}
-      style={{ width: w, height: h }}
+      style={{ width: w, height: h, ...style }}
+      {...rest}
     />
   ));
-  return <>{items}</>;
+  return count === 1 ? items[0] : <>{items}</>;
 }
