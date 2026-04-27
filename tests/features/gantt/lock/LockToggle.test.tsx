@@ -5,7 +5,6 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, cleanup, screen, fireEvent } from '@testing-library/react';
-import { useEffect } from 'react';
 import { LockToggle } from '../../../../src/features/gantt/lock/LockToggle';
 import { useLockKeybinding } from '../../../../src/features/gantt/lock/useLockKeybinding';
 import { usePlanStore } from '../../../../src/stores/planStore';

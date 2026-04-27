@@ -33,6 +33,11 @@
   /* Phase 3 Plan 03-04 — calendar + drawer (Wave 2) */
   --spacing-drawer-w: 400px;
   --spacing-tab-strip-h: 44px;
+
+  /* Phase 3 lock UI (Plan 03-06) — UI-SPEC §3 + §Color (WCAG-verified ≥3:1 against all 6 lifecycle fills) */
+  --color-lifecycle-locked: #44403C;       /* stone-700 */
+  --spacing-lock-icon: 16px;
+  --spacing-lock-hit: 24px;
 }
 
 /* Phase 3 (Plan 03-03): ghost overlay subtle pulse — applied via .ghost-pulse if Phase 4
