@@ -3,7 +3,7 @@
 // Source: [CITED: .planning/phases/01-foundation-schedule-engine/01-RESEARCH.md §Code Examples lines 973–1003]
 import { describe, it, expect } from 'vitest';
 import { canMove } from '../../src/domain/constraints';
-import { sampleCatalog } from '../../src/assets/catalog';
+import { unverifiedFixtureSampleCatalog as sampleCatalog } from '../../src/assets/catalog.unverified';
 import type { GardenPlan, ScheduleEvent } from '../../src/domain/types';
 
 const plan: GardenPlan = {

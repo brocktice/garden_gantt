@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { generateSchedule } from '../../src/domain/scheduler';
 import { expandSuccessions } from '../../src/domain/succession';
-import { sampleCatalog } from '../../src/assets/catalog';
+import { unverifiedFixtureSampleCatalog as sampleCatalog } from '../../src/assets/catalog.unverified';
 import type { GardenPlan } from '../../src/domain/types';
 
 const baseLocation = {

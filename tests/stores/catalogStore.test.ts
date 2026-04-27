@@ -124,7 +124,7 @@ describe('selectMerged', () => {
     const merged = selectMerged(useCatalogStore.getState());
     expect(merged.size).toBe(curatedCatalog.length);
     expect(merged.get('tomato')).toBeDefined();
-    expect(merged.get('lettuce')).toBeDefined();
+    expect(merged.get('leaf-lettuce')).toBeDefined();
     expect(merged.get('broccoli')).toBeDefined();
     expect(merged.get('garlic')).toBeDefined();
   });

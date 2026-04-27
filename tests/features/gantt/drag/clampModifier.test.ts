@@ -5,7 +5,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { makeClampModifier } from '../../../../src/features/gantt/drag/clampModifier';
 import { createTimeScale } from '../../../../src/features/gantt/timeScale';
-import { sampleCatalog } from '../../../../src/assets/catalog';
+import { unverifiedFixtureSampleCatalog as sampleCatalog } from '../../../../src/assets/catalog.unverified';
 import type { GardenPlan, ScheduleEvent } from '../../../../src/domain/types';
 
 const PX_PER_DAY = 6;

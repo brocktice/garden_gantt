@@ -6,7 +6,7 @@
 import { describe, it, expect } from 'vitest';
 import { generateScheduleWithLocks } from '../../src/domain/schedulerWithLocks';
 import { generateSchedule } from '../../src/domain/scheduler';
-import { sampleCatalog } from '../../src/assets/catalog';
+import { unverifiedFixtureSampleCatalog as sampleCatalog } from '../../src/assets/catalog.unverified';
 import type { GardenPlan } from '../../src/domain/types';
 
 const baseLocation = {

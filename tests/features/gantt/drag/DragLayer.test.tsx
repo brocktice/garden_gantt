@@ -17,7 +17,7 @@ import type {
   ScheduleEvent,
   Plant,
 } from '../../../../src/domain/types';
-import { sampleCatalog } from '../../../../src/assets/catalog';
+import { unverifiedFixtureSampleCatalog as sampleCatalog } from '../../../../src/assets/catalog.unverified';
 
 const PX_PER_DAY = 6;
 

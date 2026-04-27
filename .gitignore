@@ -31,5 +31,6 @@ cors-proxy/.dev.vars
 *.sln
 *.sw?
 
-# Generated catalog (re-run `npm run import:catalog` to regenerate)
-src/assets/catalog.generated.ts
+# catalog.generated.ts IS committed — it's the live catalog source.
+# Re-run `npm run import:catalog` after updating PDFs or parsers, then commit
+# the regenerated file so production builds don't depend on running the ETL.

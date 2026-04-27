@@ -6,7 +6,7 @@
 //         [CITED: .planning/phases/03-drag-cascade-calendar-tasks/03-CONTEXT.md D-19, D-20]
 import { describe, it, expect } from 'vitest';
 import { generateSchedule } from '../../src/domain/scheduler';
-import { sampleCatalog } from '../../src/assets/catalog';
+import { unverifiedFixtureSampleCatalog as sampleCatalog } from '../../src/assets/catalog.unverified';
 import type { GardenPlan, ScheduleEdit } from '../../src/domain/types';
 
 const baseLocation = {

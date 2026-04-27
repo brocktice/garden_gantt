@@ -7,7 +7,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { expandSuccessions } from '../../src/domain/succession';
-import { sampleCatalog } from '../../src/assets/catalog';
+import { unverifiedFixtureSampleCatalog as sampleCatalog } from '../../src/assets/catalog.unverified';
 import { parseDate, addDays, differenceInDays } from '../../src/domain/dateWrappers';
 import type { GardenPlan } from '../../src/domain/types';
 
