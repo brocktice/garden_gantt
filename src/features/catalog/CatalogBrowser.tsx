@@ -27,6 +27,7 @@ export function CatalogBrowser() {
   const setSearch = useUIStore((s) => s.setSearchQuery);
   const filterChips = useUIStore((s) => s.filterChips);
   const toggleChip = useUIStore((s) => s.toggleFilterChip);
+  const clearFilterChips = useUIStore((s) => s.clearFilterChips);
 
   const plan = usePlanStore((s) => s.plan);
   const addPlanting = usePlanStore((s) => s.addPlanting);
@@ -98,8 +99,9 @@ export function CatalogBrowser() {
   };
 
   const clearFilters = () => {
+    // WR-13 (REVIEW Phase 4): single set() instead of O(N) toggleChip loop.
     setSearch('');
-    for (const id of filterChips) toggleChip(id);
+    clearFilterChips();
   };
 
   const hasActiveFilters = filterChips.size > 0 || search.length > 0;

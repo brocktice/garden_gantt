@@ -35,6 +35,9 @@ interface UIState {
   importPreviewOpen: boolean;
   setMyPlanPanelOpen: (v: boolean) => void;
   toggleFilterChip: (id: string) => void;
+  // WR-13 (REVIEW Phase 4): clear all chips in one set() so consumers re-render
+  // exactly once instead of N times (was: O(N) toggleFilterChip dispatch loop).
+  clearFilterChips: () => void;
   setSearchQuery: (q: string) => void;
   setImportPreviewOpen: (v: boolean) => void;
   // Phase 3 transient flags (Plan 03-02 — memory only, never persisted)
@@ -88,6 +91,7 @@ export const useUIStore = create<UIState>()(
           else next.add(id);
           return { filterChips: next };
         }),
+      clearFilterChips: () => set({ filterChips: new Set<string>() }),
       setSearchQuery: (q) => set({ searchQuery: q }),
       setImportPreviewOpen: (v) => set({ importPreviewOpen: v }),
       // Phase 3 defaults
