@@ -6,7 +6,14 @@
 // Phase 2 (Plan 02-05): setter surface + v1->v2 migration + structuredClone bootstrap.
 // Source: .planning/phases/02-data-layer-first-end-to-end/02-05-PLAN.md (Task 2)
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { GardenPlan, Location, Plant, Planting } from '../../src/domain/types';
+import type {
+  CustomTask,
+  GardenPlan,
+  Location,
+  Plant,
+  Planting,
+  ScheduleEdit,
+} from '../../src/domain/types';
 
 const ISO_UTC_NOON_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
@@ -348,6 +355,142 @@ describe('usePlanStore — v1 -> v2 migration (Pitfall E)', () => {
     expect(plan!.name).toBe('Existing plan');
     expect(plan!.location.overrides).toEqual({ zone: true }); // preserved, not overwritten
     expect(plan!.plantings[0]!.successionEnabled).toBe(true); // preserved
+  });
+});
+
+describe('usePlanStore — Phase 3 setters (Plan 03-02)', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    vi.resetModules();
+  });
+
+  function makeEdit(plantingId: string, eventType: ScheduleEdit['eventType'], startOverride: string): ScheduleEdit {
+    return {
+      plantingId,
+      eventType,
+      startOverride,
+      reason: 'user-drag',
+      editedAt: '2026-05-20T12:00:00.000Z',
+    };
+  }
+
+  function makeCustomTask(id: string, title: string, dueDate: string): CustomTask {
+    return {
+      id,
+      source: 'custom',
+      title,
+      category: 'custom',
+      dueDate,
+      completed: false,
+    };
+  }
+
+  // commitEdit ------------------------------------------------------------------------
+
+  it('commitEdit appends an edit AND adds ONE temporal pastStates entry', async () => {
+    const { usePlanStore, getTemporal } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    getTemporal().clear();
+    const edit = makeEdit('p-tomato', 'transplant', '2026-05-20T12:00:00.000Z');
+    usePlanStore.getState().commitEdit(edit);
+
+    const plan = usePlanStore.getState().plan!;
+    expect(plan.edits).toHaveLength(1);
+    expect(plan.edits[0]).toEqual(edit);
+    expect(getTemporal().pastStates.length).toBe(1);
+  });
+
+  it('commitEdit dedupes by (plantingId, eventType) — last write wins', async () => {
+    const { usePlanStore } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    const e1 = makeEdit('p-tomato', 'transplant', '2026-05-20T12:00:00.000Z');
+    const e2 = makeEdit('p-tomato', 'transplant', '2026-05-22T12:00:00.000Z');
+    usePlanStore.getState().commitEdit(e1);
+    usePlanStore.getState().commitEdit(e2);
+    const plan = usePlanStore.getState().plan!;
+    expect(plan.edits).toHaveLength(1);
+    expect(plan.edits[0]!.startOverride).toBe('2026-05-22T12:00:00.000Z');
+  });
+
+  // setLock ---------------------------------------------------------------------------
+
+  it('setLock toggles per-event lock flag (explicit boolean, not delete)', async () => {
+    const { usePlanStore } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    usePlanStore.getState().addPlanting({ id: 'p-tomato', plantId: 'tomato', successionIndex: 0 });
+
+    usePlanStore.getState().setLock('p-tomato', 'transplant', true);
+    expect(usePlanStore.getState().plan!.plantings.find((p) => p.id === 'p-tomato')!.locks!.transplant).toBe(true);
+
+    usePlanStore.getState().setLock('p-tomato', 'transplant', false);
+    expect(usePlanStore.getState().plan!.plantings.find((p) => p.id === 'p-tomato')!.locks!.transplant).toBe(false);
+  });
+
+  // addCustomTask / editCustomTask / removeCustomTask --------------------------------
+
+  it('addCustomTask appends to plan.customTasks AND adds ONE pastStates entry', async () => {
+    const { usePlanStore, getTemporal } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    getTemporal().clear();
+    const task = makeCustomTask('task-1', 'Water seedlings', '2026-05-15T12:00:00.000Z');
+    usePlanStore.getState().addCustomTask(task);
+    const plan = usePlanStore.getState().plan!;
+    expect(plan.customTasks).toHaveLength(1);
+    expect(plan.customTasks[0]).toEqual(task);
+    expect(getTemporal().pastStates.length).toBe(1);
+  });
+
+  it('editCustomTask merges patch by id AND adds ONE pastStates entry', async () => {
+    const { usePlanStore, getTemporal } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    usePlanStore.getState().addCustomTask(makeCustomTask('task-1', 'Original', '2026-05-15T12:00:00.000Z'));
+    getTemporal().clear();
+
+    usePlanStore.getState().editCustomTask('task-1', { title: 'Renamed', notes: 'note' });
+    const plan = usePlanStore.getState().plan!;
+    expect(plan.customTasks[0]!.title).toBe('Renamed');
+    expect(plan.customTasks[0]!.notes).toBe('note');
+    expect(plan.customTasks[0]!.dueDate).toBe('2026-05-15T12:00:00.000Z'); // unchanged
+    expect(getTemporal().pastStates.length).toBe(1);
+  });
+
+  it('removeCustomTask filters by id AND adds ONE pastStates entry', async () => {
+    const { usePlanStore, getTemporal } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    usePlanStore.getState().addCustomTask(makeCustomTask('task-1', 'A', '2026-05-15T12:00:00.000Z'));
+    usePlanStore.getState().addCustomTask(makeCustomTask('task-2', 'B', '2026-05-16T12:00:00.000Z'));
+    getTemporal().clear();
+
+    usePlanStore.getState().removeCustomTask('task-1');
+    const plan = usePlanStore.getState().plan!;
+    expect(plan.customTasks).toHaveLength(1);
+    expect(plan.customTasks[0]!.id).toBe('task-2');
+    expect(getTemporal().pastStates.length).toBe(1);
+  });
+
+  // toggleTaskCompletion -------------------------------------------------------------
+
+  it('toggleTaskCompletion toggles bare taskId (one-off completion)', async () => {
+    const { usePlanStore } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    usePlanStore.getState().toggleTaskCompletion('task-1');
+    expect(usePlanStore.getState().plan!.completedTaskIds).toEqual(['task-1']);
+    usePlanStore.getState().toggleTaskCompletion('task-1');
+    expect(usePlanStore.getState().plan!.completedTaskIds).toEqual([]);
+  });
+
+  it('toggleTaskCompletion treats composite key as independent of bare taskId', async () => {
+    const { usePlanStore } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    usePlanStore.getState().toggleTaskCompletion('task-1');
+    usePlanStore.getState().toggleTaskCompletion('task-1:2026-05-15');
+    expect(usePlanStore.getState().plan!.completedTaskIds).toEqual([
+      'task-1',
+      'task-1:2026-05-15',
+    ]);
+    // Toggling the composite key off does not touch the bare key
+    usePlanStore.getState().toggleTaskCompletion('task-1:2026-05-15');
+    expect(usePlanStore.getState().plan!.completedTaskIds).toEqual(['task-1']);
   });
 });
 

@@ -86,6 +86,10 @@ export const PlantingSchema = z.object({
   // future feature stages succession backwards from the anchor.
   startOffsetDays: z.number().int().optional(),
   notes: z.string().optional(),
+  // Phase 3 (D-13): per-event-type lock map. Optional during the v2→v3 transition; Plan
+  // 03-01 migration defaults to `{}`. Use z.string() for the key (full EventType enum is
+  // over-constrained at the Zod surface — TS narrowing on read enforces correctness).
+  locks: z.record(z.string(), z.boolean()).optional(),
 });
 
 export const GardenPlanSchema = z.object({
@@ -99,6 +103,9 @@ export const GardenPlanSchema = z.object({
   plantings: z.array(PlantingSchema),
   customTasks: z.array(z.unknown()), // Phase 3 will tighten
   edits: z.array(z.unknown()), // Phase 3 will tighten
+  // Phase 3 (D-36): per-task-occurrence completion log. Optional during v2→v3 transition;
+  // Plan 03-01 migration defaults to `[]` for legacy persisted plans.
+  completedTaskIds: z.array(z.string()).optional(),
   settings: z.object({
     units: z.enum(['imperial', 'metric']),
     weekStartsOn: z.union([z.literal(0), z.literal(1)]),
