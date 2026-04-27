@@ -230,6 +230,7 @@ export function CatalogBrowser() {
         open={modalOpen}
         onOpenChange={setModalOpen}
         editingPlant={editingPlant}
+        onRequestDelete={handleDeleteRequest}
       />
 
       <DeletePlantDialog

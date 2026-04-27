@@ -156,6 +156,82 @@ describe('CustomPlantModal', () => {
     expect(anySpinner).not.toBeNull();
   });
 
+  it('CR-01: edit-mode "Delete plant" button invokes onRequestDelete with the editing plant and closes the modal', async () => {
+    const { CustomPlantModal } = await import(
+      '../../../src/features/catalog/CustomPlantModal'
+    );
+    const editingPlant = {
+      id: 'cp-test',
+      source: 'custom' as const,
+      name: 'Cherokee Heirloom',
+      category: 'fruiting-vegetable' as const,
+      timing: {
+        startMethod: 'indoor-start' as const,
+        weeksIndoorBeforeLastFrost: 6,
+        transplantOffsetDaysFromLastFrost: 0,
+        daysToGermination: [7, 10] as [number, number],
+        daysToMaturity: 75,
+        harvestWindowDays: 30,
+        frostTolerance: 'tender' as const,
+        hasFlowering: true,
+        requiresHardening: true,
+        season: 'warm' as const,
+      },
+    };
+    let openState = true;
+    const onOpenChange = vi.fn((next: boolean) => {
+      openState = next;
+    });
+    const onRequestDelete = vi.fn();
+    render(
+      <CustomPlantModal
+        open={true}
+        onOpenChange={onOpenChange}
+        editingPlant={editingPlant}
+        onRequestDelete={onRequestDelete}
+      />,
+    );
+
+    const user = userEvent.setup();
+    const deleteBtn = screen.getByRole('button', { name: /delete plant/i });
+    await user.click(deleteBtn);
+
+    // Modal closes AND delegate is called with the plant — proves the button
+    // is no longer a no-op label-lie.
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(onRequestDelete).toHaveBeenCalledWith(editingPlant);
+    expect(openState).toBe(false);
+  });
+
+  it('CR-01: "Delete plant" button is hidden when onRequestDelete prop is omitted (defensive)', async () => {
+    const { CustomPlantModal } = await import(
+      '../../../src/features/catalog/CustomPlantModal'
+    );
+    const editingPlant = {
+      id: 'cp-test',
+      source: 'custom' as const,
+      name: 'Cherokee Heirloom',
+      category: 'fruiting-vegetable' as const,
+      timing: {
+        startMethod: 'direct-sow' as const,
+        daysToMaturity: 60,
+        harvestWindowDays: 14,
+        frostTolerance: 'half-hardy' as const,
+        hasFlowering: false,
+        requiresHardening: false,
+        season: 'cool' as const,
+      },
+    };
+    render(
+      <CustomPlantModal
+        open={true}
+        onOpenChange={() => undefined}
+        editingPlant={editingPlant}
+      />,
+    );
+    expect(screen.queryByRole('button', { name: /delete plant/i })).toBeNull();
+  });
+
   it('CR-02: rejects custom plant whose kebab-case id collides with a curated catalog id', async () => {
     // The curated catalog contains common plant ids like "tomato", "lettuce".
     // Typing "Tomato" as a NEW custom plant should surface an inline name error

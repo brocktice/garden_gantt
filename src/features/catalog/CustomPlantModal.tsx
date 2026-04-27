@@ -35,6 +35,12 @@ export interface CustomPlantModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   editingPlant: Plant | null;
+  // CR-01 (REVIEW Phase 4): edit-mode "Delete plant" must hand off to the
+  // cascade-confirm flow owned by CatalogBrowser (DeletePlantDialog with
+  // referencingCount). Without this prop, the edit-mode delete button is
+  // a no-op label-lie. Caller in CatalogBrowser closes the modal and opens
+  // the confirm dialog with the correct reference count.
+  onRequestDelete?: (plant: Plant) => void;
 }
 
 // Numeric fields are `number | null` so the user can clear them while typing
@@ -132,6 +138,7 @@ export function CustomPlantModal({
   open,
   onOpenChange,
   editingPlant,
+  onRequestDelete,
 }: CustomPlantModalProps) {
   // Remount the inner form whenever the modal opens with a new editingPlant.
   // This avoids setState-in-effect for resetting form state (react-hooks rule).
@@ -141,6 +148,7 @@ export function CustomPlantModal({
       open={open}
       onOpenChange={onOpenChange}
       editingPlant={editingPlant}
+      onRequestDelete={onRequestDelete}
     />
   );
 }
@@ -149,6 +157,7 @@ function CustomPlantModalInner({
   open,
   onOpenChange,
   editingPlant,
+  onRequestDelete,
 }: CustomPlantModalProps) {
   const merged = useCatalogStore(selectMerged);
   const upsertCatalog = useCatalogStore((s) => s.upsertCustomPlant);
@@ -731,17 +740,20 @@ function CustomPlantModalInner({
         {/* Action bar */}
         <div className="mt-6 flex items-center justify-between gap-2 border-t border-stone-200 pt-4">
           <div>
-            {isEdit && editingPlant && (
+            {isEdit && editingPlant && onRequestDelete && (
               <Button
                 type="button"
                 variant="ghost"
                 className="text-red-700 hover:text-red-800"
                 onClick={() => {
-                  // Edit-mode delete: close the modal and let CatalogBrowser's
-                  // dropdown-menu Delete handler open the cascade-confirm Dialog.
-                  // For simplicity, we directly invoke removeCustomPlantWithCascade
-                  // when no references exist; otherwise the user must use the dropdown.
+                  // CR-01 (REVIEW Phase 4): edit-mode delete now hands off to
+                  // CatalogBrowser's cascade-confirm flow. Close the modal and
+                  // delegate; CatalogBrowser opens DeletePlantDialog with the
+                  // correct referencingCount, then calls
+                  // removeCustomPlantWithCascade on confirm.
+                  const plant = editingPlant;
                   onOpenChange(false);
+                  onRequestDelete(plant);
                 }}
               >
                 Delete plant
