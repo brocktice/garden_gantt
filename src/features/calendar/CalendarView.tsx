@@ -10,6 +10,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useDerivedSchedule } from '../gantt/useDerivedSchedule';
+import { useExpandedTasks } from '../tasks/useExpandedTasks';
 import { selectEventsForCalendar } from './selectEventsForCalendar';
 import { useDayDetailUrl } from './useDayDetailUrl';
 import { DayDetailDrawer } from './DayDetailDrawer';
@@ -17,9 +18,13 @@ import './fullcalendar.css';
 
 export default function CalendarView() {
   const events = useDerivedSchedule();
+  // Plan 03-07: centralized expansion (Pitfall 7 — single source for calendar + dashboard).
+  // Default range = today..today+60 days; covers visible month + week generously.
+  // Trade-off: recurring tasks beyond 60 days do not render until the user navigates
+  // and triggers a re-expansion. Phase 4 may extend via FullCalendar `viewDidMount`.
+  const tasks = useExpandedTasks();
   const { open } = useDayDetailUrl();
-  // Tasks parameter — Plan 03-07 wires the real expansion. For now: empty array.
-  const calendarEvents = selectEventsForCalendar(events, []);
+  const calendarEvents = selectEventsForCalendar(events, tasks);
 
   return (
     <>
