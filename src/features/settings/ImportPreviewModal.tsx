@@ -23,6 +23,14 @@ import type { ImportResult } from './importPlan';
 
 type SuccessResult = Extract<ImportResult, { ok: true }>;
 
+/**
+ * D-10 (Plan 04-03 Task 3) inline error copy — "corrupt JSON" / "shape mismatch"
+ * shown when importPlan returns invalid-schema. SettingsPanel renders this verbatim
+ * in place of the preview modal; the current plan is NOT mutated on this branch.
+ */
+export const CORRUPT_IMPORT_COPY =
+  "This file doesn't match the current plan format. Your current plan is unchanged.";
+
 export interface ImportPreviewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

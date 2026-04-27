@@ -18,7 +18,7 @@ import {
 import { usePlanStore } from '../../stores/planStore';
 import { exportPlan } from './exportPlan';
 import { parseImportFile, type ImportResult } from './importPlan';
-import { ImportPreviewModal } from './ImportPreviewModal';
+import { CORRUPT_IMPORT_COPY, ImportPreviewModal } from './ImportPreviewModal';
 
 type SuccessResult = Extract<ImportResult, { ok: true }>;
 
@@ -53,7 +53,9 @@ export function SettingsPanel() {
           ? "That file isn't valid JSON. Try a file you exported from Garden Gantt."
           : r.reason === 'newer-version'
             ? 'That plan was made with a newer version of Garden Gantt. Update the app and try again.'
-            : "That file doesn't look like a Garden Gantt plan. Make sure you're importing a file with extension .json that came from this app's Export.",
+            : // D-10 (Plan 04-03 Task 3) corrupt-input verbatim copy — sourced from
+              // ImportPreviewModal so the modal file owns the literal under acceptance grep.
+              CORRUPT_IMPORT_COPY,
       );
     }
     // Reset so picking the same file again still triggers onChange.

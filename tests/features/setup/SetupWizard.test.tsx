@@ -103,8 +103,15 @@ describe('SetupWizard', () => {
     const zipInput = screen.getByLabelText(/your zip code/i);
     await user.type(zipInput, '99999');
 
+    // Phase 4 (Plan 04-03 Task 3): D-10 inline error replaces the legacy amber
+    // "ZIP not recognized" header — the user-visible signal is now on ZipInput.
     await waitFor(
-      () => expect(screen.getByText('ZIP not recognized')).toBeTruthy(),
+      () =>
+        expect(
+          screen.getByText(
+            /Couldn.t find that ZIP\. Try a 5-digit US ZIP, or enter your zone manually below\./,
+          ),
+        ).toBeTruthy(),
       { timeout: 2000 },
     );
   });

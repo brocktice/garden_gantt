@@ -112,10 +112,17 @@ export function SetupStepLocation({
 
   // ZIP shape validation drives the inline error under the input — derived synchronously
   // (avoids react-hooks/set-state-in-effect by not storing the error in state).
-  const zipError =
+  // Phase 4 (Plan 04-03 Task 3): on lookup not-found we surface the D-10 inline
+  // error directly on ZipInput (replaces the legacy amber block below the field).
+  const zipShapeError =
     zip.length > 0 && !/^\d{5}$/.test(zip)
       ? 'Enter a 5-digit US ZIP code.'
       : undefined;
+  const zipNotFoundError =
+    zip.length === 5 && lookup.status === 'not-found'
+      ? "Couldn't find that ZIP. Try a 5-digit US ZIP, or enter your zone manually below."
+      : undefined;
+  const zipError = zipShapeError ?? zipNotFoundError;
 
   // Compute the effective Location (or null if invalid) and propagate to the parent.
   const frostOrderError = useMemo(() => {
@@ -380,21 +387,15 @@ export function SetupStepLocation({
         </dl>
       )}
 
-      {/* Unrecognized-ZIP error block (lookup not-found) */}
+      {/* Unrecognized-ZIP — manual fallback fields (D-10 inline error renders on
+          ZipInput via the `error` prop above). Phase 4 (Plan 04-03 Task 3) drops
+          the duplicative amber heading; the manual fields remain for entry. */}
       {lookup.status === 'not-found' && zip.length === 5 && (
         <div
           role="status"
           aria-live="polite"
-          className="border border-amber-200 bg-amber-50 p-4 rounded-md flex flex-col gap-4"
+          className="flex flex-col gap-4"
         >
-          <div>
-            <p className="text-base font-semibold text-amber-800">ZIP not recognized</p>
-            <p className="mt-1 text-sm text-amber-800">
-              We don&apos;t have data for {zip}. Enter your zone and frost dates manually
-              below — you can edit these any time in Settings.
-            </p>
-          </div>
-
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="manual-zone">USDA hardiness zone</Label>
