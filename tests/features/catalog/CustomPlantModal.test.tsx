@@ -89,14 +89,14 @@ describe('CustomPlantModal', () => {
     expect(screen.getByText(/Genus: Solanum/i)).toBeTruthy();
   });
 
-  it('Permapeople unreachable shows amber warning but Save stays enabled (CAT-07)', async () => {
+  it('Permapeople fetch fail shows D-10 inline pill (replaces legacy multi-line block); Save stays enabled (CAT-07 + Plan 04-03 Task 4)', async () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
       // Throwing TypeError mimics CORS / network failure (the canonical browser signal)
       throw new TypeError('Failed to fetch');
     });
 
     const user = userEvent.setup();
-    await renderModal();
+    const { container } = await renderModal();
 
     const nameInput = screen.getByLabelText(/plant name/i);
     await user.type(nameInput, 'Tomato');
@@ -107,14 +107,78 @@ describe('CustomPlantModal', () => {
     const enrich = screen.getByRole('button', { name: /enrich from permapeople/i });
     await user.click(enrich);
 
+    // D-10 pill copy + role=status + aria-live=polite.
     await waitFor(
       () =>
         expect(
-          screen.getByText(/Permapeople is unreachable right now/i),
+          screen.getByText(/Couldn.t fetch — try again/),
         ).toBeTruthy(),
       { timeout: 2000 },
     );
-    // Save remains enabled even after Permapeople failure
+    const pill = screen.getByText(/Couldn.t fetch — try again/);
+    expect(pill.getAttribute('role')).toBe('status');
+    expect(pill.getAttribute('aria-live')).toBe('polite');
+
+    // Legacy multi-line block must NOT render.
+    expect(
+      container.textContent?.includes('Permapeople is unreachable right now'),
+    ).toBe(false);
+
+    // Save remains enabled even after Permapeople failure.
     expect(save.disabled).toBe(false);
+  });
+
+  it('Permapeople loading state renders D-08 spinner button: disabled, animate-spin, "Looking up…" label preserved', async () => {
+    // never-resolving fetch
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () => new Promise(() => {}) as ReturnType<typeof fetch>,
+    );
+
+    const user = userEvent.setup();
+    const { container } = await renderModal();
+    const nameInput = screen.getByLabelText(/plant name/i);
+    await user.type(nameInput, 'Tomato');
+    await user.click(
+      screen.getByRole('button', { name: /enrich from permapeople/i }),
+    );
+
+    // The loading variant of the button: disabled + animate-spin + "Looking up…" text.
+    const lookingBtn = await screen.findByRole('button', {
+      name: /Looking up…/,
+    });
+    expect((lookingBtn as HTMLButtonElement).disabled).toBe(true);
+    const spinner = container.querySelector('.animate-spin');
+    expect(spinner).not.toBeNull();
+    expect(lookingBtn.textContent).toMatch(/Looking up…/);
+  });
+
+  it('Enrich button remains clickable after error pill renders (retry path)', async () => {
+    let calls = 0;
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+      calls += 1;
+      throw new TypeError('Failed to fetch');
+    });
+
+    const user = userEvent.setup();
+    await renderModal();
+    const nameInput = screen.getByLabelText(/plant name/i);
+    await user.type(nameInput, 'Tomato');
+
+    const enrich1 = screen.getByRole('button', {
+      name: /enrich from permapeople/i,
+    });
+    await user.click(enrich1);
+    await waitFor(
+      () => expect(screen.getByText(/Couldn.t fetch — try again/)).toBeTruthy(),
+      { timeout: 2000 },
+    );
+
+    // Re-click: the Enrich button is still rendered + clickable.
+    const enrich2 = screen.getByRole('button', {
+      name: /enrich from permapeople/i,
+    });
+    expect((enrich2 as HTMLButtonElement).disabled).toBe(false);
+    await user.click(enrich2);
+    await waitFor(() => expect(calls).toBeGreaterThanOrEqual(2));
   });
 });
