@@ -12,7 +12,7 @@ import { useDayDetailUrl } from '../../../src/features/calendar/useDayDetailUrl'
 import { DayDetailDrawer } from '../../../src/features/calendar/DayDetailDrawer';
 import { usePlanStore } from '../../../src/stores/planStore';
 import { samplePlan } from '../../../src/samplePlan';
-import type { GardenPlan, ScheduleEvent } from '../../../src/domain/types';
+import type { GardenPlan } from '../../../src/domain/types';
 
 // Wrapper that exposes the URL via a portal in the DOM so tests can read it.
 function URLProbe() {
