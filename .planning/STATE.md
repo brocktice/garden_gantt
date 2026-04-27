@@ -4,8 +4,8 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 3 UI-SPEC approved
-last_updated: "2026-04-27T03:35:26.822Z"
-last_activity: 2026-04-27 -- Phase 03 planning complete
+last_updated: "2026-04-27T03:40:02.878Z"
+last_activity: 2026-04-27 -- Phase 03 execution started
 progress:
   total_phases: 4
   completed_phases: 2
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-26)
 
 **Core value:** Plug in your ZIP and your plants → get a correct, draggable lifecycle gantt for the season.
-**Current focus:** Phase 01 — foundation-schedule-engine
+**Current focus:** Phase 03 — drag-cascade-calendar-tasks
 
 ## Current Position
 
-Phase: 01 (foundation-schedule-engine) — EXECUTING
-Plan: 8 of 8
-Status: Ready to execute
-Last activity: 2026-04-27 -- Phase 03 planning complete
+Phase: 03 (drag-cascade-calendar-tasks) — EXECUTING
+Plan: 1 of 7
+Status: Executing Phase 03
+Last activity: 2026-04-27 -- Phase 03 execution started
 
 Progress: [██████████] 100%
 

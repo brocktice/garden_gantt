@@ -82,8 +82,8 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. User toggling between gantt and calendar views sees the exact same schedule events; clicking any day on the calendar opens a detail panel listing every event and task scheduled for that day
   6. User opening the Tasks dashboard sees today's, this-week's, and overdue tasks (auto-derived from schedule events plus user-authored custom tasks), groupable by plant or category, with bulk check-off
 **Plans**: 7 plans
-- [ ] 03-01-PLAN.md — Schema v2→v3 + engine consumes plan.edits[] + lock-aware wrapper + new constraint rules (Wave 1)
-- [ ] 03-02-PLAN.md — planStore zundo wrap + commitEdit/setLock/task setters + dragStore + historyBindings + uiStore extensions (Wave 1)
+- [x] 03-01-PLAN.md — Schema v2→v3 + engine consumes plan.edits[] + lock-aware wrapper + new constraint rules (Wave 1)
+- [x] 03-02-PLAN.md — planStore zundo wrap + commitEdit/setLock/task setters + dragStore + historyBindings + uiStore extensions (Wave 1)
 - [ ] 03-03-PLAN.md — Gantt drag mechanics: DragLayer + clampModifier + GhostOverlay + ConstraintTooltip + DraggableBar + drag tokens (Wave 2)
 - [ ] 03-04-PLAN.md — Calendar: FullCalendar wrapper + selectEventsForCalendar + DayDetailDrawer + PlanViewTabs (Wave 2)
 - [ ] 03-05-PLAN.md — Tasks: TasksDashboard + CustomTaskModal + deriveTasks + expandRecurringTasks + useTodayWeekOverdue (Wave 2)
