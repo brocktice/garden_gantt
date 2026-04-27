@@ -88,10 +88,11 @@ describe('CustomTaskModal', () => {
     // The attach select trigger
     const trigger = screen.getByLabelText(/attach to planting/i);
     await user.click(trigger);
-    // Listbox should contain the "None" option
-    expect(screen.getByText(/None — free-floating/i)).toBeTruthy();
-    // And the seeded planting (Tomato is in curated catalog)
-    expect(screen.getByText(/Tomato/)).toBeTruthy();
+    // Open listbox should expose the options as elements with role="option" (Radix Select)
+    const noneOption = screen.getByRole('option', { name: /none — free-floating/i });
+    expect(noneOption).toBeTruthy();
+    const tomatoOption = screen.getByRole('option', { name: /tomato/i });
+    expect(tomatoOption).toBeTruthy();
   });
 
   it('Test 4 — edit mode: Delete button reveals inline confirm; confirming removes task', async () => {
