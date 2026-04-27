@@ -1,0 +1,9 @@
+services:
+  garden-gantt:
+    build: .
+    environment:
+      PERMAPEOPLE_KEY_ID: ${PERMAPEOPLE_KEY_ID:-}
+      PERMAPEOPLE_KEY_SECRET: ${PERMAPEOPLE_KEY_SECRET:-}
+    ports:
+      - "8080:80"
+    restart: unless-stopped

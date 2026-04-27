@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.planning
+coverage
+*.log
+*.tsbuildinfo
+10.3.0.132_5173-20260427T120225.json
+Trace-20260427T115427.json.gz
+

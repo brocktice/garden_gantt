@@ -7,6 +7,7 @@
 //         [CITED: D-15 cascade-confirmation Dialog wiring]
 
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Search, X } from 'lucide-react';
 import { Input } from '../../ui/Input';
 import { Button } from '../../ui/Button';
@@ -22,6 +23,7 @@ import { plantingId } from '../../domain/ids';
 import type { Plant } from '../../domain/types';
 
 export function CatalogBrowser() {
+  const navigate = useNavigate();
   const merged = useCatalogStore(selectMerged);
   const search = useUIStore((s) => s.searchQuery);
   const setSearch = useUIStore((s) => s.setSearchQuery);
@@ -69,6 +71,10 @@ export function CatalogBrowser() {
     : 0;
 
   const handleAdd = (plant: Plant) => {
+    if (!plan) {
+      navigate('/setup');
+      return;
+    }
     addPlanting({
       id: plantingId(plant.id, 0),
       plantId: plant.id,
