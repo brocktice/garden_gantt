@@ -1,7 +1,14 @@
 // src/features/settings/ImportPreviewModal.tsx
 // Radix Dialog preview before destructive overwrite (POL-06).
+// Phase 4 (Plan 04-03): adds a second-step "Replace plan" confirmation per D-09
+// irreversible-action contract — the preview modal's primary CTA opens this
+// nested dialog rather than mutating immediately.
+//
 // Source: [CITED: 02-UI-SPEC.md §9 Settings page — Import preview modal]
 //         [CITED: 02-11-PLAN.md Task 2]
+//         [CITED: .planning/phases/04-polish-mobile-ship/04-03-PLAN.md Task 1]
+//         [CITED: .planning/phases/04-polish-mobile-ship/04-UI-SPEC.md §Destructive actions]
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -25,11 +32,15 @@ export interface ImportPreviewModalProps {
 export function ImportPreviewModal({ open, onOpenChange, result }: ImportPreviewModalProps) {
   const currentPlan = usePlanStore((s) => s.plan);
   const replacePlan = usePlanStore((s) => s.replacePlan);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleConfirm = () => {
     replacePlan(result.plan);
+    setConfirmOpen(false);
     onOpenChange(false);
   };
+
+  const currentPlantingCount = currentPlan?.plantings.length ?? 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -55,11 +66,32 @@ export function ImportPreviewModal({ open, onOpenChange, result }: ImportPreview
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleConfirm}>
+          <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
             Replace my plan
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* D-09 second-step confirmation for irreversible overwrite. */}
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Replace your current plan?</DialogTitle>
+            <DialogDescription>
+              Importing this file will replace your current plan ({currentPlantingCount}{' '}
+              plantings). Your current plan won&apos;t be exported automatically. Continue?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setConfirmOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleConfirm}>
+              Replace plan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }

@@ -1,11 +1,21 @@
 // src/features/settings/SettingsPanel.tsx
-// /settings route content — Export + Import sections.
+// /settings route content — Export + Import + (Phase 4) Clear plan sections.
 // Source: [CITED: 02-UI-SPEC.md §9 Settings page (full layout + copy)]
 //         [CITED: 02-11-PLAN.md Task 2]
 //         [CITED: 02-CONTEXT.md D-27, D-28, D-29]
+//         [CITED: .planning/phases/04-polish-mobile-ship/04-03-PLAN.md Task 1 — Clear plan modal-confirm (D-09)]
 import { useRef, useState, type ChangeEvent } from 'react';
-import { Download, Upload } from 'lucide-react';
+import { Download, Trash2, Upload } from 'lucide-react';
 import { Button } from '../../ui/Button';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+} from '../../ui/Dialog';
+import { usePlanStore } from '../../stores/planStore';
 import { exportPlan } from './exportPlan';
 import { parseImportFile, type ImportResult } from './importPlan';
 import { ImportPreviewModal } from './ImportPreviewModal';
@@ -17,6 +27,7 @@ export function SettingsPanel() {
   const [previewResult, setPreviewResult] = useState<SuccessResult | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [lastExport, setLastExport] = useState<string | null>(null);
+  const [clearPlanOpen, setClearPlanOpen] = useState(false);
 
   const handleExport = () => {
     const r = exportPlan();
@@ -105,6 +116,47 @@ export function SettingsPanel() {
           result={previewResult}
         />
       )}
+
+      {/* Phase 4 (Plan 04-03): Danger zone — Clear plan with modal-confirm. */}
+      <section className="py-6 border-t border-stone-200 mt-2">
+        <h2 className="text-xl font-semibold text-stone-900">Danger zone</h2>
+        <p className="mt-1 text-base text-stone-600">
+          Wipe your plan and start fresh. Export first if you want a backup.
+        </p>
+        <Button
+          variant="destructive"
+          className="mt-4"
+          onClick={() => setClearPlanOpen(true)}
+        >
+          <Trash2 className="h-4 w-4" /> Clear plan
+        </Button>
+      </section>
+
+      <Dialog open={clearPlanOpen} onOpenChange={setClearPlanOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Clear plan?</DialogTitle>
+            <DialogDescription>
+              This removes all plantings, custom plants, custom tasks, and drag adjustments.
+              Export first if you want a backup. This can&apos;t be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setClearPlanOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                usePlanStore.getState().clearPlan();
+                setClearPlanOpen(false);
+              }}
+            >
+              Clear plan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
