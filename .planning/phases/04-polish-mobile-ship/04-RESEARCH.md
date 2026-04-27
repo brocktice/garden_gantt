@@ -810,27 +810,27 @@ compatibility_date = "2026-04-27"
 | A6 | The `useIsMobile` hook returning `false` during SSR-style first paint is acceptable (no SSR — but `useSyncExternalStore` requires `getServerSnapshot` and we'd flicker if mobile defaults to desktop on phone first paint) | Pattern 1 | LOW-MEDIUM. Vite SPA does no SSR, so `getServerSnapshot` is only invoked in test environments. In production, first paint reads `getSnapshot` directly. Mobile first-paint flicker not expected. [ASSUMED — verify via Lighthouse mobile audit on deployed URL] |
 | A7 | `temporal.getState().undo()` is a no-op when `pastStates.length === 0`, so calling it from a stale toast doesn't crash | Pitfall 5 | LOW. zundo's docs document this; behavior verified across Phase 3. [ASSUMED — verified by Phase 3 keybindings code that disables button on empty stack] |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Banner stacking implementation choice (single visible vs priority queue)**
    - What we know: CONTEXT integration-points note says "ONE banner visible at a time. Priority: storage-full > iOS Private Browsing > export-reminder."
    - What's unclear: Whether to implement as (a) a `<BannerStack>` component that picks the first qualifying banner and renders only it, or (b) keep three separate banner components and have each one suppress itself if a higher-priority banner is showing.
-   - Recommendation: Option (a) — a single mount point with a small selector that returns `'storage-full' | 'ios-private' | 'export-reminder' | null` based on store state, then renders the corresponding component. Cleaner than each banner reaching into the others.
+   - RESOLVED: Option (a) — a single mount point with a small selector that returns `'storage-full' | 'ios-private' | 'export-reminder' | null` based on store state, then renders the corresponding component. Cleaner than each banner reaching into the others.
 
 2. **Coach mark trigger gating: empty plan vs first-planting-added**
    - What we know: D-05 says coach marks point at "the catalog button, drag affordance on a bar, lock toggle on a bar, Calendar tab." Two of these (drag, lock) require a plant to exist.
    - What's unclear: Show all 4 marks immediately (and accept that drag/lock marks float over empty space until the user adds a plant) OR stage them (catalog mark first, others after first add).
-   - Recommendation: Stage. Mark 1 (catalog button) appears immediately on first /plan visit when plantings.length === 0. Marks 2-4 appear after plantings.length transitions to >= 1. Single `coachMarksDismissed` flag still kills both stages.
+   - RESOLVED: Stage. Mark 1 (catalog button) appears immediately on first /plan visit when plantings.length === 0. Marks 2-4 appear after plantings.length transitions to >= 1. Single `coachMarksDismissed` flag still kills both stages.
 
 3. **Toast position (top-right vs bottom-center)**
    - What we know: `Toast.tsx` viewport currently set to `bottom-4 right-4`. CONTEXT discretion lists position as planner's call.
    - What's unclear: Whether bottom-right covers the gantt's lock icons / horizontal-scroll affordances on mobile.
-   - Recommendation: Keep bottom-right on desktop (current); switch to bottom-center on `useIsMobile()` so it doesn't compete with the sticky plant-name column or any phone bottom-bar UI. Implement via two `<ToastViewport>` instances + `useIsMobile`.
+   - RESOLVED: Keep bottom-right on desktop (current); switch to bottom-center on `useIsMobile()` so it doesn't compete with the sticky plant-name column or any phone bottom-bar UI. Implement via two `<ToastViewport>` instances + `useIsMobile`.
 
 4. **`_headers` interaction with Cloudflare Pages preview deploys**
    - What we know: `_headers` applies to all deploys (production + previews) per CF docs.
    - What's unclear: Whether preview-deploy URLs (e.g., `commit-hash.garden-gantt.pages.dev`) will have stale-cache problems if the user shares them.
-   - Recommendation: Same headers apply across previews — no special handling needed. If per-PR previews are disabled (planner discretion per CONTEXT), this is moot.
+   - RESOLVED: Same headers apply across previews — no special handling needed. If per-PR previews are disabled (planner discretion per CONTEXT), this is moot.
 
 ## Sources
 
