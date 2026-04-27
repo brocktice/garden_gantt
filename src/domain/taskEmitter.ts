@@ -6,7 +6,7 @@
 //   - harden-off-day:         one per day in the harden-off range
 //   - fertilize-at-flowering: single event at transplant + floor(daysToMaturity/2)
 
-import type { Plant, ScheduleEvent } from './types';
+import type { CustomTask, Plant, ScheduleEvent, Task } from './types';
 import { parseDate, addDays, differenceInDays, toISODate } from './dateWrappers';
 import { eventId } from './ids';
 
@@ -140,5 +140,71 @@ export function emitTaskEvents(
     });
   }
 
+  return out;
+}
+
+/**
+ * Expand recurring custom tasks into per-day occurrences within [rangeStart, rangeEnd].
+ * Per CONTEXT D-36: each recurring occurrence's id is a composite key `${ct.id}:${YYYY-MM-DD}`.
+ * Completion is read from `completedKeys` using either the bare ct.id (one-off) or the
+ * composite key (recurring per-occurrence).
+ *
+ * Source: [CITED: 03-RESEARCH.md §Pattern 7]
+ *         [CITED: 03-CONTEXT.md D-36]
+ *
+ * Purity: zero React/Zustand/I/O. Date math via dateWrappers only.
+ *
+ * Defensive: `intervalDays` is clamped to Math.max(1, ...) so a malformed CustomTask with
+ * intervalDays: 0 cannot trigger an infinite loop (T-03-05-01 mitigation).
+ */
+export function expandRecurringTasks(
+  customTasks: CustomTask[],
+  rangeStart: string, // YYYY-MM-DD or full ISO
+  rangeEnd: string,
+  completedKeys: ReadonlySet<string>,
+): Task[] {
+  const out: Task[] = [];
+  const start = parseDate(rangeStart);
+  const end = parseDate(rangeEnd);
+
+  for (const ct of customTasks) {
+    if (!ct.recurrence) {
+      // One-off: completion key is bare ct.id.
+      const due = parseDate(ct.dueDate);
+      if (due >= start && due <= end) {
+        out.push({ ...ct, source: 'custom', completed: completedKeys.has(ct.id) });
+      }
+      continue;
+    }
+
+    const rawInterval =
+      ct.recurrence.type === 'daily'
+        ? 1
+        : ct.recurrence.type === 'weekly'
+          ? 7
+          : ct.recurrence.intervalDays ?? 7;
+    const interval = Math.max(1, rawInterval);
+
+    const stopAt = ct.recurrence.endDate ? parseDate(ct.recurrence.endDate) : end;
+    const effectiveEnd = stopAt < end ? stopAt : end;
+
+    let cursor = parseDate(ct.dueDate);
+    // Skip ahead to range start if dueDate is before it.
+    while (cursor < start) {
+      cursor = addDays(cursor, interval);
+    }
+    while (cursor <= effectiveEnd) {
+      const dateStr = toISODate(cursor).slice(0, 10);
+      const key = `${ct.id}:${dateStr}`;
+      out.push({
+        ...ct,
+        id: key,
+        source: 'custom',
+        dueDate: toISODate(cursor),
+        completed: completedKeys.has(key),
+      });
+      cursor = addDays(cursor, interval);
+    }
+  }
   return out;
 }

@@ -46,14 +46,15 @@ function plant(id: string, name: string, overrides: Partial<Plant> = {}): Plant 
 }
 
 function customTask(overrides: Partial<CustomTask> & { id: string; dueDate: string; title?: string }): CustomTask {
+  const { id, dueDate, title, ...rest } = overrides;
   return {
-    id: overrides.id,
+    id,
     source: 'custom',
-    title: overrides.title ?? 'Custom task',
-    category: overrides.category ?? 'custom',
-    dueDate: overrides.dueDate,
-    completed: overrides.completed ?? false,
-    ...overrides,
+    title: title ?? 'Custom task',
+    category: rest.category ?? 'custom',
+    dueDate,
+    completed: rest.completed ?? false,
+    ...rest,
   } as CustomTask;
 }
 
@@ -242,14 +243,15 @@ describe('partitionTasksByWindow', () => {
   const TODAY = '2026-05-15T12:00:00.000Z';
 
   function task(overrides: Partial<Task> & { id: string; dueDate: string }): Task {
+    const { id, dueDate, ...rest } = overrides;
     return {
-      id: overrides.id,
-      source: overrides.source ?? 'custom',
-      title: overrides.title ?? 'T',
-      category: overrides.category ?? 'custom',
-      dueDate: overrides.dueDate,
-      completed: overrides.completed ?? false,
-      ...overrides,
+      id,
+      source: rest.source ?? 'custom',
+      title: rest.title ?? 'T',
+      category: rest.category ?? 'custom',
+      dueDate,
+      completed: rest.completed ?? false,
+      ...rest,
     } as Task;
   }
 
