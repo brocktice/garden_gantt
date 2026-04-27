@@ -148,7 +148,7 @@ export function CustomPlantModal({
       open={open}
       onOpenChange={onOpenChange}
       editingPlant={editingPlant}
-      onRequestDelete={onRequestDelete}
+      {...(onRequestDelete ? { onRequestDelete } : {})}
     />
   );
 }

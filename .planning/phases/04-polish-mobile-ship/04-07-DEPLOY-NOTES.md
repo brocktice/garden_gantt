@@ -70,6 +70,26 @@ Auto-mode rule: `For perf checkpoints with measurable thresholds: if you can
 simulate the stress in tests, do so… If only manual verification is possible,
 document and mark as deferred.` Sandboxed CI cannot run a Performance trace.
 
+### POL-07 trace results (filled in by user)
+
+- Date: 2026-04-27
+- Browser: Chrome DevTools trace (exact Chrome version not present in trace metadata)
+- Trace file: `Trace-20260427T115427.json.gz`
+- Median frame time during arrow-key spam: 9.37 ms
+- Max frame time: 26.93 ms during primary arrow-key hold; 128.20 ms across the full interaction window including commit/cancel
+- Long tasks (>50ms) on main thread: 0 during primary arrow-key hold; 2 across the full interaction window, both around commit/cancel key events
+- Lighthouse Performance score (Slow 4G + Mid-tier mobile): 92 / 100 on production preview (`http://10.3.0.132:4174/`)
+- Invalid dev-server Lighthouse runs: 35 / 100 initial run with cache-clearing timeout; 44 / 100 clean Incognito rerun without cache warning, but both were captured against the Vite dev server rather than a production build
+- Lighthouse report file: `10.3.0.132_5173-20260427T120225.json`
+- Verdict: pass
+
+Notes:
+
+- The keyboard-drag trace itself satisfies the median frame-time and primary arrow-key long-task criteria.
+- The Lighthouse JSON shows the low score was dominated by dev-server artifacts: `@vite/client`, `@react-refresh`, 141 script requests, 5.7 MiB of script transfer, and unminified/unused JavaScript warnings. Do not use that score as the production deploy gate.
+- `npm run build` initially exposed a TypeScript exact-optional-props error in `CustomPlantModal.tsx`; fixed locally by omitting `onRequestDelete` when undefined. Production build then passed.
+- Production preview is available at `http://10.3.0.132:4174/`. The `?stress=1` fixture hook is dev-only, so the production Lighthouse run measures the normal production app bundle while the DevTools trace measures the stress fixture keyboard-drag path.
+
 ---
 
 ## Task 3 — DEPLOY-01 Cloudflare Pages connection (DEFERRED — needs OAuth)

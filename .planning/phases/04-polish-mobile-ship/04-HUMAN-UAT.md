@@ -14,7 +14,7 @@ updated: 2026-04-27T16:10:00Z
 
 ### 1. POL-07 perf checkpoint — DevTools Performance trace at /plan with stress fixture
 expected: Median frame time during arrow-key drag spam ≤ 20ms (50fps); zero long tasks (>50ms) on main thread; Lighthouse Performance score ≥ 80 on Slow 4G mobile profile
-result: [pending]
+result: [pass — Chrome stress trace passed; production Lighthouse mobile score 92/100]
 runbook: .planning/phases/04-polish-mobile-ship/04-07-DEPLOY-NOTES.md §Task 2
 why_human: DevTools Performance trace requires headed Chrome (no sandbox capability). Code-side ready: stress fixture + ?stress=1 hook + smoke test all in place.
 
@@ -33,10 +33,12 @@ why_human: Requires a live deployed URL from §2.
 ## Summary
 
 total: 3
-passed: 0
+passed: 1
 issues: 0
-pending: 3
+pending: 2
 skipped: 0
 blocked: 0
 
 ## Gaps
+
+[none for POL-07 — keyboard-drag trace passed and production Lighthouse scored 92/100. Dev-server Lighthouse score was discarded because it measured Vite dev tooling instead of the production bundle.]
