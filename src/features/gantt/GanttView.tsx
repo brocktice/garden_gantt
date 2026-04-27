@@ -22,7 +22,7 @@
 //         [CITED: .planning/phases/03-drag-cascade-calendar-tasks/03-CONTEXT.md D-04, D-05, D-06, D-19, D-20, D-21]
 //         [CITED: .planning/phases/03-drag-cascade-calendar-tasks/03-RESEARCH.md §Pitfall 2 — useDraggable on <g> not <rect>]
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDerivedSchedule } from './useDerivedSchedule';
 import { createTimeScale, type TimeScale } from './timeScale';
 import { lifecyclePalette } from './lifecyclePalette';
@@ -32,12 +32,14 @@ import { usePlanStore } from '../../stores/planStore';
 import { useDragStore } from '../../stores/dragStore';
 import { lastDayOfMonth } from '../../domain/dateWrappers';
 import { expandSuccessions } from '../../domain/succession';
-import type { GardenPlan, Plant, ScheduleEvent } from '../../domain/types';
+import type { EventType, GardenPlan, Plant, ScheduleEvent } from '../../domain/types';
 import { useDragBar } from './drag/useDragBar';
 import { GhostOverlay } from './drag/GhostOverlay';
 import { useTransientSchedule } from './drag/useTransientSchedule';
 import { setActiveScale } from './drag/scaleHandoff';
 import { LockToggle } from './lock/LockToggle';
+import { useIsMobile } from '../mobile/useIsMobile';
+import { EditPlantingModal } from '../mobile/EditPlantingModal';
 import { cn } from '../../ui/cn';
 
 // UI-SPEC §Gantt Visual Treatment §Visual specifications — pixel constants
@@ -158,13 +160,29 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
   const activeEventId = useDragStore((s) => s.activeEventId);
   const transientEvents = useTransientSchedule();
 
+  // Phase 4 Plan 04-02 (D-01/D-02/D-04): mobile branch — sticky plant-name column,
+  // 44px transparent tap-handle overlay per bar, EditPlantingModal as the edit
+  // affordance instead of touch-drag.
+  const isMobile = useIsMobile();
+  const [editModalState, setEditModalState] = useState<
+    { plantingId: string; eventType: EventType } | null
+  >(null);
+
   return (
     <div className="bg-white border border-stone-200 rounded">
       <div className="flex">
-        {/* Left label column — outside the scrollable SVG per UI-SPEC §Min plot width */}
+        {/* Left label column — outside the scrollable SVG per UI-SPEC §Min plot width.
+            Phase 4 D-04: at <640px viewport, position:sticky left:0 z-10 with width
+            var(--spacing-sticky-plant-col) so the plant names stay visible while
+            the user horizontally scrolls the plot. */}
         <div
-          className="border-r border-stone-200 shrink-0 bg-white"
-          style={{ width: LABEL_WIDTH }}
+          className={cn(
+            'border-r border-stone-200 shrink-0 bg-white',
+            isMobile && 'sticky left-0 z-10',
+          )}
+          style={{
+            width: isMobile ? 'var(--spacing-sticky-plant-col, 96px)' : LABEL_WIDTH,
+          }}
         >
           <div style={{ height: AXIS_HEIGHT }} />
           {plantings.map((p, i) => {
@@ -275,6 +293,16 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                       // Skip task events (water-seedlings, harden-off-day, fertilize-at-flowering).
                       if (!fill || !plant) return null;
                       const isLocked = p.locks?.[e.type] === true;
+                      const mobileTapProps = isMobile
+                        ? {
+                            isMobile: true,
+                            onTapMobile: () =>
+                              setEditModalState({
+                                plantingId: p.id,
+                                eventType: e.type,
+                              }),
+                          }
+                        : {};
                       return (
                         <DraggableBar
                           key={e.id}
@@ -285,6 +313,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                           fill={fill}
                           scale={scale}
                           isLocked={isLocked}
+                          {...mobileTapProps}
                         />
                       );
                     })}
@@ -329,6 +358,18 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
           </svg>
         </div>
       </div>
+      {/* Phase 4 Plan 04-02 (D-02): mobile tap-to-edit modal mount. Plan 04-03 will
+          wrap this in a toast-with-undo provider so deletes show an Undo affordance. */}
+      {editModalState && (
+        <EditPlantingModal
+          open
+          onOpenChange={(o) => {
+            if (!o) setEditModalState(null);
+          }}
+          plantingId={editModalState.plantingId}
+          eventType={editModalState.eventType}
+        />
+      )}
     </div>
   );
 }
@@ -341,6 +382,11 @@ interface DraggableBarProps {
   fill: string;
   scale: TimeScale;
   isLocked: boolean;
+  /** Phase 4 Plan 04-02 (D-02): true at <640px viewport. Drag is disabled by gating
+   *  the @dnd-kit listeners and a transparent 44px tap-handle <rect> is drawn over
+   *  the bar to open EditPlantingModal via onTapMobile. */
+  isMobile?: boolean;
+  onTapMobile?: () => void;
 }
 
 /**
@@ -378,12 +424,17 @@ function DraggableBar({
   fill,
   scale,
   isLocked,
+  isMobile,
+  onTapMobile,
 }: DraggableBarProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDragBar({
     event,
     plant,
   });
-  const isDraggable = DRAGGABLE_BAR_TYPES.has(event.type);
+  // At <640px, suppress drag listeners — the tap-handle overlay opens EditPlantingModal
+  // instead. We preserve the underlying <g> ref so dnd-kit's bookkeeping stays sane.
+  const effectiveListeners = isMobile ? {} : listeners;
+  const isDraggable = !isMobile && DRAGGABLE_BAR_TYPES.has(event.type);
   const x = scale.dateToX(event.start);
   const endX = scale.dateToX(event.end);
   const width = Math.max(endX - x, 4);
@@ -411,7 +462,7 @@ function DraggableBar({
       style={{ touchAction: 'none', opacity: isDragging ? 0.4 : 1 }}
       data-planting-id={plantingId}
       {...attributes}
-      {...listeners}
+      {...effectiveListeners}
     >
       <rect
         data-event-id={event.id}
@@ -428,6 +479,27 @@ function DraggableBar({
           {plantLabel} — {event.type} — {dateLabel}
         </title>
       </rect>
+      {/* Phase 4 Plan 04-02 (D-02): mobile tap-handle overlay. Transparent rect with
+          a 44px hit-target height so finger taps reliably register over the 20px-tall
+          bar. Rendered ONLY at <640px so the desktop drag from Phase 3 stays
+          unaffected (T-04-02-04 mitigation). */}
+      {isMobile && onTapMobile && (
+        <rect
+          data-tap-handle="true"
+          x={x}
+          y={BAR_Y_OFFSET - 12}
+          width={Math.max(width, 24)}
+          height={Math.max(BAR_HEIGHT + 24, 44)}
+          fill="transparent"
+          style={{ cursor: 'pointer' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onTapMobile();
+          }}
+          aria-label={`Edit ${plantLabel} ${event.type}`}
+          role="button"
+        />
+      )}
       {/* Phase 3 Plan 03-06: lock outline ring (UI-SPEC §"Gantt Visual Treatment — Lock outline ring"). */}
       {isLocked && (
         <rect

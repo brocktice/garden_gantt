@@ -3,9 +3,11 @@
 // Per CONTEXT D-27 + UI-SPEC §5.
 // Source: [CITED: src/app/AppShell.tsx lines 67-82 (active-link pattern reused verbatim)]
 
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import { BarChart3, Calendar } from 'lucide-react';
 import { cn } from '../ui/cn';
+import { useIsMobile } from '../features/mobile/useIsMobile';
 
 const TABS = [
   { id: 'gantt' as const, label: 'Gantt', Icon: BarChart3 },
@@ -15,6 +17,21 @@ const TABS = [
 export function PlanViewTabs() {
   const [searchParams, setSearchParams] = useSearchParams();
   const view = searchParams.get('view') === 'calendar' ? 'calendar' : 'gantt';
+  const isMobile = useIsMobile();
+
+  // CAL-04: at <640px on first mount with no explicit ?view= search param, default
+  // to the calendar view. `replace: true` so this initial set does not push a new
+  // history entry. Re-running on isMobile changes is intentional — when the user
+  // crosses the breakpoint via resize, the calendar default re-engages provided
+  // they have not explicitly chosen a view.
+  useEffect(() => {
+    if (isMobile && !searchParams.has('view')) {
+      const sp = new URLSearchParams(searchParams);
+      sp.set('view', 'calendar');
+      setSearchParams(sp, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only respond to mobile transitions
+  }, [isMobile]);
 
   function setView(next: 'gantt' | 'calendar') {
     const sp = new URLSearchParams(searchParams);
