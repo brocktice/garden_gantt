@@ -103,11 +103,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. Pushing to `main` triggers a Cloudflare Pages CI/CD deploy that propagates within minutes; deployed assets are hashed and `index.html` is uncached, so users always get the latest bundle without stale-cache breakage
   6. App periodically (or on-demand) prompts the user to export their plan as a JSON backup, mitigating the localStorage-clear data-loss risk
 **Plans**: 7 plans
-- [ ] 04-01-PLAN.md — Wave 0 foundation: uiStore persist + useIsMobile + Skeleton + storage quota watcher + Phase 4 @theme tokens
-- [ ] 04-02-PLAN.md — Mobile slice: EditPlantingModal + GanttView sticky column + LockToggle hide + PlanViewTabs CAL-04 default + dateWrappers ymdToISONoon
-- [ ] 04-03-PLAN.md — States/confirms slice: empty-state copy + bad-ZIP + corrupt-import + StorageFullBanner + toast-with-undo helper + catalog skeleton + Settings clear-plan modal
+- [x] 04-01-PLAN.md — Wave 0 foundation: uiStore persist + useIsMobile + Skeleton + storage quota watcher + Phase 4 @theme tokens
+- [x] 04-02-PLAN.md — Mobile slice: EditPlantingModal + GanttView sticky column + LockToggle hide + PlanViewTabs CAL-04 default + dateWrappers ymdToISONoon
+- [x] 04-03-PLAN.md — States/confirms slice: empty-state copy + bad-ZIP + corrupt-import + StorageFullBanner + toast-with-undo helper + catalog skeleton + Settings clear-plan modal
 - [ ] 04-04-PLAN.md — Onboarding slice: hand-rolled CoachMarks portal (4 marks, single dismissal) + Settings Reset onboarding row + data-coach-target attributes
-- [ ] 04-05-PLAN.md — Export-reminder slice: dirty counter on planStore coarse setters + ExportReminderBanner + useExportReminder selector + exportPlan post-success side-effect
+- [x] 04-05-PLAN.md — Export-reminder slice: dirty counter on planStore coarse setters + ExportReminderBanner + useExportReminder selector + exportPlan post-success side-effect
 - [ ] 04-06-PLAN.md — Integration + a11y: AppShell banner-stack + SkipToMain + sr-only announcer + ConstraintTooltip a11y + useKeyboardBarDrag + WCAG audit checkpoint
 - [ ] 04-07-PLAN.md — Deploy + perf: 200-event stress fixture + public/_headers + POL-07 perf checkpoint + DEPLOY-01 Cloudflare Pages connect (user OAuth) + DEPLOY-03 verification
 **UI hint**: yes
