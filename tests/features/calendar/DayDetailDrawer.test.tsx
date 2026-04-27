@@ -145,6 +145,45 @@ describe('DayDetailDrawer (component)', () => {
     expect(headings.length).toBeGreaterThan(0);
   });
 
+  it('Test 9: drawer renders task row + checkbox toggle calls toggleTaskCompletion', async () => {
+    const user = userEvent.setup();
+    // Seed plan with a one-off custom task whose dueDate is 2026-05-15.
+    const planWithTask: GardenPlan = {
+      ...structuredClone(samplePlan),
+      customTasks: [
+        {
+          id: 'custom-task-1',
+          source: 'custom',
+          title: 'Water tomato bed',
+          category: 'water',
+          dueDate: '2026-05-15T12:00:00.000Z',
+          completed: false,
+        },
+      ],
+    };
+    usePlanStore.setState({ plan: planWithTask });
+
+    render(
+      <Wrapper initialEntries={['/plan?date=2026-05-15']}>
+        <DayDetailDrawer />
+      </Wrapper>,
+    );
+
+    // Task row visible
+    expect(screen.getByText(/Water tomato bed/i)).toBeTruthy();
+
+    // Checkbox is present and unchecked
+    const taskCheckbox = screen.getByRole('checkbox', {
+      name: /Mark "Water tomato bed" as complete/i,
+    });
+    expect(taskCheckbox).toBeTruthy();
+
+    // Click → completedTaskIds gains the bare taskId (one-off completion)
+    expect(usePlanStore.getState().plan?.completedTaskIds ?? []).not.toContain('custom-task-1');
+    await user.click(taskCheckbox);
+    expect(usePlanStore.getState().plan?.completedTaskIds ?? []).toContain('custom-task-1');
+  });
+
   it('Test 8: Esc closes — clears ?date= from URL', async () => {
     const user = userEvent.setup();
     render(
