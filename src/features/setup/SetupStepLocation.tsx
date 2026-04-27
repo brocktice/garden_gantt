@@ -17,6 +17,7 @@ import { Button } from '../../ui/Button';
 import { Input } from '../../ui/Input';
 import { Label } from '../../ui/Label';
 import { Badge } from '../../ui/Badge';
+import { Skeleton } from '../../ui/Skeleton';
 import {
   Select,
   SelectContent,
@@ -259,18 +260,20 @@ export function SetupStepLocation({
     <div className="flex flex-col gap-6">
       <ZipInput value={zip} onChange={setZip} error={zipError} />
 
-      {/* Lookup loading state */}
+      {/* Lookup loading state — Phase 4 (Plan 04-03 Task 4) D-08: Skeleton row
+          replaces the legacy spinner+text block. The fixed-height pulsing line
+          morphs into the derived-fields dl once lookup resolves, avoiding
+          layout shift. sr-only span preserves the original a11y announcement. */}
       {lookup.status === 'loading' && (
         <div
           role="status"
           aria-live="polite"
-          className="flex items-center gap-3 text-sm text-stone-600"
+          aria-label={`Looking up frost dates for ${zip}`}
+          data-testid="lookup-skeleton"
+          className="flex flex-col gap-2"
         >
-          <span
-            aria-hidden="true"
-            className="inline-block h-4 w-4 rounded-full border-2 border-stone-200 border-t-green-700 animate-spin"
-          />
-          <span>Looking up frost dates for {zip}…</span>
+          <Skeleton shape="rect" className="h-5 w-full" />
+          <span className="sr-only">Looking up frost dates for {zip}…</span>
         </div>
       )}
 

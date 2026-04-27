@@ -82,8 +82,10 @@ describe('SetupStepLocation — D-08 ZIP-derive Skeleton', () => {
     const { container } = renderHarness();
 
     expect(container.querySelector('[data-testid="lookup-skeleton"]')).toBeNull();
-    // The "USDA zone" dt heading should render in the derived dl.
-    expect(screen.getByText(/USDA zone/)).toBeTruthy();
+    // The derived <dl> renders with a <dt>USDA zone</dt> heading.
+    const dl = container.querySelector('dl');
+    expect(dl).not.toBeNull();
+    expect(dl?.textContent).toMatch(/USDA zone/);
   });
 
   it('does not render skeleton when lookup.status === idle', () => {

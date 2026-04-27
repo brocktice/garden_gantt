@@ -147,9 +147,13 @@ describe('CustomPlantModal', () => {
       name: /Looking up…/,
     });
     expect((lookingBtn as HTMLButtonElement).disabled).toBe(true);
-    const spinner = container.querySelector('.animate-spin');
-    expect(spinner).not.toBeNull();
     expect(lookingBtn.textContent).toMatch(/Looking up…/);
+    // The Loader2 icon inside the button has the animate-spin class.
+    const spinner = lookingBtn.querySelector('[class*="animate-spin"]');
+    // Fallback: any element in the document with animate-spin (lucide-react may
+    // place the class on a wrapper or the svg itself depending on version).
+    const anySpinner = spinner ?? container.querySelector('.animate-spin') ?? container.querySelector('[class*="animate-spin"]');
+    expect(anySpinner).not.toBeNull();
   });
 
   it('Enrich button remains clickable after error pill renders (retry path)', async () => {

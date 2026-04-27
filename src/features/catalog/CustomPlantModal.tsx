@@ -696,20 +696,22 @@ function CustomPlantModalInner({
               </>
             )}
             {enrich.status === 'error' && (
-              <>
+              // Phase 4 (Plan 04-03 Task 4) D-10: inline pill replaces the legacy
+              // amber multi-line block. Pill sits adjacent to the Enrich button
+              // (UI-SPEC: "on the enrichment row"). Button remains clickable for retry.
+              <div className="flex items-center gap-3 flex-wrap">
                 <Button type="button" variant="secondary" onClick={handleEnrich}>
                   <Sparkles className="h-4 w-4" />
                   Enrich from Permapeople
                 </Button>
-                <div
-                  className="mt-3 bg-amber-50 border border-amber-200 text-amber-800 p-2 rounded-md text-sm"
+                <span
                   role="status"
                   aria-live="polite"
+                  className="inline-flex items-center px-2 py-1 rounded-md bg-red-50 border border-red-200 text-sm font-medium text-red-700"
                 >
-                  Permapeople is unreachable right now. You can save without
-                  enrichment — try again later from this same modal.
-                </div>
-              </>
+                  Couldn&apos;t fetch — try again
+                </span>
+              </div>
             )}
           </div>
         </section>
