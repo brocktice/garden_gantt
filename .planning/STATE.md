@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Completed 03-drag-cascade-calendar-tasks/04 (calendar view + drawer + tabs)
-last_updated: "2026-04-27T04:31:43.040Z"
+last_updated: "2026-04-27T04:48:47.876Z"
 last_activity: 2026-04-27
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 27
-  completed_plans: 24
-  percent: 89
+  completed_plans: 25
+  percent: 93
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 03 (drag-cascade-calendar-tasks) — EXECUTING
-Plan: 5 of 7
+Plan: 6 of 7
 Status: Ready to execute
 Last activity: 2026-04-27
 
-Progress: [█████████░] 89%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [█████████░] 89%
 | Phase 01-foundation-schedule-engine P08 | 4m 2s | 2 tasks | 7 files |
 | Phase 03-drag-cascade-calendar-tasks P03 | 11min | 3 tasks | 17 files |
 | Phase 03-drag-cascade-calendar-tasks P04 | 8min | 3 tasks | 10 files |
+| Phase 03-drag-cascade-calendar-tasks P05 | 12min | 3 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -109,6 +110,11 @@ Recent decisions affecting current work:
 - [Phase ?]: Phase 3 P04: CalendarView is default export so React.lazy in Plan 03-07 can code-split the FullCalendar bundle cleanly
 - [Phase ?]: Phase 3 P04: drawer/tab tokens (--spacing-drawer-w 400px, --spacing-tab-strip-h 44px) shipped via comment-fenced @theme region; Plan 03-06 must NOT re-add
 - [Phase ?]: Phase 3 P04: Tasks parameter passed [] to selectEventsForCalendar + DayDetailDrawer; Plan 03-07 wires real Task[] consumer via useExpandedTasks once Plan 03-05 lands
+- [Phase ?]: Phase 3 P05: defensive Math.max(1, intervalDays) clamp in expandRecurringTasks closes T-03-05-01 (engine-level guard against malformed CustomTask infinite loop)
+- [Phase ?]: Phase 3 P05: useExpandedTasks is the centralized seam — both dashboard AND (Plan 03-07) calendar consume the same expansion (Pitfall 7 mitigation)
+- [Phase ?]: Phase 3 P05: TASK-06 — no bulk multi-select in v1 per D-34; per-row checkboxes only
+- [Phase ?]: Phase 3 P05: one-off range check uses YYYY-MM-DD string compare to dodge sub-day ISO precision excluding tasks created seconds before render
+- [Phase ?]: Phase 3 P05: CustomTask.plantingId captured in modal form state but not yet threaded through saved CustomTask; deferred to Plan 03-07 / Phase 4
 
 ### Pending Todos
 
@@ -127,6 +133,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27T04:31:43.022Z
+Last session: 2026-04-27T04:48:38.693Z
 Stopped at: Completed 03-drag-cascade-calendar-tasks/04 (calendar view + drawer + tabs)
 Resume file: 
+None

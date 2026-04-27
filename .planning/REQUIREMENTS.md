@@ -59,12 +59,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Tasks
 
-- [ ] **TASK-01**: Auto-derived garden tasks (from `SCH-07`) appear on the calendar and in the task dashboard
-- [ ] **TASK-02**: User can add custom one-off or recurring tasks tied to a planting or free-floating
-- [ ] **TASK-03**: User can edit and delete custom tasks
-- [ ] **TASK-04**: All tasks (auto + custom) are checkable; completion state persists
-- [ ] **TASK-05**: "Today / This Week" dashboard shows tasks due today and within the next 7 days, plus overdue tasks
-- [ ] **TASK-06**: Dashboard groups tasks by plant or category and supports bulk check-off
+- [x] **TASK-01**: Auto-derived garden tasks (from `SCH-07`) appear on the calendar and in the task dashboard
+- [x] **TASK-02**: User can add custom one-off or recurring tasks tied to a planting or free-floating
+- [x] **TASK-03**: User can edit and delete custom tasks
+- [x] **TASK-04**: All tasks (auto + custom) are checkable; completion state persists
+- [x] **TASK-05**: "Today / This Week" dashboard shows tasks due today and within the next 7 days, plus overdue tasks
+- [x] **TASK-06**: Dashboard groups tasks by plant or category and supports bulk check-off
 
 ### Persistence & Portability
 
@@ -184,12 +184,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CAL-02 | Phase 3 | Complete |
 | CAL-03 | Phase 3 | Complete |
 | CAL-04 | Phase 4 | Pending |
-| TASK-01 | Phase 3 | Pending |
-| TASK-02 | Phase 3 | Pending |
-| TASK-03 | Phase 3 | Pending |
-| TASK-04 | Phase 3 | Pending |
-| TASK-05 | Phase 3 | Pending |
-| TASK-06 | Phase 3 | Pending |
+| TASK-01 | Phase 3 | Complete |
+| TASK-02 | Phase 3 | Complete |
+| TASK-03 | Phase 3 | Complete |
+| TASK-04 | Phase 3 | Complete |
+| TASK-05 | Phase 3 | Complete |
+| TASK-06 | Phase 3 | Complete |
 | DATA-01 | Phase 1 | Complete |
 | DATA-02 | Phase 1 | Complete |
 | DATA-03 | Phase 1 | Complete |
