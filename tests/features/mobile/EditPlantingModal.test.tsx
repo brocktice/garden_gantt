@@ -13,7 +13,7 @@ import { EditPlantingModal } from '../../../src/features/mobile/EditPlantingModa
 import { usePlanStore } from '../../../src/stores/planStore';
 import { useCatalogStore } from '../../../src/stores/catalogStore';
 import { samplePlan } from '../../../src/samplePlan';
-import type { Plant, Planting } from '../../../src/domain/types';
+import type { Planting } from '../../../src/domain/types';
 
 const tomatoPlanting: Planting = {
   id: 'p-tomato-test',
@@ -23,6 +23,7 @@ const tomatoPlanting: Planting = {
 
 beforeEach(() => {
   cleanup();
+  vi.restoreAllMocks();
   // Seed the store with sample plan + an extra known planting.
   const seeded = structuredClone(samplePlan);
   seeded.plantings = [tomatoPlanting];
@@ -33,6 +34,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
 });
 
 describe('EditPlantingModal — Task 1 behaviors', () => {
@@ -78,7 +80,8 @@ describe('EditPlantingModal — Task 1 behaviors', () => {
 
   it('Save calls commitEdit with newStart parsed via ymdToISONoon and closes', async () => {
     const onOpenChange = vi.fn();
-    const commitSpy = vi.spyOn(usePlanStore.getState(), 'commitEdit');
+    const commitMock = vi.fn();
+    usePlanStore.setState({ commitEdit: commitMock });
     render(
       <EditPlantingModal
         open
@@ -89,16 +92,16 @@ describe('EditPlantingModal — Task 1 behaviors', () => {
     );
 
     const dateInput = document.querySelector('input[type="date"]') as HTMLInputElement;
-    fireEvent.change(dateInput, { target: { value: '2026-05-15' } });
+    fireEvent.change(dateInput, { target: { value: '2026-06-15' } });
 
     const saveBtn = screen.getByRole('button', { name: /save/i });
     await userEvent.click(saveBtn);
 
-    expect(commitSpy).toHaveBeenCalledWith(
+    expect(commitMock).toHaveBeenCalledWith(
       expect.objectContaining({
         plantingId: tomatoPlanting.id,
         eventType: 'transplant',
-        startOverride: '2026-05-15T12:00:00.000Z',
+        startOverride: '2026-06-15T12:00:00.000Z',
       }),
     );
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -106,7 +109,8 @@ describe('EditPlantingModal — Task 1 behaviors', () => {
 
   it('Cancel does NOT call commitEdit', async () => {
     const onOpenChange = vi.fn();
-    const commitSpy = vi.spyOn(usePlanStore.getState(), 'commitEdit');
+    const commitMock = vi.fn();
+    usePlanStore.setState({ commitEdit: commitMock });
     render(
       <EditPlantingModal
         open
@@ -116,15 +120,16 @@ describe('EditPlantingModal — Task 1 behaviors', () => {
       />,
     );
 
-    const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+    const cancelBtn = screen.getByRole('button', { name: 'Cancel' });
     await userEvent.click(cancelBtn);
 
-    expect(commitSpy).not.toHaveBeenCalled();
+    expect(commitMock).not.toHaveBeenCalled();
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
   it('toggling Lock switch calls setLock(plantingId, eventType, true)', async () => {
-    const setLockSpy = vi.spyOn(usePlanStore.getState(), 'setLock');
+    const setLockMock = vi.fn();
+    usePlanStore.setState({ setLock: setLockMock });
     render(
       <EditPlantingModal
         open
@@ -138,13 +143,14 @@ describe('EditPlantingModal — Task 1 behaviors', () => {
     const sw = screen.getByRole('switch');
     await userEvent.click(sw);
 
-    expect(setLockSpy).toHaveBeenCalledWith(tomatoPlanting.id, 'transplant', true);
+    expect(setLockMock).toHaveBeenCalledWith(tomatoPlanting.id, 'transplant', true);
   });
 
   it('Delete planting button calls removePlanting + onDelete + closes', async () => {
     const onOpenChange = vi.fn();
     const onDelete = vi.fn();
-    const removeSpy = vi.spyOn(usePlanStore.getState(), 'removePlanting');
+    const removeMock = vi.fn();
+    usePlanStore.setState({ removePlanting: removeMock });
     render(
       <EditPlantingModal
         open
@@ -158,7 +164,7 @@ describe('EditPlantingModal — Task 1 behaviors', () => {
     const deleteBtn = screen.getByRole('button', { name: /delete planting/i });
     await userEvent.click(deleteBtn);
 
-    expect(removeSpy).toHaveBeenCalledWith(tomatoPlanting.id);
+    expect(removeMock).toHaveBeenCalledWith(tomatoPlanting.id);
     expect(onDelete).toHaveBeenCalled();
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });

@@ -96,3 +96,23 @@ export function currentYear(): number {
   // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (Phase 2 extension of SCH-03).
   return new Date().getUTCFullYear();
 }
+
+/**
+ * Convert YYYY-MM-DD (e.g. from a native `<input type=date>`) to a UTC-noon ISO string.
+ * Pinned to noon UTC to dodge DST/timezone shifts (SCH-03 invariant).
+ *
+ * Phase 4 Plan 02 — used by `src/features/mobile/EditPlantingModal.tsx`. Inline string
+ * concat — never calls `new Date(string)` — so feature directories outside the ESLint
+ * allowlist can safely consume this helper.
+ */
+export function ymdToISONoon(ymd: string): string {
+  return `${ymd}T12:00:00.000Z`;
+}
+
+/**
+ * Inverse of `ymdToISONoon` — extract YYYY-MM-DD from a UTC-noon ISO string. Used as
+ * the `defaultValue`/`value` for native `<input type=date>` controls.
+ */
+export function isoNoonToYMD(iso: string): string {
+  return iso.slice(0, 10);
+}
