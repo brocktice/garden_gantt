@@ -6,11 +6,12 @@
 // Covers: empty state, sections render, group-by toggle, per-row checkbox wiring,
 // modal opens via "+ New task" button.
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import type { Location, GardenPlan, CustomTask } from '../../../src/domain/types';
+import { nowISOString } from '../../../src/domain/dateWrappers';
 
 const sampleLocation: Location = {
   zip: '20001',
@@ -21,14 +22,15 @@ const sampleLocation: Location = {
 };
 
 function todayISOFor(): string {
-  // Match the dateWrappers nowISOString() — full ISO of "now"
-  return new Date().toISOString();
+  return nowISOString();
 }
 
 describe('TasksDashboard', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     window.localStorage.clear();
-    vi.resetModules();
+    // Reset planStore's plan to null so empty-state test works regardless of order.
+    const { usePlanStore } = await import('../../../src/stores/planStore');
+    usePlanStore.setState({ plan: null });
   });
 
   afterEach(() => {
@@ -36,7 +38,6 @@ describe('TasksDashboard', () => {
   });
 
   async function renderDashboard() {
-    vi.resetModules();
     const { TasksDashboard } = await import('../../../src/features/tasks/TasksDashboard');
     return render(
       <MemoryRouter>

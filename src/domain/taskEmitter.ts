@@ -167,11 +167,17 @@ export function expandRecurringTasks(
   const start = parseDate(rangeStart);
   const end = parseDate(rangeEnd);
 
+  // Use YYYY-MM-DD string comparisons for the in-range check — avoids edge cases where
+  // sub-day ISO precision (e.g. nowISOString() at 04:40Z vs a task created seconds earlier)
+  // pushes a task technically before the "start of today" range.
+  const startDay = toISODate(start).slice(0, 10);
+  const endDay = toISODate(end).slice(0, 10);
+
   for (const ct of customTasks) {
     if (!ct.recurrence) {
       // One-off: completion key is bare ct.id.
-      const due = parseDate(ct.dueDate);
-      if (due >= start && due <= end) {
+      const dueDay = ct.dueDate.slice(0, 10);
+      if (dueDay >= startDay && dueDay <= endDay) {
         out.push({ ...ct, source: 'custom', completed: completedKeys.has(ct.id) });
       }
       continue;
