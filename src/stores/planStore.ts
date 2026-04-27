@@ -382,11 +382,23 @@ export const usePlanStore = create<PlanState>()(
         // clearPlan: resets plan to null. Caller (SettingsPanel) gates with a modal-confirm
         // Dialog (D-09 irreversible). Tracked by zundo so a Cmd-Z still works to recover
         // immediately, but the UI presents this as irreversible to set expectations.
-        clearPlan: () => set({ plan: null }),
+        // CR-03 fix (REVIEW Phase 4): also reset uiStore dirty counter — the export-reminder
+        // banner reads dirtySinceExport, and a cleared plan with stale dirty would render
+        // a phantom "N unsaved changes" banner with no UI path to clear (since exportPlan()
+        // short-circuits on null plan). resetDirty() restores D-15 contract that the dirty
+        // counter mirrors plan state.
+        clearPlan: () => {
+          set({ plan: null });
+          useUIStore.getState().resetDirty();
+        },
 
         // clearCompletedTaskIds: empties the completion array. Reversible — caller
         // (TasksDashboard) wires a toast-with-undo around getTemporal().undo() (D-09).
-        clearCompletedTaskIds: () =>
+        // CR-03 fix (REVIEW Phase 4): emptying the completion array IS a schema-meaningful
+        // mutation (plan.completedTaskIds is exported in the JSON snapshot), so it is
+        // dirty per D-14. Distinct from toggleTaskCompletion which the test suite + plan
+        // 04-05 explicitly exclude as a per-occurrence display flip.
+        clearCompletedTaskIds: () => {
           set((s) =>
             s.plan
               ? {
@@ -397,7 +409,9 @@ export const usePlanStore = create<PlanState>()(
                   },
                 }
               : s,
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
       }),
       {
         // Per CONTEXT D-14 + D-16:

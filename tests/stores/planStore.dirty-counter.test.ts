@@ -214,6 +214,24 @@ describe('planStore — dirty-counter wiring (D-14)', () => {
     expect(useUIStore.getState().exportReminder.dirtySinceExport).toBe(before);
   });
 
+  it('clearPlan resets dirtySinceExport to 0 (CR-03 fix — phantom banner prevention)', async () => {
+    const { usePlanStore, useUIStore } = await setupPlan();
+    // Pump dirty counter to a positive value (simulate accumulated edits).
+    usePlanStore.getState().addPlanting(makePlanting('p1', 'tomato'));
+    usePlanStore.getState().addPlanting(makePlanting('p2', 'lettuce'));
+    expect(useUIStore.getState().exportReminder.dirtySinceExport).toBeGreaterThan(0);
+    usePlanStore.getState().clearPlan();
+    expect(useUIStore.getState().exportReminder.dirtySinceExport).toBe(0);
+  });
+
+  it('clearCompletedTaskIds increments dirtySinceExport (CR-03 fix — schema-meaningful)', async () => {
+    const { usePlanStore, useUIStore } = await setupPlan();
+    usePlanStore.getState().toggleTaskCompletion('t1:2026-05-01');
+    const before = useUIStore.getState().exportReminder.dirtySinceExport;
+    usePlanStore.getState().clearCompletedTaskIds();
+    expect(useUIStore.getState().exportReminder.dirtySinceExport).toBe(before + 1);
+  });
+
   it('zundo undo/redo do NOT increment dirtySinceExport (replays bypass setters)', async () => {
     const { usePlanStore, useUIStore } = await setupPlan();
     const { getTemporal } = await import('../../src/stores/planStore');
