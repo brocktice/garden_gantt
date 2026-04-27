@@ -70,10 +70,27 @@ export const useCatalogStore = create<CatalogState>()(
 /**
  * Merge selector: custom plants override curated entries by id.
  * Returns ReadonlyMap<id, Plant> for catalog browser + filter consumers.
+ *
+ * Memoization invariant: useSyncExternalStore (Zustand's underlying React 19
+ * subscription) requires getSnapshot to return a referentially-stable value
+ * when state has not changed; otherwise React loops with "Maximum update depth
+ * exceeded". The result is keyed by the customPlants array reference (which
+ * Zustand replaces only on writes), so the merged Map is rebuilt only when
+ * customPlants identity changes.
+ *
+ * Source: [Rule 1 fix discovered while writing tests/features/catalog/CatalogBrowser.test.tsx
+ *          in Plan 02-12 — React 19 strictly enforces getSnapshot cache.]
  */
+let cachedCustomPlantsRef: Plant[] | null = null;
+let cachedMerged: ReadonlyMap<string, Plant> | null = null;
 export function selectMerged(s: CatalogState): ReadonlyMap<string, Plant> {
+  if (cachedMerged !== null && cachedCustomPlantsRef === s.customPlants) {
+    return cachedMerged;
+  }
   const map = new Map<string, Plant>();
   for (const p of curatedCatalog) map.set(p.id, p);
   for (const p of s.customPlants) map.set(p.id, p);
+  cachedCustomPlantsRef = s.customPlants;
+  cachedMerged = map;
   return map;
 }
