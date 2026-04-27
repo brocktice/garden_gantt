@@ -15,7 +15,7 @@ function buildPlan(
   plantings: Array<{ plantId: string; successionEnabled?: boolean }>,
 ): GardenPlan {
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     id: 'test-plan',
     name: 'Test',
     createdAt: '2026-01-01T12:00:00.000Z',
@@ -38,6 +38,7 @@ function buildPlan(
     })),
     customTasks: [],
     edits: [],
+    completedTaskIds: [],
     settings: { units: 'imperial', weekStartsOn: 0, timezone: 'UTC' },
   };
 }

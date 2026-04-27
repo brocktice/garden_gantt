@@ -60,7 +60,7 @@ describe('usePlanStore — persist wiring (DATA-01, DATA-02)', () => {
       }
     ).persist.getOptions();
     expect(options.name).toBe('garden-gantt:plan');
-    expect(options.version).toBe(2);
+    expect(options.version).toBe(3);
   });
 });
 
@@ -92,7 +92,7 @@ describe('usePlanStore — Phase 2 setters', () => {
 
     const plan = usePlanStore.getState().plan;
     expect(plan).not.toBeNull();
-    expect(plan!.schemaVersion).toBe(2);
+    expect(plan!.schemaVersion).toBe(3);
     expect(plan!.location).toEqual(sampleLocation);
     expect(plan!.plantings).toEqual([]);
     expect(plan!.customPlants).toEqual([]);
@@ -241,7 +241,7 @@ describe('usePlanStore — Phase 2 setters', () => {
     usePlanStore.getState().setLocation(sampleLocation);
 
     const replacement: GardenPlan = {
-      schemaVersion: 2,
+      schemaVersion: 3,
       id: 'imported-plan',
       name: 'Imported Plan',
       createdAt: '2025-01-01T12:00:00.000Z',
@@ -251,6 +251,7 @@ describe('usePlanStore — Phase 2 setters', () => {
       plantings: [makePlanting('p-cilantro', 'cilantro')],
       customTasks: [],
       edits: [],
+      completedTaskIds: [],
       settings: { units: 'metric', weekStartsOn: 1, timezone: 'UTC' },
     };
     usePlanStore.getState().replacePlan(replacement);
@@ -272,13 +273,13 @@ describe('usePlanStore — Phase 2 setters', () => {
   });
 });
 
-describe('usePlanStore — v1 -> v2 migration (Pitfall E)', () => {
+describe('usePlanStore — v1 -> v3 migration (Pitfall E)', () => {
   beforeEach(() => {
     window.localStorage.clear();
     vi.resetModules();
   });
 
-  it('rehydrates a v1-shaped persisted plan as v2 with overrides:{} and successionEnabled:false', async () => {
+  it('rehydrates a v1-shaped persisted plan as v3 with overrides:{}, successionEnabled:false, locks:{}, completedTaskIds:[]', async () => {
     const v1State = {
       state: {
         plan: {
@@ -307,12 +308,14 @@ describe('usePlanStore — v1 -> v2 migration (Pitfall E)', () => {
     const { usePlanStore } = await import('../../src/stores/planStore');
     const plan = usePlanStore.getState().plan;
     expect(plan).not.toBeNull();
-    expect(plan!.schemaVersion).toBe(2);
+    expect(plan!.schemaVersion).toBe(3);
     expect(plan!.location.overrides).toEqual({});
     expect(plan!.plantings[0]!.successionEnabled).toBe(false);
+    expect(plan!.plantings[0]!.locks).toEqual({});
+    expect(plan!.completedTaskIds).toEqual([]);
   });
 
-  it('rehydrates v2-shaped persisted plan unchanged (idempotent)', async () => {
+  it('rehydrates v2-shaped persisted plan as v3 (chains v2→v3, defaults locks and completedTaskIds)', async () => {
     const v2State = {
       state: {
         plan: {
@@ -344,9 +347,11 @@ describe('usePlanStore — v1 -> v2 migration (Pitfall E)', () => {
     const { usePlanStore } = await import('../../src/stores/planStore');
     const plan = usePlanStore.getState().plan;
     expect(plan).not.toBeNull();
-    expect(plan!.schemaVersion).toBe(2);
+    expect(plan!.schemaVersion).toBe(3);
     expect(plan!.name).toBe('Existing plan');
     expect(plan!.location.overrides).toEqual({ zone: true }); // preserved, not overwritten
+    expect(plan!.plantings[0]!.locks).toEqual({});
+    expect(plan!.completedTaskIds).toEqual([]);
     expect(plan!.plantings[0]!.successionEnabled).toBe(true); // preserved
   });
 });

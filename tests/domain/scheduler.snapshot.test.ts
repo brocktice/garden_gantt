@@ -20,7 +20,7 @@ const planFor = (
   plantId: string,
   locationOverrides: Partial<typeof baseLocation> = {},
 ): GardenPlan => ({
-  schemaVersion: 2,
+  schemaVersion: 3,
   id: 'snapshot-fixture',
   name: 'Snapshot test plan',
   createdAt: '2026-01-01T12:00:00.000Z',
@@ -30,6 +30,7 @@ const planFor = (
   plantings: [{ id: `p-${plantId}`, plantId, successionIndex: 0 }],
   customTasks: [],
   edits: [],
+  completedTaskIds: [],
   settings: { units: 'imperial', weekStartsOn: 0, timezone: 'America/New_York' },
 });
 
