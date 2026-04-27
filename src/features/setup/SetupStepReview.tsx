@@ -6,7 +6,7 @@
 //         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-CONTEXT.md D-01, D-26]
 //         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-08-PLAN.md Task 2 Step 2]
 
-import { GanttView } from '../gantt/GanttView';
+import { DragLayer } from '../gantt/drag/DragLayer';
 import { usePlanStore } from '../../stores/planStore';
 
 function formatDate(iso: string): string {
@@ -39,11 +39,11 @@ export function SetupStepReview() {
         {plan.plantings.length} plant{plan.plantings.length === 1 ? '' : 's'} in your plan
       </p>
       <div className="mt-6 -mx-4 overflow-x-auto">
-        <GanttView />
+        <DragLayer />
       </div>
       <p className="mt-4 max-w-prose text-sm text-stone-600">
-        Drag-to-adjust comes in the next milestone. For now, your plan is saved
-        automatically as you go.
+        Drag any lifecycle bar to adjust your schedule. Constraint violations snap back with
+        a tooltip explaining why. Your plan is saved automatically as you go.
       </p>
     </div>
   );

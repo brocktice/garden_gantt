@@ -24,6 +24,18 @@
   --spacing-panel-w: 400px;
   --spacing-pill-h: 36px;
   --spacing-wizard-max-w: 720px;
+
+  /* Phase 3 drag mechanics (Plan 03-03) — UI-SPEC §4 ConstraintTooltip */
+  --spacing-tooltip-min-w: 240px;
+  --spacing-tooltip-max-w: 320px;
+  --spacing-bar-min-drag-px: 6px;
+}
+
+/* Phase 3 (Plan 03-03): ghost overlay subtle pulse — applied via .ghost-pulse if Phase 4
+   visual polish wants animated emphasis on the cascade preview. Inert by default. */
+@keyframes ghost-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 0.65; }
 }
 
 /* Body baseline — UI-SPEC §Typography */

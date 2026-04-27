@@ -11,16 +11,20 @@
 import { useMemo } from 'react';
 import { usePlanStore } from '../../stores/planStore';
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
-import { generateSchedule } from '../../domain/scheduler';
+import { generateScheduleWithLocks } from '../../domain/schedulerWithLocks';
 import { expandSuccessions } from '../../domain/succession';
 import type { ScheduleEvent } from '../../domain/types';
 
+// Phase 3 (Plan 03-03): switched from generateSchedule → generateScheduleWithLocks.
+// The wrapper is a thin pass-through today (engine consumes plan.edits[] from Plan 03-01)
+// but it is the documented public seam where future locked-event policy (D-13) plugs in
+// without changing this hook.
 export function useDerivedSchedule(): ScheduleEvent[] {
   const plan = usePlanStore((s) => s.plan);
   const catalog = useCatalogStore(selectMerged);
   return useMemo(() => {
     if (!plan) return [];
     const expanded = expandSuccessions(plan, catalog);
-    return generateSchedule(expanded, catalog);
+    return generateScheduleWithLocks(expanded, catalog);
   }, [plan, catalog]);
 }

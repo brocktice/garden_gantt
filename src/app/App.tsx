@@ -10,7 +10,7 @@ import { Route, Routes } from 'react-router';
 import { AppShell } from './AppShell';
 import { ErrorBoundary } from './ErrorBoundary';
 import { PlaceholderRoute } from './PlaceholderRoute';
-import { GanttView } from '../features/gantt/GanttView';
+import { DragLayer } from '../features/gantt/drag/DragLayer';
 import { SetupWizard } from '../features/setup/SetupWizard';
 import { CatalogBrowser } from '../features/catalog/CatalogBrowser';
 import { SettingsPanel } from '../features/settings/SettingsPanel';
@@ -20,9 +20,9 @@ export function App() {
     <ErrorBoundary>
       <AppShell>
         <Routes>
-          {/* Default + /plan: render the gantt */}
-          <Route path="/" element={<GanttView />} />
-          <Route path="/plan" element={<GanttView />} />
+          {/* Default + /plan: render the interactive (drag-enabled) gantt — Phase 3 Plan 03-03 */}
+          <Route path="/" element={<DragLayer />} />
+          <Route path="/plan" element={<DragLayer />} />
           <Route path="/setup" element={<SetupWizard />} />
           <Route path="/catalog" element={<CatalogBrowser />} />
           <Route
@@ -36,7 +36,7 @@ export function App() {
           />
           <Route path="/settings" element={<SettingsPanel />} />
           {/* Catch-all → gantt */}
-          <Route path="*" element={<GanttView />} />
+          <Route path="*" element={<DragLayer />} />
         </Routes>
       </AppShell>
     </ErrorBoundary>

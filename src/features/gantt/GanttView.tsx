@@ -6,27 +6,37 @@
 // stone-400 left-edge accent strip on succession-derived rows, falls back to <EmptyGanttState/>
 // when plan is null or plantings.length === 0.
 //
-// D-23: still hand-rolled bare-SVG (no SVAR / no Frappe / no @dnd-kit) — Phase 3 spike picks the
-// final gantt library.
-// D-26: read-only in Phase 2 (no drag bindings) but data-event-id, data-event-type, and
-// data-planting-id attributes are preserved on every rect so Phase 3 has the handles ready.
+// Phase 3 (Plan 03-03): each lifecycle bar is wrapped in <DraggableBar> which calls useDragBar
+// (a useDraggable wrapper that gates non-draggable types per D-06). The active TimeScale is
+// published via setActiveScale() so DragLayer's dispatcher modifier can read it without a prop
+// path. GhostOverlay is mounted conditionally on isDragging.
+//
+// D-23: still hand-rolled bare-SVG (no SVAR / no Frappe) — Phase 3 spike resolved as
+// "stay bare-SVG + @dnd-kit/core" per CONTEXT D-01.
+// D-26: data-event-id, data-event-type, data-planting-id attributes preserved for drag layer.
 //
 // Source: [CITED: .planning/phases/01-foundation-schedule-engine/01-UI-SPEC.md §Gantt Visual Treatment]
 //         [CITED: .planning/phases/01-foundation-schedule-engine/01-CONTEXT.md D-05, D-06, D-07]
 //         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-UI-SPEC.md §Component Inventory item 8]
-//         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-RESEARCH.md §Code Example D lines 1252-1283]
-//         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-CONTEXT.md D-22, D-23, D-24, D-25, D-26]
+//         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-RESEARCH.md §Code Example D]
+//         [CITED: .planning/phases/03-drag-cascade-calendar-tasks/03-CONTEXT.md D-04, D-05, D-06, D-19, D-20, D-21]
+//         [CITED: .planning/phases/03-drag-cascade-calendar-tasks/03-RESEARCH.md §Pitfall 2 — useDraggable on <g> not <rect>]
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDerivedSchedule } from './useDerivedSchedule';
-import { createTimeScale } from './timeScale';
+import { createTimeScale, type TimeScale } from './timeScale';
 import { lifecyclePalette } from './lifecyclePalette';
 import { EmptyGanttState } from './EmptyGanttState';
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
 import { usePlanStore } from '../../stores/planStore';
+import { useDragStore } from '../../stores/dragStore';
 import { lastDayOfMonth } from '../../domain/dateWrappers';
 import { expandSuccessions } from '../../domain/succession';
 import type { GardenPlan, Plant, ScheduleEvent } from '../../domain/types';
+import { useDragBar } from './drag/useDragBar';
+import { GhostOverlay } from './drag/GhostOverlay';
+import { useTransientSchedule } from './drag/useTransientSchedule';
+import { setActiveScale } from './drag/scaleHandoff';
 
 // UI-SPEC §Gantt Visual Treatment §Visual specifications — pixel constants
 const ROW_HEIGHT = 32;
@@ -37,6 +47,13 @@ const AXIS_HEIGHT = 32;
 const LABEL_WIDTH = 140;
 const PX_PER_DAY = 3;
 const MIN_PLOT_WIDTH = 720;
+
+const DRAGGABLE_BAR_TYPES = new Set<ScheduleEvent['type']>([
+  'indoor-start',
+  'transplant',
+  'direct-sow',
+  'harvest-window',
+]);
 
 /**
  * Compute axis bounds (start/end ISO YYYY-MM-DD strings) snapped to month boundaries.
@@ -79,9 +96,6 @@ export function GanttView() {
     return <EmptyGanttState />;
   }
 
-  // Build the row list from the SAME expansion the engine sees so succession-derived
-  // rows render with their own labels + accent strips. Keep this cheap — expandSuccessions
-  // is pure and re-runs whenever plan/catalog change (matched by useDerivedSchedule deps).
   return <GanttViewInner plan={plan} events={events} merged={merged} />;
 }
 
@@ -92,8 +106,6 @@ interface GanttViewInnerProps {
 }
 
 function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
-  // Re-derive expanded plantings inline so we can render one row per derived planting.
-  // expandSuccessions is the same pure call used by useDerivedSchedule.
   const plantings = useMemo(() => {
     return expandSuccessions(plan, merged).plantings;
   }, [plan, merged]);
@@ -106,6 +118,13 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
     () => createTimeScale({ start: axisStart, end: axisEnd, pxPerDay: PX_PER_DAY }),
     [axisStart, axisEnd],
   );
+
+  // Phase 3 (Plan 03-03): publish scale for DragLayer's dispatcher modifier.
+  useEffect(() => {
+    setActiveScale(scale);
+    return () => setActiveScale(null);
+  }, [scale]);
+
   const plotWidth = Math.max(MIN_PLOT_WIDTH, scale.totalWidth);
   const totalHeight = AXIS_HEIGHT + plantings.length * (ROW_HEIGHT + ROW_GAP);
 
@@ -120,8 +139,22 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
     return map;
   }, [events]);
 
+  // rowYByPlantingId: ghost overlay needs to render bars at the correct row Y.
+  const rowYByPlantingId = useMemo(() => {
+    const map = new Map<string, number>();
+    plantings.forEach((p, i) => {
+      const rowY = AXIS_HEIGHT + i * (ROW_HEIGHT + ROW_GAP);
+      map.set(p.id, rowY);
+    });
+    return map;
+  }, [plantings]);
+
   const todayX = scale.todayX();
   const showToday = todayX >= 0 && todayX <= plotWidth;
+
+  const isDragging = useDragStore((s) => s.isDragging);
+  const activeEventId = useDragStore((s) => s.activeEventId);
+  const transientEvents = useTransientSchedule();
 
   return (
     <div className="bg-white border border-stone-200 rounded">
@@ -173,7 +206,6 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                 stroke="#E7E5E4"
                 strokeWidth={1}
               />
-              {/* Month tick labels */}
               {scale.monthTicks.map((tick) => (
                 <text
                   key={tick.date}
@@ -185,7 +217,6 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                   {tick.label}
                 </text>
               ))}
-              {/* Weekly grid lines (faint) */}
               {scale.weekTicks.map((tick) => (
                 <line
                   key={tick.date}
@@ -200,9 +231,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
               ))}
             </g>
 
-            {/* Succession-row visual grouping (D-22): 4px stone-400 left-edge accent
-                rendered BEHIND the row rects. Only derived plantings (successionIndex > 0)
-                get the accent strip. */}
+            {/* Succession-row visual grouping (D-22) */}
             <g className="succession-groups">
               {plantings.map((p, i) => {
                 if ((p.successionIndex ?? 0) === 0) return null;
@@ -221,7 +250,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
               })}
             </g>
 
-            {/* Rows: one <g> per planting, one <rect> per lifecycle event */}
+            {/* Rows: one <g> per planting, one <DraggableBar> per lifecycle event */}
             <g className="rows">
               {plantings.map((p, i) => {
                 const plant = merged.get(p.plantId);
@@ -241,40 +270,35 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                   >
                     {rowEvents.map((e) => {
                       const fill = lifecyclePalette[e.type];
-                      // Skip task events (water-seedlings, harden-off-day, fertilize-at-flowering)
-                      // — they are intentionally absent from lifecyclePalette per Plan 08.
-                      if (!fill) return null;
-                      const x = scale.dateToX(e.start);
-                      const endX = scale.dateToX(e.end);
-                      // Point events have start === end → render a 4px-wide marker
-                      const width = Math.max(endX - x, 4);
-                      const dateLabel =
-                        e.end !== e.start
-                          ? `${e.start.slice(0, 10)} to ${e.end.slice(0, 10)}`
-                          : e.start.slice(0, 10);
+                      // Skip task events (water-seedlings, harden-off-day, fertilize-at-flowering).
+                      if (!fill || !plant) return null;
                       return (
-                        <rect
+                        <DraggableBar
                           key={e.id}
-                          data-event-id={e.id}
-                          data-event-type={e.type}
-                          data-planting-id={p.id}
-                          x={x}
-                          y={BAR_Y_OFFSET}
-                          width={width}
-                          height={BAR_HEIGHT}
+                          event={e}
+                          plant={plant}
+                          plantingId={p.id}
+                          plantLabel={plant.name}
                           fill={fill}
-                          rx={3}
-                        >
-                          <title>
-                            {plant?.name ?? p.plantId} — {e.type} — {dateLabel}
-                          </title>
-                        </rect>
+                          scale={scale}
+                        />
                       );
                     })}
                   </g>
                 );
               })}
             </g>
+
+            {/* Phase 3 (Plan 03-03): GhostOverlay rendered while dragging — draws on top of
+                committed bars at 0.55 opacity per D-20 + UI-SPEC §2. */}
+            {isDragging && (
+              <GhostOverlay
+                events={transientEvents}
+                activeEventId={activeEventId}
+                scale={scale}
+                rowYByPlantingId={rowYByPlantingId}
+              />
+            )}
 
             {/* Today indicator — green-700 (accent) per UI-SPEC §Gantt Visual Treatment */}
             {showToday && (
@@ -305,3 +329,76 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
   );
 }
 
+interface DraggableBarProps {
+  event: ScheduleEvent;
+  plant: Plant;
+  plantingId: string;
+  plantLabel: string;
+  fill: string;
+  scale: TimeScale;
+}
+
+/**
+ * Per-bar wrapper that calls useDragBar and renders the lifecycle bar inside a <g> with
+ * the drag listeners attached. Per RESEARCH.md §Pitfall 2: setNodeRef goes on the <g>,
+ * NOT directly on the <rect> (dnd-kit needs a focusable element).
+ *
+ * Memoized re-render: useDragBar reads transform from useDraggable's internal state and
+ * applies it as an SVG transform on the wrapper <g> so React only re-renders this single
+ * bar during its own drag (per CONTEXT D-21).
+ */
+function DraggableBar({
+  event,
+  plant,
+  plantingId,
+  plantLabel,
+  fill,
+  scale,
+}: DraggableBarProps) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDragBar({
+    event,
+    plant,
+  });
+  const isDraggable = DRAGGABLE_BAR_TYPES.has(event.type);
+  const x = scale.dateToX(event.start);
+  const endX = scale.dateToX(event.end);
+  const width = Math.max(endX - x, 4);
+  const dateLabel =
+    event.end !== event.start
+      ? `${event.start.slice(0, 10)} to ${event.end.slice(0, 10)}`
+      : event.start.slice(0, 10);
+
+  const dx = transform?.x ?? 0;
+  const dy = transform?.y ?? 0;
+  const cursorClass = isDraggable
+    ? 'cursor-grab active:cursor-grabbing'
+    : 'cursor-default';
+
+  return (
+    <g
+      ref={setNodeRef as unknown as (el: SVGGElement | null) => void}
+      transform={`translate(${dx}, ${dy})`}
+      className={cursorClass}
+      style={{ touchAction: 'none', opacity: isDragging ? 0.4 : 1 }}
+      data-planting-id={plantingId}
+      {...attributes}
+      {...listeners}
+    >
+      <rect
+        data-event-id={event.id}
+        data-event-type={event.type}
+        data-planting-id={plantingId}
+        x={x}
+        y={BAR_Y_OFFSET}
+        width={width}
+        height={BAR_HEIGHT}
+        fill={fill}
+        rx={3}
+      >
+        <title>
+          {plantLabel} — {event.type} — {dateLabel}
+        </title>
+      </rect>
+    </g>
+  );
+}

@@ -7,10 +7,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, cleanup, screen } from '@testing-library/react';
 import { useDragStore } from '../../../../src/stores/dragStore';
 import { usePlanStore } from '../../../../src/stores/planStore';
-import {
-  DragLayer,
-  __test__,
-} from '../../../../src/features/gantt/drag/DragLayer';
+import { DragLayer } from '../../../../src/features/gantt/drag/DragLayer';
+import * as __test__ from '../../../../src/features/gantt/drag/dragHandlers';
 import { setActiveScale } from '../../../../src/features/gantt/drag/scaleHandoff';
 import { createTimeScale } from '../../../../src/features/gantt/timeScale';
 import type {
@@ -71,7 +69,7 @@ const transplantEvent: ScheduleEvent = {
 };
 
 describe('DragLayer wiring (Phase 3 Plan 03-03)', () => {
-  it('Test 1: handleDragMove writes a transientEdit reflecting the pixel delta', () => {
+  it('Test 1: handleDragMove writes a transientEdit reflecting the pixel delta (rAF-coalesced)', async () => {
     const tomato = sampleCatalog.get('tomato')! as Plant;
     // Simulate dnd-kit drag-move event: drag right by 7 days = 42 px.
     __test__.handleDragMove({
@@ -81,6 +79,8 @@ describe('DragLayer wiring (Phase 3 Plan 03-03)', () => {
       },
       delta: { x: 7 * PX_PER_DAY, y: 0 },
     });
+    // rAF coalesce — wait one frame for the setter to flush (mirrors planStore handleSet pattern).
+    await new Promise((r) => requestAnimationFrame(() => r(null)));
     const transient = useDragStore.getState().transientEdit;
     expect(transient).not.toBeNull();
     expect(transient!.plantingId).toBe('p-tomato');
