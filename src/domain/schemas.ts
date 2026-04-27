@@ -92,6 +92,39 @@ export const PlantingSchema = z.object({
   locks: z.record(z.string(), z.boolean()).optional(),
 });
 
+// CR-01 (Plan 03-08): tightened CustomTaskSchema to validate persisted plantingId.
+// Optional fields preserve forward-compat with v3 plans authored before the type widen.
+export const TaskCategorySchema = z.enum([
+  'sow',
+  'transplant',
+  'harden-off',
+  'harvest',
+  'water',
+  'fertilize',
+  'prune',
+  'scout-pests',
+  'custom',
+]);
+
+export const TaskRecurrenceSchema = z.object({
+  type: z.enum(['weekly', 'daily', 'interval']),
+  intervalDays: z.number().int().min(1).max(365).optional(),
+  endDate: z.string().optional(),
+});
+
+export const CustomTaskSchema = z.object({
+  id: z.string().min(1),
+  source: z.literal('custom'),
+  plantingId: z.string().min(1).optional(),
+  title: z.string().min(1),
+  category: TaskCategorySchema,
+  dueDate: z.string(),
+  recurrence: TaskRecurrenceSchema.optional(),
+  completed: z.boolean(),
+  completedAt: z.string().optional(),
+  notes: z.string().optional(),
+});
+
 export const GardenPlanSchema = z.object({
   schemaVersion: z.literal(3), // Phase 3 strict — v1/v2 enter via ExportEnvelope migration chain
   id: z.string().min(1),
@@ -101,7 +134,7 @@ export const GardenPlanSchema = z.object({
   location: LocationSchema,
   customPlants: z.array(PlantSchema),
   plantings: z.array(PlantingSchema),
-  customTasks: z.array(z.unknown()), // Phase 4 polish will tighten (UI-SPEC §11)
+  customTasks: z.array(CustomTaskSchema),
   edits: z.array(z.unknown()), // Phase 4 polish will tighten (UI-SPEC §11)
   // Phase 3 (D-36): array of taskIds (one-off) or `${taskId}:${YYYY-MM-DD}` per-occurrence keys.
   completedTaskIds: z.array(z.string()),

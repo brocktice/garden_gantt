@@ -152,8 +152,11 @@ export interface Task {
   notes?: string;
 }
 
-export interface CustomTask extends Omit<Task, 'source' | 'plantingId'> {
+export interface CustomTask extends Omit<Task, 'source'> {
   source: 'custom';
+  // plantingId inherited from Task (optional). Phase 3 (D-30): custom tasks may be
+  // attached to a planting (TASK-02) for groupBy='plant' bucketing in the dashboard
+  // (TASK-06). Absent = free-floating.
 }
 
 export interface GardenPlan {

@@ -125,10 +125,9 @@ function taskToForm(t: CustomTask): FormState {
         ? (t.recurrence.intervalDays ?? null)
         : null,
     endDate: t.recurrence?.endDate ? t.recurrence.endDate.slice(0, 10) : '',
-    plantingId:
-      // Edit-mode tasks come from plan.customTasks; CustomTask doesn't carry plantingId
-      // (Task interface does, CustomTask omits it). Default to free-floating.
-      FREE_FLOATING,
+    // CR-01 (Plan 03-08): CustomTask now inherits plantingId from Task. Read the persisted
+    // value when editing an attached task; default to FREE_FLOATING otherwise.
+    plantingId: t.plantingId ?? FREE_FLOATING,
     category: t.category,
     notes: t.notes ?? '',
   };
@@ -162,6 +161,10 @@ function buildTask(
     category: form.category,
     dueDate: dueISO,
     completed: false,
+    // CR-01 (Plan 03-08): persist the attach-to-planting selection. Conditional spread
+    // keeps the field absent when free-floating — no '__none__' string leaks into the
+    // serialized plan.
+    ...(form.plantingId !== FREE_FLOATING ? { plantingId: form.plantingId } : {}),
   };
   if (recurrence) task.recurrence = recurrence;
   if (form.notes.trim() !== '') task.notes = form.notes.trim();
