@@ -284,20 +284,35 @@ export const usePlanStore = create<PlanState>()(
               : s,
           ),
 
+        // CR-03 (Plan 03-08): completedTaskIds pruning contract.
+        //   - removeCustomTask(id) — UNCONDITIONAL purge of bare `${id}` and `${id}:*` keys.
+        //   - editCustomTask(id, patch) — CONDITIONAL purge of `${id}:*` per-occurrence keys
+        //     when patch.dueDate or patch.recurrence is present (recurrence shape changed,
+        //     so prior occurrence dates may no longer apply). The bare `${id}` key (one-off
+        //     completion) survives because it isn't tied to a date. Cosmetic patches
+        //     (title, notes, category, completed) leave completedTaskIds untouched.
+        // Both setters mutate inside the SAME `set()` call so zundo's handleSet coalesces
+        // the prune + the task mutation into one atomic history entry (Cmd-Z restores both).
         editCustomTask: (id, patch) =>
-          set((s) =>
-            s.plan
-              ? {
-                  plan: {
-                    ...s.plan,
-                    customTasks: s.plan.customTasks.map((t) =>
-                      t.id === id ? { ...t, ...patch } : t,
-                    ),
-                    updatedAt: nowISOString(),
-                  },
-                }
-              : s,
-          ),
+          set((s) => {
+            if (!s.plan) return s;
+            const recurrenceShapeChanged =
+              Object.prototype.hasOwnProperty.call(patch, 'dueDate') ||
+              Object.prototype.hasOwnProperty.call(patch, 'recurrence');
+            const nextCompletedTaskIds = recurrenceShapeChanged
+              ? (s.plan.completedTaskIds ?? []).filter((k) => !k.startsWith(`${id}:`))
+              : s.plan.completedTaskIds;
+            return {
+              plan: {
+                ...s.plan,
+                customTasks: s.plan.customTasks.map((t) =>
+                  t.id === id ? { ...t, ...patch } : t,
+                ),
+                completedTaskIds: nextCompletedTaskIds,
+                updatedAt: nowISOString(),
+              },
+            };
+          }),
 
         removeCustomTask: (id) =>
           set((s) =>
@@ -306,6 +321,11 @@ export const usePlanStore = create<PlanState>()(
                   plan: {
                     ...s.plan,
                     customTasks: s.plan.customTasks.filter((t) => t.id !== id),
+                    // CR-03: prune both bare `${id}` (one-off) and `${id}:*` (per-occurrence)
+                    // completion keys so localStorage doesn't accumulate orphans on delete.
+                    completedTaskIds: (s.plan.completedTaskIds ?? []).filter(
+                      (k) => k !== id && !k.startsWith(`${id}:`),
+                    ),
                     updatedAt: nowISOString(),
                   },
                 }
