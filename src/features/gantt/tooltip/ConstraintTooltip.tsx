@@ -65,6 +65,20 @@ export function ConstraintTooltip() {
     return () => clearTimeout(timer);
   }, [stickyViolation, isDragging, setStickyViolation]);
 
+  // Phase 4 Plan 04-06 — Escape dismisses the sticky pill (RESEARCH Pitfall 3 +
+  // UI-SPEC §Accessibility Contract). Listener is gated on an active sticky
+  // violation so it doesn't intercept Escape elsewhere (T-04-06-06 mitigation).
+  useEffect(() => {
+    if (!stickyViolation || isDragging) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setStickyViolation(null);
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [stickyViolation, isDragging, setStickyViolation]);
+
   // Mode A: track cursor while dragging. Effect subscribes to the document pointermove —
   // setCursorPos is invoked only from inside the rAF callback (event-handler scope), not
   // synchronously in the effect body, so React Compiler's setState-in-effect rule is satisfied.
@@ -136,9 +150,19 @@ export function ConstraintTooltip() {
         ? { left: anchorPos.left, top: anchorPos.top }
         : { left: '50%', top: 80, transform: 'translateX(-50%)' };
 
+  // Phase 4 Plan 04-06 — key on (eventId + reasons) so React remounts whenever
+  // the violation message actually changes; aria-live=polite then re-announces.
+  // Re-render under same key (e.g. cursor-position update during Mode A) does NOT
+  // trigger a fresh announcement (RESEARCH Pitfall 3 mitigation).
+  const violationKey = `${violation.eventId}|${violation.reasons.join('|')}`;
+
   return createPortal(
     <div
+      key={violationKey}
+      data-violation-key={violationKey}
       role="status"
+      aria-live="polite"
+      aria-atomic="true"
       tabIndex={-1}
       data-testid="constraint-tooltip"
       className={cn(
@@ -150,10 +174,19 @@ export function ConstraintTooltip() {
       )}
       style={{ borderLeftColor: accent, ...positionStyle }}
     >
-      <p className="text-sm font-semibold uppercase tracking-wider text-stone-900">
+      {/* Phase 4 Plan 04-06 — sr-only summary so screen readers get an unambiguous
+          read regardless of how the visible body wraps the date in <strong>. */}
+      <span className="sr-only">{`${header}: ${body}`}</span>
+      <p
+        aria-hidden="true"
+        className="text-sm font-semibold uppercase tracking-wider text-stone-900"
+      >
         {header}
       </p>
-      <p className="text-sm font-normal leading-snug text-stone-900 mt-1">
+      <p
+        aria-hidden="true"
+        className="text-sm font-normal leading-snug text-stone-900 mt-1"
+      >
         {renderBody(body)}
       </p>
     </div>,

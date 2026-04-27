@@ -20,9 +20,16 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Undo2, Redo2 } from 'lucide-react';
 import { Banner } from './Banner';
+import { StorageFullBanner } from './StorageFullBanner';
+import { ExportReminderBanner } from '../features/export-reminder/ExportReminderBanner';
 import { MyPlanPill } from '../features/catalog/MyPlanPill';
 import { MyPlanPanel } from '../features/catalog/MyPlanPanel';
 import { PermapeopleAttributionFooter } from './PermapeopleAttributionFooter';
+import { CoachMarks } from '../features/onboarding/CoachMarks';
+import { ToastHost } from '../ui/toast/ToastHost';
+import { SkipToMain } from '../ui/SkipToMain';
+import { useUIStore } from '../stores/uiStore';
+import { useShouldShowExportReminder } from '../features/export-reminder/useExportReminder';
 import { usePlanStore, useTemporalStore, getTemporal } from '../stores/planStore';
 import { useHistoryKeybindings } from '../stores/historyBindings';
 import { useLockKeybinding } from '../features/gantt/lock/useLockKeybinding';
@@ -67,6 +74,19 @@ export function AppShell({ children }: AppShellProps) {
   useHistoryKeybindings();
   useLockKeybinding();
 
+  // Phase 4 Plan 04-06 — banner-stack selector. Priority order (UI-SPEC §Banner stack,
+  // RESEARCH Open Question 1 recommendation a): storage-full > iOS Private > export-reminder.
+  // Only ONE banner renders at a time so the user never sees a stack of competing alerts.
+  const isStorageFull = useUIStore((s) => s.isStorageFull);
+  const isStorageAvailable = useUIStore((s) => s.isStorageAvailable);
+  const bannerDismissed = useUIStore((s) => s.bannerDismissed);
+  const exportReminder = useShouldShowExportReminder();
+
+  let banner: ReactNode = null;
+  if (isStorageFull) banner = <StorageFullBanner />;
+  else if (!isStorageAvailable && !bannerDismissed) banner = <Banner />;
+  else if (exportReminder.shouldShow) banner = <ExportReminderBanner />;
+
   // UI-SPEC §10 line 517: hide MyPlanPill on /setup when plan === null (first-run).
   // Once a plan exists (Step 1 done) OR the user is anywhere outside the wizard, show it.
   const hideMyPlanPill = plan === null && currentHash.startsWith('#/setup');
@@ -83,7 +103,8 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <>
-      <Banner />
+      <SkipToMain />
+      {banner}
       <header className="sticky top-0 z-20 w-full bg-white border-b border-stone-200 h-[60px] px-6">
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
           <div className="flex items-baseline gap-3">
@@ -159,6 +180,13 @@ export function AppShell({ children }: AppShellProps) {
       {/* Phase 3 Plan 03-06: top-level ConstraintTooltip mount (portaled).
           Replaces the temporary in-DragLayer mount from Plan 03-03. */}
       <ConstraintTooltip />
+      {/* Phase 4 Plan 04-06 — sr-only live region for keyboard-drag screen-reader
+          announcements (POL-08). Written to by useKeyboardBarDrag in GanttView. */}
+      <div aria-live="polite" className="sr-only" id="kbd-drag-announcer" />
+      {/* Phase 4 Plan 04-04 / 04-06 — onboarding coach marks (route-gated internally). */}
+      <CoachMarks />
+      {/* Phase 4 Plan 04-03 / 04-06 — programmatic toast viewport. */}
+      <ToastHost />
     </>
   );
 }

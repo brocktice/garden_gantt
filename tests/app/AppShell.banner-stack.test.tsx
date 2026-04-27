@@ -35,11 +35,22 @@ vi.mock('../../src/features/export-reminder/useExportReminder', () => ({
     count: 0,
     lastExportedAt: null,
   })),
+  useExportReminder: vi.fn(() => ({
+    shouldShow: false,
+    count: 0,
+    lastExportedAt: null,
+    snooze3Days: vi.fn(),
+    snooze30Days: vi.fn(),
+    formatLastExportedShort: () => 'you started',
+  })),
 }));
 
 import { AppShell } from '../../src/app/AppShell';
 import { useUIStore } from '../../src/stores/uiStore';
-import { useShouldShowExportReminder } from '../../src/features/export-reminder/useExportReminder';
+import {
+  useShouldShowExportReminder,
+  useExportReminder,
+} from '../../src/features/export-reminder/useExportReminder';
 
 function resetUIStore() {
   useUIStore.setState({
@@ -55,6 +66,14 @@ beforeEach(() => {
     shouldShow: false,
     count: 0,
     lastExportedAt: null,
+  });
+  vi.mocked(useExportReminder).mockReturnValue({
+    shouldShow: false,
+    count: 0,
+    lastExportedAt: null,
+    snooze3Days: vi.fn(),
+    snooze30Days: vi.fn(),
+    formatLastExportedShort: () => 'you started',
   });
 });
 
@@ -82,7 +101,7 @@ describe('AppShell — banner stack priority (Plan 04-06 Task 1)', () => {
     );
     expect(screen.getByText(/Storage full/i)).toBeTruthy();
     // iOS Private banner copy must NOT render (its key phrase).
-    expect(screen.queryByText(/changes won't be saved/i)).toBeNull();
+    expect(screen.queryByText(/Heads up — your changes won't be saved/i)).toBeNull();
     // Export reminder copy must NOT render.
     expect(screen.queryByText(/unsaved changes/i)).toBeNull();
   });
@@ -112,6 +131,14 @@ describe('AppShell — banner stack priority (Plan 04-06 Task 1)', () => {
       shouldShow: true,
       count: 25,
       lastExportedAt: null,
+    });
+    vi.mocked(useExportReminder).mockReturnValue({
+      shouldShow: true,
+      count: 25,
+      lastExportedAt: null,
+      snooze3Days: vi.fn(),
+      snooze30Days: vi.fn(),
+      formatLastExportedShort: () => 'you started',
     });
     render(
       <AppShell>
