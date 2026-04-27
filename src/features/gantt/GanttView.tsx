@@ -26,6 +26,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDerivedSchedule } from './useDerivedSchedule';
 import { createTimeScale, type TimeScale } from './timeScale';
 import { lifecyclePalette } from './lifecyclePalette';
+import { LifecycleLegend } from './LifecycleLegend';
 import { EmptyGanttState } from './EmptyGanttState';
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
 import { usePlanStore } from '../../stores/planStore';
@@ -176,6 +177,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
 
   return (
     <div className="bg-white border border-stone-200 rounded">
+      <LifecycleLegend />
       <div className="flex">
         {/* Left label column — outside the scrollable SVG per UI-SPEC §Min plot width.
             Phase 4 D-04: at <640px viewport, position:sticky left:0 z-10 with width
