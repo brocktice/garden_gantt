@@ -70,12 +70,17 @@ export function ToastHost() {
 
   // Pitfall 5: when pastStates shrinks below a toast's mount-time count, undo
   // happened from another path — drop the toast so the user can't double-undo.
+  // WR-12 (REVIEW Phase 4): a single undo previously dismissed ALL stacked
+  // toasts whose mountTimePastStatesCount was higher than the new count
+  // (e.g. clear-completed + delete + edit toasts all dropped on one Cmd-Z).
+  // Per-undo correlation: only dismiss the most recent toast whose
+  // mount-time count is exactly pastStatesCount + 1 (the one whose action
+  // just got undone).
   useEffect(() => {
-    for (const t of toasts) {
-      if (pastStatesCount < t.mountTimePastStatesCount) {
-        dismiss(t.id);
-      }
-    }
+    const target = [...toasts]
+      .reverse()
+      .find((t) => t.mountTimePastStatesCount === pastStatesCount + 1);
+    if (target) dismiss(target.id);
   }, [pastStatesCount, toasts, dismiss]);
 
   return (
