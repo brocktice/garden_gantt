@@ -4,7 +4,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router';
 import { App } from './app/App';
-import { probeStorage, withStorageDOMEvents } from './data/storage';
+import { probeStorage, watchQuotaExceeded, withStorageDOMEvents } from './data/storage';
 import { useCatalogStore } from './stores/catalogStore';
 import { usePlanStore } from './stores/planStore';
 import { useUIStore } from './stores/uiStore';
@@ -14,11 +14,16 @@ import './index.css';
 const isStorageAvailable = probeStorage();
 useUIStore.getState().setStorageAvailable(isStorageAvailable);
 
-// 2. Wire multi-tab `storage` event listener (D-15 / DATA-06) for BOTH persist stores.
-//    Phase 2 adds catalogStore alongside planStore so customPlants + permapeopleCache
-//    sync across tabs.
+// 1a. Watch for QuotaExceededError on subsequent writes (D-10 storage-full banner).
+//     Mirrors the failure into uiStore.isStorageFull so the banner can render.
+watchQuotaExceeded(() => useUIStore.getState().setStorageFull(true));
+
+// 2. Wire multi-tab `storage` event listener (D-15 / DATA-06) for ALL persist stores.
+//    Phase 4 adds uiStore alongside planStore + catalogStore so onboarding +
+//    exportReminder slices sync across tabs.
 withStorageDOMEvents(usePlanStore);
 withStorageDOMEvents(useCatalogStore);
+withStorageDOMEvents(useUIStore);
 
 // 3. Render hash-router shell.
 createRoot(document.getElementById('root')!).render(
