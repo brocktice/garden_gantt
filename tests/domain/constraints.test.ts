@@ -78,31 +78,24 @@ describe('noTransplantBeforeLastFrostForTender (SCH-04)', () => {
 // Phase 3 GANTT-05: harden-off must precede transplant by daysToHardenOff.
 // Source: [CITED: .planning/phases/03-drag-cascade-calendar-tasks/03-01-PLAN.md Task 2 (B.1)]
 describe('hardenOffMustPrecedeTransplant (Phase 3 GANTT-05)', () => {
-  // Make a plan with the planting registered so the rule can find indoorAnchor.
-  const planWithTomato: GardenPlan = {
-    ...plan,
-    plantings: [{ id: 'p-tomato', plantId: 'tomato', successionIndex: 0 }],
-  };
-
-  it('clamps transplant forward when candidate squeezes harden-off before indoor anchor', () => {
-    // tomato indoorStart = lastFrost (2026-04-15) - 6w = 2026-03-04
-    // daysToHardenOff = 7
-    // If user drags transplant to 2026-03-08, harden-off would need to start
-    //   2026-03-08 - 1 - 7 = 2026-02-29 (= 2026-03-01 in non-leap), before indoor anchor.
-    // Rule clamps to indoorAnchor + hardenDays + 1 = 2026-03-04 + 8d = 2026-03-12.
-    const tomato = sampleCatalog.get('tomato')!;
-    const event = transplantEvent('p-tomato', 'tomato', '2026-03-08T12:00:00.000Z');
-    const result = canMove(event, '2026-03-08T12:00:00.000Z', planWithTomato, tomato);
+  it('clamps transplant forward when candidate squeezes harden-off before indoor anchor (half-hardy plant)', () => {
+    // broccoli requiresHardening=true, frostTolerance=half-hardy (so the tender rule
+    // does NOT fire); daysToHardenOff=7, weeksIndoorBeforeLastFrost=5.
+    // indoorStart = lastFrost (2026-04-15) - 5w = 2026-03-11
+    // If user drags transplant to 2026-03-15, harden-off span = 2026-03-07..2026-03-14,
+    //   which starts before indoorAnchor 2026-03-11.
+    // Rule clamps to indoorAnchor + hardenDays + 1 = 2026-03-11 + 8d = 2026-03-19.
+    const broccoli = sampleCatalog.get('broccoli')!;
+    const planWithBroccoli: GardenPlan = {
+      ...plan,
+      plantings: [{ id: 'p-broccoli', plantId: 'broccoli', successionIndex: 0 }],
+    };
+    const event = transplantEvent('p-broccoli', 'broccoli', '2026-03-15T12:00:00.000Z');
+    const result = canMove(event, '2026-03-15T12:00:00.000Z', planWithBroccoli, broccoli);
     expect(result.ok).toBe(true);
-    // Tender clamp also fires (tomato is tender, 2026-03-08 < 2026-04-15) → final clamp
-    // is governed by composition; the harden-off rule fires alongside the tender rule.
-    // Both clamp forward; the later rule's date (last frost 2026-04-15) wins as the
-    // composed result because rules accumulate and tender's clamp output is later.
-    // We simply verify the result is clamped and >= indoorAnchor + hardenDays + 1 = 2026-03-12.
     expect('clamped' in result && result.clamped).toBe(true);
     if ('clamped' in result && result.clamped) {
-      expect(result.finalDate >= '2026-03-12T12:00:00.000Z').toBe(true);
-      // Confirm at least one reason references harden-off.
+      expect(result.finalDate).toBe('2026-03-19T12:00:00.000Z');
       const hasHardenReason = result.reasons.some((r) => r.includes('Harden-off'));
       expect(hasHardenReason).toBe(true);
     }
