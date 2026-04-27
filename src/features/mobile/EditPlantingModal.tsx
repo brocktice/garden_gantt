@@ -23,7 +23,8 @@ import {
 } from '../../ui/Dialog';
 import { Button } from '../../ui/Button';
 import { Switch } from '../../ui/Switch';
-import { usePlanStore } from '../../stores/planStore';
+import { pushToast } from '../../ui/toast/useToast';
+import { usePlanStore, getTemporal } from '../../stores/planStore';
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
 import { useDerivedSchedule } from '../gantt/useDerivedSchedule';
 import { canMove } from '../../domain/constraints';
@@ -114,6 +115,16 @@ export function EditPlantingModal({
   }
 
   const handleSave = () => {
+    // WR-01 (REVIEW Phase 4): short-circuit no-op saves so opening the modal
+    // and tapping Save (the natural way to dismiss on mobile) does not inflate
+    // dirtySinceExport or churn the plan.edits[] log with a redundant entry.
+    const startChanged = startYMD !== initialStartYMD;
+    const endChanged =
+      eventType === 'harvest-window' && endYMD !== initialEndYMD;
+    if (!startChanged && !endChanged) {
+      onOpenChange(false);
+      return;
+    }
     const edit: ScheduleEdit = {
       plantingId,
       eventType,
@@ -129,7 +140,22 @@ export function EditPlantingModal({
   };
 
   const handleDelete = () => {
+    // WR-02 (REVIEW Phase 4): mobile delete now pushes toast-with-undo
+    // matching D-09 (reversible destructive ops) and the desktop pattern.
+    // Mis-taps on a phone are likely; the Undo action calls
+    // getTemporal().undo() to restore the planting.
     removePlanting(plantingId);
+    pushToast({
+      variant: 'success',
+      duration: 5000,
+      title: `Deleted ${plant.name}.`,
+      action: {
+        label: 'Undo',
+        onClick: () => {
+          getTemporal().undo();
+        },
+      },
+    });
     onDelete?.();
     onOpenChange(false);
   };
