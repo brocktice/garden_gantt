@@ -37,6 +37,10 @@ export interface CustomPlantModalProps {
   editingPlant: Plant | null;
 }
 
+// Numeric fields are `number | null` so the user can clear them while typing
+// (controlled-input + `Number('')` returning 0 made backspace impossible — #2026-04-26).
+// `null` represents "currently empty"; submit-time validation enforces required fields
+// and falls back to safe defaults for optional ones.
 interface FormState {
   name: string;
   scientificName: string;
@@ -44,13 +48,19 @@ interface FormState {
   frostTolerance: 'tender' | 'half-hardy' | 'hardy';
   season: 'cool' | 'warm';
   startMethod: 'direct-sow' | 'indoor-start' | 'either';
-  weeksIndoorBeforeLastFrost: number;
-  transplantOffsetDaysFromLastFrost: number;
-  daysToGermination: number;
-  daysToMaturity: number;
-  harvestWindowDays: number;
+  weeksIndoorBeforeLastFrost: number | null;
+  transplantOffsetDaysFromLastFrost: number | null;
+  daysToGermination: number | null;
+  daysToMaturity: number | null;
+  harvestWindowDays: number | null;
   successionIntervalDays: number | null;
   description: string;
+}
+
+function parseNumInput(v: string): number | null {
+  if (v === '' || v === '-') return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
 }
 
 type EnrichState =
@@ -196,13 +206,19 @@ function CustomPlantModalInner({
 
   const buildPlant = (): Plant => {
     const id = isEdit && editingPlant ? editingPlant.id : kebabCase(form.name);
+    // Submit-time fallbacks for optional numeric fields when user cleared them.
+    const weeks = form.weeksIndoorBeforeLastFrost ?? 0;
+    const tOff = form.transplantOffsetDaysFromLastFrost ?? 0;
+    const germ = form.daysToGermination ?? 7;
+    const dtm = form.daysToMaturity ?? 60; // gated by validation; this is a safety floor
+    const hwin = form.harvestWindowDays ?? 14;
     const timing: PlantTiming = {
       startMethod: form.startMethod,
-      weeksIndoorBeforeLastFrost: form.weeksIndoorBeforeLastFrost,
-      transplantOffsetDaysFromLastFrost: form.transplantOffsetDaysFromLastFrost,
-      daysToGermination: [form.daysToGermination, form.daysToGermination + 3],
-      daysToMaturity: form.daysToMaturity,
-      harvestWindowDays: form.harvestWindowDays,
+      weeksIndoorBeforeLastFrost: weeks,
+      transplantOffsetDaysFromLastFrost: tOff,
+      daysToGermination: [germ, germ + 3],
+      daysToMaturity: dtm,
+      harvestWindowDays: hwin,
       frostTolerance: form.frostTolerance,
       hasFlowering: false,
       requiresHardening: form.startMethod === 'indoor-start',
@@ -238,7 +254,7 @@ function CustomPlantModalInner({
     // Inline validation
     const fieldErrors: Record<string, string> = {};
     if (!form.name.trim()) fieldErrors.name = 'Plant name is required.';
-    if (form.daysToMaturity < 1)
+    if (form.daysToMaturity === null || form.daysToMaturity < 1)
       fieldErrors.daysToMaturity = 'Days to maturity must be at least 1.';
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
@@ -265,7 +281,10 @@ function CustomPlantModalInner({
     onOpenChange(false);
   };
 
-  const saveDisabled = !form.name.trim() || form.daysToMaturity < 1;
+  const saveDisabled =
+    !form.name.trim() ||
+    form.daysToMaturity === null ||
+    form.daysToMaturity < 1;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -455,11 +474,11 @@ function CustomPlantModalInner({
                 type="number"
                 min={0}
                 max={16}
-                value={form.weeksIndoorBeforeLastFrost}
+                value={form.weeksIndoorBeforeLastFrost ?? ''}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    weeksIndoorBeforeLastFrost: Number(e.target.value),
+                    weeksIndoorBeforeLastFrost: parseNumInput(e.target.value),
                   })
                 }
               />
@@ -477,11 +496,13 @@ function CustomPlantModalInner({
                 type="number"
                 min={-30}
                 max={30}
-                value={form.transplantOffsetDaysFromLastFrost}
+                value={form.transplantOffsetDaysFromLastFrost ?? ''}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    transplantOffsetDaysFromLastFrost: Number(e.target.value),
+                    transplantOffsetDaysFromLastFrost: parseNumInput(
+                      e.target.value,
+                    ),
                   })
                 }
               />
@@ -496,11 +517,11 @@ function CustomPlantModalInner({
                 id="cp-germ"
                 type="number"
                 min={1}
-                value={form.daysToGermination}
+                value={form.daysToGermination ?? ''}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    daysToGermination: Number(e.target.value),
+                    daysToGermination: parseNumInput(e.target.value),
                   })
                 }
               />
@@ -518,9 +539,12 @@ function CustomPlantModalInner({
                 type="number"
                 min={1}
                 aria-required="true"
-                value={form.daysToMaturity}
+                value={form.daysToMaturity ?? ''}
                 onChange={(e) =>
-                  setForm({ ...form, daysToMaturity: Number(e.target.value) })
+                  setForm({
+                    ...form,
+                    daysToMaturity: parseNumInput(e.target.value),
+                  })
                 }
               />
               <p className="mt-1 text-sm text-stone-600">
@@ -539,11 +563,11 @@ function CustomPlantModalInner({
                 id="cp-hwin"
                 type="number"
                 min={1}
-                value={form.harvestWindowDays}
+                value={form.harvestWindowDays ?? ''}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    harvestWindowDays: Number(e.target.value),
+                    harvestWindowDays: parseNumInput(e.target.value),
                   })
                 }
               />

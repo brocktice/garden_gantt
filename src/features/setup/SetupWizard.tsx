@@ -9,7 +9,7 @@
 //          src/features/setup/SetupWizard.tsx (NEW)]
 //         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-08-PLAN.md Task 2 Step 3]
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Button } from '../../ui/Button';
 import { SetupStepLocation } from './SetupStepLocation';
@@ -47,6 +47,17 @@ export function SetupWizard() {
   // to the store until the user clicks Next (avoids redundant store writes on every keystroke).
   const [locationValid, setLocationValid] = useState(false);
   const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
+
+  // Memoize callbacks passed to SetupStepLocation — its useEffect deps include these,
+  // so non-stable refs trigger an infinite render loop (effect → setState → rerender →
+  // new fn refs → effect → ...).
+  const handleValidLocation = useCallback((loc: Location) => {
+    setPendingLocation(loc);
+    setLocationValid(true);
+  }, []);
+  const handleLocationInvalid = useCallback(() => {
+    setLocationValid(false);
+  }, []);
 
   const handleNext = () => {
     if (step === 1) {
@@ -121,13 +132,8 @@ export function SetupWizard() {
       <div className="min-h-[400px]">
         {step === 1 && (
           <SetupStepLocation
-            onValidLocation={(loc) => {
-              setPendingLocation(loc);
-              setLocationValid(true);
-            }}
-            onLocationInvalid={() => {
-              setLocationValid(false);
-            }}
+            onValidLocation={handleValidLocation}
+            onLocationInvalid={handleLocationInvalid}
           />
         )}
         {step === 2 && <SetupStepPlants />}
