@@ -5,7 +5,7 @@
 // rendering is its own test surface.
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, cleanup, screen } from '@testing-library/react';
+import { render, cleanup } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router';
 import CalendarView from '../../../src/features/calendar/CalendarView';
 import { usePlanStore } from '../../../src/stores/planStore';
