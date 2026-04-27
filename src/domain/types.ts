@@ -66,6 +66,13 @@ export interface PlantProvenance {
   license?: string;
   /** Free-form note when verified=false (e.g., reason it's pending). */
   note?: string;
+  /** Names of PlantTiming fields this source directly backs (verifies).
+   *  Used by the import orchestrator to merge field-level data across
+   *  sources — e.g. Cornell verifies start-method + frost-window offsets;
+   *  UMaine verifies weeksIndoorBeforeLastFrost + daysToGermination; USU
+   *  verifies daysToMaturity. A Plant can become verified=true once every
+   *  critical field is covered by at least one source. */
+  verifiedFields?: readonly string[];
 }
 
 export interface Plant {

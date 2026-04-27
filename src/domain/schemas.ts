@@ -55,6 +55,7 @@ export const PlantProvenanceSchema = z.object({
   page: z.union([z.string(), z.number()]).optional(),
   license: z.string().optional(),
   note: z.string().optional(),
+  verifiedFields: z.array(z.string()).readonly().optional(),
 });
 
 export const PlantSchema = z.object({
