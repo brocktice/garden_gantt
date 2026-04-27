@@ -114,9 +114,11 @@ export function ConstraintTooltip() {
       return;
     }
     const compute = () => {
-      const el = document.querySelector(
-        `[data-event-id="${stickyViolation.eventId}"]`,
-      );
+      // WR-03 (REVIEW Phase 4): escape the event id for CSS attribute selector
+      // safety. Future composite ids (succession/recurrence suffixes) may carry
+      // characters that throw SyntaxError from querySelector.
+      const sel = `[data-event-id="${CSS.escape(stickyViolation.eventId)}"]`;
+      const el = document.querySelector(sel);
       if (!el) {
         setAnchorPos(null);
         return;

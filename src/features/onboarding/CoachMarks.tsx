@@ -52,9 +52,9 @@ export function CoachMarks() {
       return;
     }
     const compute = () => {
-      const el = document.querySelector(
-        `[data-coach-target="${currentMark.id}"]`,
-      );
+      // WR-03 (REVIEW Phase 4): escape attribute value for CSS selector safety.
+      const sel = `[data-coach-target="${CSS.escape(currentMark.id)}"]`;
+      const el = document.querySelector(sel);
       if (!el) {
         setAnchorPos({ left: 16, top: 80 });
         return;
