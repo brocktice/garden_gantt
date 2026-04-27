@@ -9,7 +9,7 @@
 //          src/features/setup/SetupStepLocation.tsx (NEW)]
 //         [CITED: .planning/phases/02-data-layer-first-end-to-end/02-08-PLAN.md Task 1]
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ZipInput } from './ZipInput';
 import { useLookupLocation } from './lookupLocation';
@@ -134,6 +134,20 @@ export function SetupStepLocation({
     return undefined;
   }, [manualLast, manualFirst]);
 
+  // WR-08 (REVIEW Phase 4): ref-stabilize the callback props so the validation
+  // effect never re-runs solely because the parent passed a fresh inline arrow.
+  // Without this, an inline `onValidLocation={(l) => setLoc(l)}` in any future
+  // caller would create a re-entry storm: effect dispatches → parent re-renders
+  // → new inline callback → effect re-runs.
+  const onValidRef = useRef(onValidLocation);
+  const onInvalidRef = useRef(onLocationInvalid);
+  useEffect(() => {
+    onValidRef.current = onValidLocation;
+  }, [onValidLocation]);
+  useEffect(() => {
+    onInvalidRef.current = onLocationInvalid;
+  }, [onLocationInvalid]);
+
   useEffect(() => {
     // Path A: lookup ok and no override — synthesize from lookup directly.
     if (
@@ -142,7 +156,7 @@ export function SetupStepLocation({
       !overrides.lastFrostDate &&
       !overrides.firstFrostDate
     ) {
-      onValidLocation({
+      onValidRef.current({
         zip,
         zone: lookup.zone,
         lastFrostDate: lookup.lastFrostDate,
@@ -186,7 +200,7 @@ export function SetupStepLocation({
     const zipOk = /^\d{5}$/.test(zip);
 
     if (!zipOk || !zoneOk || !lastOk || !firstOk || !orderOk) {
-      onLocationInvalid();
+      onInvalidRef.current();
       // Suppress unused-var warnings on intermediate values used only for branching.
       void zoneVal;
       void lastVal;
@@ -197,7 +211,7 @@ export function SetupStepLocation({
     const lastIso = ymdToISONoon(effectiveLast);
     const firstIso = ymdToISONoon(effectiveFirst);
     if (!ISO_NOON_RE.test(lastIso) || !ISO_NOON_RE.test(firstIso)) {
-      onLocationInvalid();
+      onInvalidRef.current();
       return;
     }
 
@@ -220,17 +234,10 @@ export function SetupStepLocation({
     if (lookup.status === 'ok') {
       result.lookupTimestamp = nowISOString();
     }
-    onValidLocation(result);
-  }, [
-    zip,
-    lookup,
-    overrides,
-    manualZone,
-    manualLast,
-    manualFirst,
-    onValidLocation,
-    onLocationInvalid,
-  ]);
+    onValidRef.current(result);
+    // WR-08: callback deps deliberately excluded — they are read via refs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zip, lookup, overrides, manualZone, manualLast, manualFirst]);
 
   const showSamplePlanLink = plan === null;
 
