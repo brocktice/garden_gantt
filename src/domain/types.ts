@@ -81,6 +81,11 @@ export interface Planting {
   // `successionIndex * successionIntervalDays` so each succession row plants on a distinct
   // calendar date. Default 0 keeps Phase 1 snapshots byte-identical.
   startOffsetDays?: number;
+  // Phase 3 (D-13): per-event-type lock map. Locked events held fixed during cascade reflow.
+  // Keys are EventType strings; missing key === unlocked. Persisted via planStore; tracked
+  // by zundo (Plan 03-02). Consumed by drag UI (Plan 03-03) which prevents NEW edits to
+  // locked events, and by cascade preview (useTransientSchedule).
+  locks?: Partial<Record<EventType, boolean>>;
 }
 
 // 6 lifecycle event types from D-11 + 3 task event types from D-12.
@@ -152,7 +157,7 @@ export interface CustomTask extends Omit<Task, 'source' | 'plantingId'> {
 }
 
 export interface GardenPlan {
-  schemaVersion: 2;
+  schemaVersion: 3;
   id: string;
   name: string;
   createdAt: string;
@@ -160,8 +165,13 @@ export interface GardenPlan {
   location: Location;
   customPlants: Plant[];
   plantings: Planting[];
+  // Phase 3 (D-36): completedTaskIds keys are either a bare taskId (one-off, global completion)
+  // OR `${taskId}:${YYYY-MM-DD}` (per-occurrence completion for recurring tasks).
+  // No type change required — both are strings; consumers branch on presence of ':' separator.
   customTasks: CustomTask[];
   edits: ScheduleEdit[];
+  // Phase 3 (D-36): Track per-task or per-occurrence completion. See note above for key format.
+  completedTaskIds: string[];
   settings: {
     units: 'imperial' | 'metric';
     weekStartsOn: 0 | 1;

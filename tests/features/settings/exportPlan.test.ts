@@ -66,8 +66,8 @@ describe('exportPlan', () => {
     const text = await (capturedBlob as unknown as Blob).text();
     const parsed = JSON.parse(text);
     expect(parsed.app).toBe('garden-gantt');
-    expect(parsed.version).toBe('0.2');
-    expect(parsed.schemaVersion).toBe(2);
+    expect(parsed.version).toBe('0.3');
+    expect(parsed.schemaVersion).toBe(3);
     expect(typeof parsed.exportedAt).toBe('string');
     expect(parsed.plan).toBeTruthy();
     expect(parsed.plan.id).toBe(samplePlan.id);

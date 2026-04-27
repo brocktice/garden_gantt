@@ -8,7 +8,7 @@
 // DO NOT duplicate v1->v2 migration logic here — the only call site is migrateToCurrent.
 
 import { ExportEnvelopeSchema, GardenPlanSchema } from '../../domain/schemas';
-import { migrateToCurrent } from '../../domain/migrations';
+import { migrateToCurrent, CURRENT_SCHEMA_VERSION } from '../../domain/migrations';
 import type { GardenPlan } from '../../domain/types';
 
 export type ImportResult =
@@ -28,8 +28,6 @@ export type ImportResult =
       reason: 'invalid-json' | 'invalid-schema' | 'newer-version';
       detail?: string;
     };
-
-const CURRENT_SCHEMA_VERSION = 2;
 
 export async function parseImportFile(file: File): Promise<ImportResult> {
   const text = await file.text();
@@ -63,12 +61,12 @@ export async function parseImportFile(file: File): Promise<ImportResult> {
       : { ok: false, reason: 'invalid-schema' };
   }
 
-  // Apply migration when schemaVersion === 1.
+  // Apply migration when envelope.schemaVersion < CURRENT_SCHEMA_VERSION (chains v1→v3).
   // migrateToCurrent expects the persist-state shape `{ plan: ... }`; wrap then unwrap.
   let planObj: unknown = env.data.plan;
-  const needsMigration = env.data.schemaVersion === 1;
+  const needsMigration = env.data.schemaVersion < CURRENT_SCHEMA_VERSION;
   if (needsMigration) {
-    const wrapped = migrateToCurrent({ plan: planObj }, 1);
+    const wrapped = migrateToCurrent({ plan: planObj }, env.data.schemaVersion);
     planObj = (wrapped as { plan?: unknown }).plan;
   }
 

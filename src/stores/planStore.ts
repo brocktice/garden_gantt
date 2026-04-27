@@ -42,7 +42,7 @@ const SCHEMA_VERSION = CURRENT_SCHEMA_VERSION;
 function createEmptyPlan(location: Location): GardenPlan {
   const now = nowISOString();
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     id: 'plan-1',
     name: 'My Garden',
     createdAt: now,
@@ -52,6 +52,7 @@ function createEmptyPlan(location: Location): GardenPlan {
     plantings: [],
     customTasks: [],
     edits: [],
+    completedTaskIds: [],
     settings: {
       units: 'imperial',
       weekStartsOn: 0,

@@ -1,19 +1,42 @@
 // src/domain/scheduler.ts
 // The product. Pure entry point per SCH-02.
 // Source: [CITED: .planning/phases/01-foundation-schedule-engine/01-RESEARCH.md §Pattern 1, §System Architecture Diagram]
+//         [CITED: .planning/phases/03-drag-cascade-calendar-tasks/03-01-PLAN.md Task 2 (A) — edit consumption]
 //
 // Algorithm:
 //   For each Planting → resolve Plant from catalog → compute base anchors from
-//   plant.timing + plan.location.lastFrostDate → emit lifecycle events → apply
-//   constraints (SCH-04 transplant clamp) → append auto-task events → sort.
+//   plant.timing + plan.location.lastFrostDate → apply plan.edits[] overrides per
+//   (plantingId, eventType) → apply constraints (SCH-04 + Phase 3 rules) → emit lifecycle
+//   events → emit auto-task events (which read from anchors that already incorporate edits
+//   + clamps) → sort.
 //
 // Purity: zero React/Zustand/I/O; date math via dateWrappers only.
 
-import type { GardenPlan, Plant, Planting, ScheduleEvent } from './types';
+import type { EventType, GardenPlan, Plant, Planting, ScheduleEdit, ScheduleEvent } from './types';
 import { parseDate, addDays, subDays, toISODate } from './dateWrappers';
 import { eventId } from './ids';
 import { canMove } from './constraints';
 import { emitTaskEvents, type PlantingAnchors } from './taskEmitter';
+
+/**
+ * Last-write-wins lookup for an edit on (plantingId, eventType).
+ * Phase 3 GANTT-07: drag commits append to plan.edits[]; the most recent edit (last in
+ * array order) wins for a given (plantingId, eventType) pair. Scan from the end so a
+ * fresh user-drag overrides any prior form-edit on the same field. When an edit is
+ * found, the emitted ScheduleEvent gets `edited: true` so UI can render the
+ * "user-edited" affordance (badge, color tweak, restore-to-default action).
+ */
+function findEdit(
+  plan: GardenPlan,
+  plantingId: string,
+  eventType: EventType,
+): ScheduleEdit | undefined {
+  for (let i = plan.edits.length - 1; i >= 0; i--) {
+    const e = plan.edits[i];
+    if (e && e.plantingId === plantingId && e.eventType === eventType) return e;
+  }
+  return undefined;
+}
 
 function eventsForPlanting(
   planting: Planting,
@@ -38,20 +61,63 @@ function eventsForPlanting(
   if (t.startMethod === 'indoor-start') {
     // weeksIndoorBeforeLastFrost is required for indoor-start plants in our Phase 1 catalog
     const weeks = t.weeksIndoorBeforeLastFrost ?? 6;
-    const indoorStart = subDays(lastFrost, weeks * 7);
-    const transplant = addDays(lastFrost, t.transplantOffsetDaysFromLastFrost ?? 0);
+    const computedIndoorStart = subDays(lastFrost, weeks * 7);
+    const computedTransplant = addDays(lastFrost, t.transplantOffsetDaysFromLastFrost ?? 0);
     const daysToHardenOff = t.daysToHardenOff ?? 7;
-    const hardenOffEnd = subDays(transplant, 1);
-    const hardenOffStart = subDays(transplant, daysToHardenOff);
-    const germStart = indoorStart;
-    const germEnd = addDays(indoorStart, germWindow);
-    const harvestStart = addDays(transplant, t.daysToMaturity);
-    const harvestEnd = addDays(harvestStart, t.harvestWindowDays);
 
-    anchors.indoorStart = toISODate(indoorStart);
+    // Phase 3 GANTT-07: consume plan.edits[] BEFORE downstream cascade math so harvest +
+    // tasks (water-seedlings end-day, fertilize-at-flowering, harden-off range) all
+    // reflow off the EDITED anchor.
+    const indoorEdit = findEdit(plan, planting.id, 'indoor-start');
+    const transplantEdit = findEdit(plan, planting.id, 'transplant');
+
+    const indoorStartISO = indoorEdit
+      ? indoorEdit.startOverride
+      : toISODate(computedIndoorStart);
+    let transplantISO = transplantEdit
+      ? transplantEdit.startOverride
+      : toISODate(computedTransplant);
+
+    // Constraint pipeline runs on the EDITED candidate (or computed if no edit) so user
+    // can't drag a tender transplant before last frost via an edit either.
+    const transplantCandidate: ScheduleEvent = {
+      id: eventId(planting.id, 'transplant'),
+      plantingId: planting.id,
+      plantId: plant.id,
+      type: 'transplant',
+      start: transplantISO,
+      end: transplantISO,
+      edited: transplantEdit !== undefined,
+      constraintsApplied: [],
+    };
+    const result = canMove(transplantCandidate, transplantISO, plan, plant);
+    let transplantConstraints: string[] = [];
+    if ('clamped' in result && result.clamped) {
+      transplantISO = result.finalDate;
+      // Build constraintsApplied from the rule reasons. Each rule contributes one entry.
+      // For Phase 1 + Phase 3 we record rule names by inspection of reasons so ordering
+      // is preserved without a structural rule registry change.
+      transplantConstraints = result.reasons.map((reason) => {
+        if (reason.includes('Tender plant')) return 'noTransplantBeforeLastFrostForTender';
+        if (reason.includes('Harden-off must precede')) return 'hardenOffMustPrecedeTransplant';
+        return 'unknown';
+      });
+    }
+
+    // Recompute downstream anchors from the (post-edit, post-clamp) transplant.
+    const transplantPost = parseDate(transplantISO);
+    const harvestStart = addDays(transplantPost, t.daysToMaturity);
+    const harvestEnd = addDays(harvestStart, t.harvestWindowDays);
+    const hardenOffEnd = subDays(transplantPost, 1);
+    const hardenOffStart = subDays(transplantPost, daysToHardenOff);
+    const indoorStartDate = parseDate(indoorStartISO);
+    const germStart = indoorStartDate;
+    const germEnd = addDays(indoorStartDate, germWindow);
+
+    anchors.indoorStart = indoorStartISO;
     anchors.germStart = toISODate(germStart);
     anchors.germEnd = toISODate(germEnd);
-    anchors.transplant = toISODate(transplant);
+    anchors.transplant = transplantISO;
     anchors.harvestStart = toISODate(harvestStart);
     anchors.harvestEnd = toISODate(harvestEnd);
 
@@ -68,7 +134,7 @@ function eventsForPlanting(
       type: 'indoor-start',
       start: anchors.indoorStart,
       end: anchors.indoorStart,
-      edited: false,
+      edited: indoorEdit !== undefined,
       constraintsApplied: [],
     });
     out.push({
@@ -82,61 +148,60 @@ function eventsForPlanting(
       constraintsApplied: [],
     });
     if (t.requiresHardening && anchors.hardenOffStart && anchors.hardenOffEnd) {
+      const hardenOffEdit = findEdit(plan, planting.id, 'harden-off');
       out.push({
         id: eventId(planting.id, 'harden-off'),
         plantingId: planting.id,
         plantId: plant.id,
         type: 'harden-off',
-        start: anchors.hardenOffStart,
-        end: anchors.hardenOffEnd,
-        edited: false,
+        start: hardenOffEdit ? hardenOffEdit.startOverride : anchors.hardenOffStart,
+        end: hardenOffEdit
+          ? hardenOffEdit.endOverride ?? hardenOffEdit.startOverride
+          : anchors.hardenOffEnd,
+        edited: hardenOffEdit !== undefined,
         constraintsApplied: [],
       });
     }
-    // Build candidate transplant event, then apply constraints (SCH-04)
-    const transplantCandidate: ScheduleEvent = {
-      id: eventId(planting.id, 'transplant'),
-      plantingId: planting.id,
-      plantId: plant.id,
-      type: 'transplant',
-      start: anchors.transplant,
-      end: anchors.transplant,
-      edited: false,
-      constraintsApplied: [],
-    };
-    const result = canMove(transplantCandidate, transplantCandidate.start, plan, plant);
-    if ('clamped' in result && result.clamped) {
-      // Update both the event AND anchors.transplant so downstream task events use the clamped date
-      anchors.transplant = result.finalDate;
-      out.push({
-        ...transplantCandidate,
-        start: result.finalDate,
-        end: result.finalDate,
-        constraintsApplied: ['noTransplantBeforeLastFrostForTender'],
-      });
-    } else {
-      out.push(transplantCandidate);
-    }
-    // Harvest window
+    out.push({
+      ...transplantCandidate,
+      start: transplantISO,
+      end: transplantISO,
+      edited: transplantEdit !== undefined || transplantConstraints.length > 0,
+      constraintsApplied: transplantConstraints,
+    });
+
+    // Harvest window: respect direct harvest-window edit if present (last-write-wins),
+    // else use the cascade-derived dates. Either way the engine emits a harvest event.
+    const harvestEdit = findEdit(plan, planting.id, 'harvest-window');
+    const harvestStartISO = harvestEdit ? harvestEdit.startOverride : anchors.harvestStart;
+    const harvestEndISO = harvestEdit
+      ? harvestEdit.endOverride ?? harvestEdit.startOverride
+      : anchors.harvestEnd;
     out.push({
       id: eventId(planting.id, 'harvest-window'),
       plantingId: planting.id,
       plantId: plant.id,
       type: 'harvest-window',
-      start: anchors.harvestStart,
-      end: anchors.harvestEnd,
-      edited: false,
+      start: harvestStartISO,
+      end: harvestEndISO,
+      edited: harvestEdit !== undefined,
       constraintsApplied: [],
     });
   } else {
     // direct-sow OR either (treated as direct-sow)
-    const directSow = addDays(lastFrost, t.directSowOffsetDaysFromLastFrost ?? 0);
-    const germStart = directSow;
-    const germEnd = addDays(directSow, germWindow);
-    const harvestStart = addDays(directSow, t.daysToMaturity);
+    const computedDirectSow = addDays(lastFrost, t.directSowOffsetDaysFromLastFrost ?? 0);
+    const directSowEdit = findEdit(plan, planting.id, 'direct-sow');
+    const directSowISO = directSowEdit
+      ? directSowEdit.startOverride
+      : toISODate(computedDirectSow);
+
+    const directSowDate = parseDate(directSowISO);
+    const germStart = directSowDate;
+    const germEnd = addDays(directSowDate, germWindow);
+    const harvestStart = addDays(directSowDate, t.daysToMaturity);
     const harvestEnd = addDays(harvestStart, t.harvestWindowDays);
 
-    anchors.directSow = toISODate(directSow);
+    anchors.directSow = directSowISO;
     anchors.germStart = toISODate(germStart);
     anchors.germEnd = toISODate(germEnd);
     anchors.harvestStart = toISODate(harvestStart);
@@ -147,9 +212,9 @@ function eventsForPlanting(
       plantingId: planting.id,
       plantId: plant.id,
       type: 'direct-sow',
-      start: anchors.directSow,
-      end: anchors.directSow,
-      edited: false,
+      start: directSowISO,
+      end: directSowISO,
+      edited: directSowEdit !== undefined,
       constraintsApplied: [],
     });
     out.push({
@@ -162,19 +227,26 @@ function eventsForPlanting(
       edited: false,
       constraintsApplied: [],
     });
+
+    const harvestEdit = findEdit(plan, planting.id, 'harvest-window');
+    const harvestStartISO = harvestEdit ? harvestEdit.startOverride : anchors.harvestStart;
+    const harvestEndISO = harvestEdit
+      ? harvestEdit.endOverride ?? harvestEdit.startOverride
+      : anchors.harvestEnd;
     out.push({
       id: eventId(planting.id, 'harvest-window'),
       plantingId: planting.id,
       plantId: plant.id,
       type: 'harvest-window',
-      start: anchors.harvestStart,
-      end: anchors.harvestEnd,
-      edited: false,
+      start: harvestStartISO,
+      end: harvestEndISO,
+      edited: harvestEdit !== undefined,
       constraintsApplied: [],
     });
   }
 
-  // Auto-task events (D-12; gated on catalog flags)
+  // Auto-task events (D-12; gated on catalog flags). Reads from anchors that have already
+  // been updated for edits + constraint clamps, so projected tasks reflect the edited plan.
   out.push(...emitTaskEvents(planting.id, plant.id, plant, anchors));
 
   return out;
@@ -182,8 +254,8 @@ function eventsForPlanting(
 
 /**
  * Pure entry point. Phase 1 success criterion #1 + #2 depend on this.
- * For each planting in plan: resolve plant → compute anchors → apply constraints → emit tasks.
- * Returns a deterministic, sorted ScheduleEvent[].
+ * For each planting in plan: resolve plant → compute anchors → apply edits → apply constraints
+ * → emit tasks. Returns a deterministic, sorted ScheduleEvent[].
  */
 export function generateSchedule(
   plan: GardenPlan,

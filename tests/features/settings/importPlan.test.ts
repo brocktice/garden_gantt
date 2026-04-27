@@ -27,14 +27,14 @@ describe('parseImportFile', () => {
     if (!r.ok) expect(r.reason).toBe('invalid-schema');
   });
 
-  it('rejects schemaVersion outside the {1,2} union (newer-version OR invalid-schema)', async () => {
-    // ExportEnvelopeSchema accepts only 1|2; schemaVersion: 3 fails the union — surfaces
-    // as invalid-schema. The dedicated newer-version branch is reachable only if the schema
-    // were widened. Either result is an acceptable rejection.
+  it('rejects schemaVersion outside the {1,2,3} union (newer-version OR invalid-schema)', async () => {
+    // ExportEnvelopeSchema accepts 1|2|3 in Phase 3; schemaVersion: 4 fails the union.
+    // The dedicated newer-version pre-check fires for known-numeric-but-too-new versions
+    // before Zod runs. Either result is an acceptable rejection.
     const env = JSON.stringify({
       app: 'garden-gantt',
-      version: '0.3',
-      schemaVersion: 3,
+      version: '0.4',
+      schemaVersion: 4,
       exportedAt: 'x',
       plan: {},
     });
@@ -45,11 +45,11 @@ describe('parseImportFile', () => {
     }
   });
 
-  it('round-trip: a v2 envelope deep-equals the input plan after parse', async () => {
+  it('round-trip: a v3 envelope deep-equals the input plan after parse', async () => {
     const env = {
       app: 'garden-gantt',
-      version: '0.2',
-      schemaVersion: 2,
+      version: '0.3',
+      schemaVersion: 3,
       exportedAt: '2026-04-26T12:00:00.000Z',
       plan: samplePlan,
     };
@@ -65,7 +65,7 @@ describe('parseImportFile', () => {
     }
   });
 
-  it('v1 envelope migrates to v2 via shared migrateToCurrent (Pitfall E)', async () => {
+  it('v1 envelope migrates to v3 via shared migrateToCurrent (Pitfall E + Pitfall 10 chain)', async () => {
     // Build a v1-shaped plan: schemaVersion: 1, no location.overrides, no successionEnabled
     // on plantings. Wrap in v1 envelope.
     const v1Plan = {
@@ -105,14 +105,18 @@ describe('parseImportFile', () => {
     const r = await parseImportFile(makeFile(JSON.stringify(env)));
     expect(r.ok).toBe(true);
     if (r.ok) {
-      // v2 strict literal
-      expect(r.plan.schemaVersion).toBe(2);
-      // Migration adds overrides: {}
+      // v3 strict literal (chained v1→v2→v3)
+      expect(r.plan.schemaVersion).toBe(3);
+      // v2 migration step adds overrides: {}
       expect(r.plan.location.overrides).toEqual({});
-      // Migration sets successionEnabled: false on each planting
+      // v2 migration step sets successionEnabled: false on each planting
+      // v3 migration step defaults locks: {} on each planting
       for (const p of r.plan.plantings) {
         expect(p.successionEnabled).toBe(false);
+        expect(p.locks).toEqual({});
       }
+      // v3 migration step defaults completedTaskIds: []
+      expect(r.plan.completedTaskIds).toEqual([]);
       expect(r.meta.needsMigration).toBe(true);
     }
   });

@@ -14,7 +14,7 @@ import {
 import { samplePlan } from '../../src/samplePlan';
 
 describe('GardenPlanSchema — accepts the canonical sample plan', () => {
-  it('parses src/samplePlan.ts (schemaVersion: 2)', () => {
+  it('parses src/samplePlan.ts (schemaVersion: 3)', () => {
     const result = GardenPlanSchema.safeParse(samplePlan);
     expect(result.success).toBe(true);
   });
@@ -34,7 +34,12 @@ describe('GardenPlanSchema — accepts the canonical sample plan', () => {
 });
 
 describe('GardenPlanSchema — rejects invalid shapes', () => {
-  it('rejects schemaVersion: 1 (Phase 2 strict — v1 only enters via ExportEnvelope migration)', () => {
+  it('rejects schemaVersion: 2 (Phase 3 strict — v1/v2 only enter via ExportEnvelope migration)', () => {
+    const plan = { ...samplePlan, schemaVersion: 2 };
+    expect(GardenPlanSchema.safeParse(plan).success).toBe(false);
+  });
+
+  it('rejects schemaVersion: 1 (Phase 3 strict)', () => {
     const plan = { ...samplePlan, schemaVersion: 1 };
     expect(GardenPlanSchema.safeParse(plan).success).toBe(false);
   });
@@ -93,13 +98,24 @@ describe('GardenPlanSchema — rejects invalid shapes', () => {
 });
 
 describe('ExportEnvelopeSchema — versioned import wrapper (D-27)', () => {
-  it('parses a v2 envelope with a valid plan', () => {
+  it('parses a v3 envelope with a valid plan', () => {
+    const env = {
+      app: 'garden-gantt',
+      version: '0.3',
+      schemaVersion: 3,
+      exportedAt: '2026-04-26T17:00:00.000Z',
+      plan: samplePlan,
+    };
+    expect(ExportEnvelopeSchema.safeParse(env).success).toBe(true);
+  });
+
+  it('parses a v2 envelope (envelope OK; plan validated AFTER migration to v3)', () => {
     const env = {
       app: 'garden-gantt',
       version: '0.2',
       schemaVersion: 2,
       exportedAt: '2026-04-26T17:00:00.000Z',
-      plan: samplePlan,
+      plan: { schemaVersion: 2, anything: 'goes' },
     };
     expect(ExportEnvelopeSchema.safeParse(env).success).toBe(true);
   });
@@ -118,19 +134,19 @@ describe('ExportEnvelopeSchema — versioned import wrapper (D-27)', () => {
   it('rejects app: "wrong"', () => {
     const env = {
       app: 'wrong',
-      version: '0.2',
-      schemaVersion: 2,
+      version: '0.3',
+      schemaVersion: 3,
       exportedAt: '2026-04-26T17:00:00.000Z',
       plan: samplePlan,
     };
     expect(ExportEnvelopeSchema.safeParse(env).success).toBe(false);
   });
 
-  it('rejects schemaVersion: 3 (out of accepted range)', () => {
+  it('rejects schemaVersion: 4 (out of accepted range)', () => {
     const env = {
       app: 'garden-gantt',
-      version: '0.2',
-      schemaVersion: 3,
+      version: '0.4',
+      schemaVersion: 4,
       exportedAt: '2026-04-26T17:00:00.000Z',
       plan: samplePlan,
     };

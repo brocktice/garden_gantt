@@ -10,7 +10,7 @@ import type { GardenPlan } from './domain/types';
 import { plantingId } from './domain/ids';
 
 export const samplePlan: GardenPlan = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   id: 'sample-plan',
   name: '2026 Sample Garden',
   createdAt: '2026-01-01T12:00:00.000Z',
@@ -31,6 +31,7 @@ export const samplePlan: GardenPlan = {
   ],
   customTasks: [],
   edits: [],
+  completedTaskIds: [],
   settings: {
     units: 'imperial',
     weekStartsOn: 0,

@@ -86,10 +86,14 @@ export const PlantingSchema = z.object({
   // future feature stages succession backwards from the anchor.
   startOffsetDays: z.number().int().optional(),
   notes: z.string().optional(),
+  // Phase 3 (D-13): per-event-type lock map. Keys are EventType strings; full enum
+  // narrowing happens at the TypeScript layer — Zod stays permissive on the key
+  // surface to avoid coupling the schema to the EventType union.
+  locks: z.record(z.string(), z.boolean()).optional(),
 });
 
 export const GardenPlanSchema = z.object({
-  schemaVersion: z.literal(2), // Phase 2 strict — v1 only enters via ExportEnvelope migration
+  schemaVersion: z.literal(3), // Phase 3 strict — v1/v2 enter via ExportEnvelope migration chain
   id: z.string().min(1),
   name: z.string().min(1),
   createdAt: z.string(),
@@ -97,8 +101,10 @@ export const GardenPlanSchema = z.object({
   location: LocationSchema,
   customPlants: z.array(PlantSchema),
   plantings: z.array(PlantingSchema),
-  customTasks: z.array(z.unknown()), // Phase 3 will tighten
-  edits: z.array(z.unknown()), // Phase 3 will tighten
+  customTasks: z.array(z.unknown()), // Phase 4 polish will tighten (UI-SPEC §11)
+  edits: z.array(z.unknown()), // Phase 4 polish will tighten (UI-SPEC §11)
+  // Phase 3 (D-36): array of taskIds (one-off) or `${taskId}:${YYYY-MM-DD}` per-occurrence keys.
+  completedTaskIds: z.array(z.string()),
   settings: z.object({
     units: z.enum(['imperial', 'metric']),
     weekStartsOn: z.union([z.literal(0), z.literal(1)]),
@@ -106,15 +112,15 @@ export const GardenPlanSchema = z.object({
   }),
 });
 
-// Top-level export envelope (D-27). Accepts schemaVersion 1 or 2 — v1 triggers
-// migration before the inner plan is validated against GardenPlanSchema (v2-strict).
+// Top-level export envelope (D-27). Accepts schemaVersion 1, 2, or 3 — older versions
+// trigger migration before the inner plan is validated against GardenPlanSchema (v3-strict).
 export const ExportEnvelopeSchema = z.object({
   app: z.literal('garden-gantt'),
-  version: z.string(), // app semver, e.g. '0.2'
-  schemaVersion: z.union([z.literal(1), z.literal(2)]),
+  version: z.string(), // app semver, e.g. '0.3'
+  schemaVersion: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   exportedAt: z.string(),
-  plan: z.unknown(), // schema-versioned; validated AFTER migration in Plan 02-11
+  plan: z.unknown(), // schema-versioned; validated AFTER migration
 });
 
-export type GardenPlanV2 = z.infer<typeof GardenPlanSchema>;
+export type GardenPlanV3 = z.infer<typeof GardenPlanSchema>;
 export type ExportEnvelope = z.infer<typeof ExportEnvelopeSchema>;
