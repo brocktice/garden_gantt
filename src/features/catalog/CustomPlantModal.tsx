@@ -256,6 +256,18 @@ function CustomPlantModalInner({
     if (!form.name.trim()) fieldErrors.name = 'Plant name is required.';
     if (form.daysToMaturity === null || form.daysToMaturity < 1)
       fieldErrors.daysToMaturity = 'Days to maturity must be at least 1.';
+    // CR-02 (REVIEW Phase 4): collision check on custom-plant id derivation.
+    // kebabCase(name) can collide with curated catalog ids (e.g. typing "Tomato"
+    // produces id "tomato"). Without this check, upsertCustomPlant + selectMerged
+    // precedence (custom > curated) would silently mask the curated entry.
+    // Edit mode is exempt because the id is fixed to editingPlant.id.
+    if (!isEdit && form.name.trim()) {
+      const candidateId = kebabCase(form.name);
+      if (candidateId && merged.has(candidateId)) {
+        fieldErrors.name =
+          'A plant with this name already exists. Pick a different name.';
+      }
+    }
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
       return;

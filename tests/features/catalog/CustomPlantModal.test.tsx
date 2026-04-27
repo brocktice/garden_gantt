@@ -156,6 +156,32 @@ describe('CustomPlantModal', () => {
     expect(anySpinner).not.toBeNull();
   });
 
+  it('CR-02: rejects custom plant whose kebab-case id collides with a curated catalog id', async () => {
+    // The curated catalog contains common plant ids like "tomato", "lettuce".
+    // Typing "Tomato" as a NEW custom plant should surface an inline name error
+    // rather than silently overwriting the curated entry via upsertCustomPlant.
+    const user = userEvent.setup();
+    await renderModal();
+
+    const nameInput = screen.getByLabelText(/plant name/i);
+    await user.type(nameInput, 'Tomato');
+
+    const save = screen.getByRole('button', {
+      name: /save plant/i,
+    }) as HTMLButtonElement;
+    expect(save.disabled).toBe(false);
+
+    await user.click(save);
+
+    // Inline error appears on the name field; modal stays open and the
+    // upsert never fires (collision was rejected pre-build).
+    await waitFor(() =>
+      expect(
+        screen.getByText(/A plant with this name already exists/i),
+      ).toBeTruthy(),
+    );
+  });
+
   it('Enrich button remains clickable after error pill renders (retry path)', async () => {
     let calls = 0;
     vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
