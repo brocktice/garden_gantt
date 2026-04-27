@@ -5,11 +5,16 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { format, parseISO } from 'date-fns';
+import { UTCDate } from '@date-fns/utc';
 
-// Mock the underlying selector hook so we can drive banner state deterministically.
-const snooze3Mock = vi.fn();
-const snooze30Mock = vi.fn();
-const exportPlanMock = vi.fn(() => ({ ok: true as const, filename: 'test.json' }));
+// Mock module factories MUST be hoisted-safe: no top-level var refs inside the factory.
+// We use vi.hoisted to share mock fns between factory and tests.
+const { snooze3Mock, snooze30Mock, exportPlanMock } = vi.hoisted(() => ({
+  snooze3Mock: vi.fn(),
+  snooze30Mock: vi.fn(),
+  exportPlanMock: vi.fn(() => ({ ok: true as const, filename: 'test.json' })),
+}));
 
 vi.mock('../../../src/features/export-reminder/useExportReminder', () => ({
   useExportReminder: vi.fn(),
@@ -38,12 +43,8 @@ function setHookState(state: {
     snooze30Days: snooze30Mock,
     formatLastExportedShort: () =>
       state.lastExportedAt
-        ? // Match useExportReminder's real format helper; tests cover Apr 15 specifically.
-          new Date(state.lastExportedAt).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            timeZone: 'UTC',
-          })
+        ? // Match useExportReminder's real format helper (UTCDate-wrapped MMM d).
+          format(new UTCDate(parseISO(state.lastExportedAt)), 'MMM d')
         : 'you started',
   });
 }
