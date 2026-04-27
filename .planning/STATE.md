@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 4 context gathered
-last_updated: "2026-04-27T13:19:51.646Z"
-last_activity: 2026-04-27 -- Phase 04 execution started
+stopped_at: Phase 04 Plan 04 (onboarding) complete
+last_updated: "2026-04-27T13:53:00.000Z"
+last_activity: 2026-04-27 -- Phase 04 Plan 04 (onboarding coach marks) complete
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 35
-  completed_plans: 28
-  percent: 80
+  completed_plans: 32
+  percent: 91
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 04 (polish-mobile-ship) — EXECUTING
-Plan: 1 of 7
+Plan: 4 of 7 complete (Wave 2 plan 04-04 done; 04-06 + 04-07 remaining; 04-05 already complete)
 Status: Executing Phase 04
-Last activity: 2026-04-27 -- Phase 04 execution started
+Last activity: 2026-04-27 -- Phase 04 Plan 04 (onboarding coach marks) complete
 
 Progress: [██████████] 100%
 
@@ -65,6 +65,7 @@ Progress: [██████████] 100%
 | Phase 03-drag-cascade-calendar-tasks P05 | 12min | 3 tasks | 12 files |
 | Phase 03 P06 | 5min | 2 tasks | 7 files |
 | Phase 03-drag-cascade-calendar-tasks P07 | 7min | 2 tasks | 5 files |
+| Phase 04-polish-mobile-ship P04 | ~7min | 2 tasks | 11 files (5 created, 6 modified) |
 
 ## Accumulated Context
 
@@ -125,6 +126,11 @@ Recent decisions affecting current work:
 - [Phase 03-drag-cascade-calendar-tasks]: Plan 03-07: Phase 3 integration smoke runs simplified-core scope (4 tests); drag/cascade in clampModifier units + manual checkpoint
 - [Phase 03-drag-cascade-calendar-tasks]: Plan 03-07: useExpandedTasks default 60-day window for CalendarView; Phase 4 may dynamically extend via FullCalendar viewDidMount
 - [Phase 03-drag-cascade-calendar-tasks]: Plan 03-07: Top-level ErrorBoundary covers React.lazy chunk-load failure; calendar-specific recovery UI deferred to Phase 4
+- [Phase 04-polish-mobile-ship]: Plan 04-04: CoachMarks portal hand-rolled (no library) — backdrop + getBoundingClientRect callout positioning, Esc/Enter keyboard support gated by isFormFocus, single-boolean dismissal model (per-mark progress is local hook state, not persisted).
+- [Phase 04-polish-mobile-ship]: Plan 04-04: Both 'Browse plants' (empty state) and 'Add more plants' (footer) buttons in MyPlanPanel get data-coach-target=catalog-button — they render in mutually-exclusive branches, so document.querySelector resolves to whichever is mounted.
+- [Phase 04-polish-mobile-ship]: Plan 04-04: isFirstBar prop on DraggableBar (i===0 && ei===0) drives both data-coach-target='first-bar' on the wrapping <g> AND propagation to LockToggle.isFirst → data-coach-target='first-lock-toggle' (single boolean, two anchors).
+- [Phase 04-polish-mobile-ship]: Plan 04-04: 'Reset onboarding' Settings row lives in its own 'Onboarding' section above 'Danger zone' (D-07: separate from Clear plan; clearing the plan does NOT re-arm coach marks).
+- [Phase 04-polish-mobile-ship]: Plan 04-04: Plan 06 will mount <CoachMarks /> in AppShell — this plan does NOT modify AppShell.
 
 ### Pending Todos
 
@@ -143,7 +149,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27T12:01:47.858Z
-Stopped at: Phase 4 context gathered
+Last session: 2026-04-27T13:53:00.000Z
+Stopped at: Phase 04 Plan 04 (onboarding coach marks) complete
 Resume file: 
-.planning/phases/04-polish-mobile-ship/04-CONTEXT.md
+.planning/phases/04-polish-mobile-ship/04-04-SUMMARY.md

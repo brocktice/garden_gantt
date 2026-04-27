@@ -79,7 +79,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Polish & Share-Worthy v1
 
 - [ ] **POL-01**: Mobile-responsive layout: calendar default on phones; gantt readable in landscape on phones; full editing on desktop/tablet
-- [ ] **POL-02**: First-run onboarding walks new users from blank slate to first gantt without dead ends
+- [x] **POL-02**: First-run onboarding walks new users from blank slate to first gantt without dead ends
 - [ ] **POL-03**: Real empty states with a clear next-step CTA on every primary view (catalog empty, plan empty, dashboard empty)
 - [ ] **POL-04**: Real error states for: bad ZIP, network failure on Permapeople, localStorage full, corrupt import
 - [ ] **POL-05**: Loading states for any async operation (Permapeople fetch, ZIP lookup if any)
@@ -198,7 +198,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-06 | Phase 1 | Complete |
 | DATA-07 | Phase 1 | Complete |
 | POL-01 | Phase 4 | Pending |
-| POL-02 | Phase 4 | Pending |
+| POL-02 | Phase 4 | Complete |
 | POL-03 | Phase 4 | Pending |
 | POL-04 | Phase 4 | Pending |
 | POL-05 | Phase 4 | Pending |
