@@ -112,8 +112,17 @@ export function AppShell({ children }: AppShellProps) {
     currentHash.startsWith('#/plan') || currentHash.startsWith('#/tasks');
   const canUndo = useTemporalStore((s) => s.pastStates.length > 0);
   const canRedo = useTemporalStore((s) => s.futureStates.length > 0);
-  const isMac =
-    typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
+  // WR-06 (REVIEW Phase 4): navigator.platform is deprecated and returns
+  // empty/inconsistent strings on modern browsers. Prefer userAgentData.platform
+  // (Chromium 2023+) and fall back to userAgent regex for Safari/Firefox.
+  const isMac = (() => {
+    if (typeof navigator === 'undefined') return false;
+    const uaData = (
+      navigator as Navigator & { userAgentData?: { platform?: string } }
+    ).userAgentData;
+    if (uaData?.platform) return /mac/i.test(uaData.platform);
+    return /Mac|iPhone|iPad/i.test(navigator.userAgent);
+  })();
   const undoHint = isMac ? 'Undo (⌘Z)' : 'Undo (Ctrl+Z)';
   const redoHint = isMac ? 'Redo (⌘⇧Z)' : 'Redo (Ctrl+Shift+Z)';
 
