@@ -1205,32 +1205,37 @@ export function CalendarView() {
 
 **Total assumed claims:** 8. All flagged for the planner — assumptions A1, A2, A5 are the highest risk and should appear as explicit verification steps in the relevant plans.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Should the lock toggle UI be exposed on derived (non-draggable) bars?**
    - What we know: D-13 says lock state is per-event-type; D-06 says certain bars are non-draggable.
    - What's unclear: Whether to render the LockToggle component on `harden-off` / `germination-window` / auto-task bars.
    - Recommendation: Yes — lock applies to all events the user sees; drag is a separate concern. Document this in the plan.
+   - **RESOLVED:** Plan 03-06 renders LockToggle on ALL event types (per Pitfall 9); per-bar `<foreignObject>` wrapper inside `GanttView.tsx` `<DraggableBar>`.
 
 2. **Where should `commitEdit` deduplicate against existing edits for the same event?**
    - What we know: `plan.edits: ScheduleEdit[]` is an append-only sparse-edit log per Phase 1 design.
    - What's unclear: If a user drags the same `transplant` bar twice, do we have two ScheduleEdits or do we dedupe to the latest?
    - Recommendation: Dedupe by `(plantingId, eventType)` — keep only the most recent. Saves storage and matches user intent. Append + filter on read works too; planner picks.
+   - **RESOLVED:** Dedupe by `(plantingId, eventType)` keeping last write. Implemented in `planStore.commitEdit` (Plan 03-02 Task 3) and mirrored by `findEdit` last-write-wins scan in `scheduler.ts` (Plan 03-01 Task 2A).
 
 3. **Should `useExpandedTasks` cache occurrences across the whole season or expand on demand per visible range?**
    - What we know: 50 plantings × 6 events ≈ 30 auto-tasks/wk; user custom tasks ≪ 50. Total ~1000-2000 occurrences/season.
    - What's unclear: Whether re-expanding on every range change is cheap enough to skip caching.
    - Recommendation: Expand on demand (range-bounded). Sub-millisecond for these cardinalities; cache invalidation is the real cost.
+   - **RESOLVED:** Expand on demand via `useMemo` in `useExpandedTasks.ts` (Plan 03-05 Task 1D); default range today..today+60 days covers calendar visible month + dashboard week.
 
 4. **What's the keybinding behavior when the day-detail drawer is open?**
    - What we know: D-30 says drawer closes on Esc.
    - What's unclear: Should Cmd-Z while drawer is open undo the last plan mutation, or close the drawer?
    - Recommendation: Cmd-Z always undoes (uniform per D-15); drawer close requires Esc / X / outside-click.
+   - **RESOLVED:** Cmd-Z always undoes plan mutations. `historyBindings.ts` (Plan 03-02 Task 4) only suppresses on form-focus; drawer close uses Esc / X / outside-click only.
 
 5. **Should we test the drag interaction with Vitest 4 browser mode or with Playwright?**
    - What we know: Vitest 4 browser mode supports Playwright as the underlying engine; both are options. Existing tests are happy-dom + Vitest.
    - What's unclear: Whether the marginal test fidelity of real-browser drag justifies the setup cost.
    - Recommendation: Unit-test the constraint registry, the modifier function (call it directly with synthetic transform), and the cascade preview selector with happy-dom (cheap, fast). Reserve Playwright for one or two end-to-end "drag a bar, verify it commits, verify Cmd-Z reverts" smoke tests. Planner picks the exact split (CONTEXT explicitly delegates this).
+   - **RESOLVED:** Happy-dom + Vitest for clampModifier/useTransientSchedule/DragLayer (direct handler invocation). Playwright deferred to Phase 4. Manual smoke checkpoint (Plan 03-07 Task 3) covers real-browser drag fidelity for Phase 3.
 
 ## Environment Availability
 
