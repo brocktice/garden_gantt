@@ -21,9 +21,14 @@
 //         [CITED: src/stores/historyBindings.ts (isFormFocus pattern)]
 
 import { useEffect, useRef } from 'react';
-import { addDays, format, parseISO } from 'date-fns';
 import { usePlanStore } from '../../stores/planStore';
-import { nowISOString, ymdToISONoon } from '../../domain/dateWrappers';
+import {
+  addDays,
+  formatDateShort,
+  nowISOString,
+  parseDate,
+  ymdToISONoon,
+} from '../../domain/dateWrappers';
 import type { EventType } from '../../domain/types';
 
 interface PendingState {
@@ -89,10 +94,17 @@ export function useKeyboardBarDrag(): void {
       const stage = (n: number) => {
         e.preventDefault();
         p.pendingDeltaDays += n;
-        const newStart = addDays(parseISO(p.originalStartISO), p.pendingDeltaDays);
-        const sign = p.pendingDeltaDays >= 0 ? '+' : '';
+        // WR-10 (REVIEW Phase 4): suppress no-op announcements when delta
+        // returns to 0 (user pressed e.g. ArrowRight then ArrowLeft); also
+        // route Date formatting through formatDateShort (UTC-aware) so the
+        // announcer YMD never shifts at UTC+13/+14 edges.
+        if (p.pendingDeltaDays === 0) return;
+        const newStart = addDays(parseDate(p.originalStartISO), p.pendingDeltaDays);
+        const sign = p.pendingDeltaDays > 0 ? '+' : '';
+        const dayWord =
+          p.pendingDeltaDays === 1 || p.pendingDeltaDays === -1 ? 'day' : 'days';
         announce(
-          `Pending move ${sign}${p.pendingDeltaDays} day${p.pendingDeltaDays === 1 || p.pendingDeltaDays === -1 ? '' : 's'} to ${format(newStart, 'yyyy-MM-dd')}.`,
+          `Pending move ${sign}${p.pendingDeltaDays} ${dayWord} to ${formatDateShort(newStart)}.`,
         );
       };
 
@@ -107,8 +119,8 @@ export function useKeyboardBarDrag(): void {
       if (e.key === 'Enter') {
         e.preventDefault();
         if (p.pendingDeltaDays === 0) return;
-        const newStart = addDays(parseISO(p.originalStartISO), p.pendingDeltaDays);
-        const newStartYMD = format(newStart, 'yyyy-MM-dd');
+        const newStart = addDays(parseDate(p.originalStartISO), p.pendingDeltaDays);
+        const newStartYMD = formatDateShort(newStart);
         usePlanStore.getState().commitEdit({
           plantingId: p.plantingId,
           eventType: p.eventType,
