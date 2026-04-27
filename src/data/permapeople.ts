@@ -85,12 +85,57 @@ export async function searchPlant(query: string): Promise<PermapeopleResult> {
   }
 
   const plants = (json as { plants?: unknown[] } | null)?.plants;
-  const first = Array.isArray(plants) ? plants[0] : undefined;
-  if (!first) return { status: 'not-found' };
+  if (!Array.isArray(plants) || plants.length === 0) {
+    return { status: 'not-found' };
+  }
+  const best = pickBestMatch(plants, query);
+  if (!best) return { status: 'not-found' };
   return {
     status: 'ok',
-    data: mapPermapeopleToEnrichment(first),
+    data: mapPermapeopleToEnrichment(best),
   };
+}
+
+/**
+ * Rank Permapeople search candidates by relevance to the user's query.
+ *
+ * Permapeople's `/search` returns plants in an internal order (popularity-ish);
+ * the top result is frequently NOT the closest name match. We re-rank by:
+ *   1. Exact case-insensitive name match
+ *   2. Name or scientific_name starts with query
+ *   3. Name or scientific_name contains query
+ *   4. Fall back to the first result Permapeople returned
+ *
+ * Ties broken by preserving Permapeople's original order.
+ */
+function pickBestMatch(plants: unknown[], query: string): unknown {
+  const q = query.trim().toLowerCase();
+  if (!q) return plants[0];
+
+  let exact: unknown;
+  let startsWith: unknown;
+  let contains: unknown;
+
+  for (const p of plants) {
+    const obj = (p ?? {}) as Record<string, unknown>;
+    const name = typeof obj.name === 'string' ? obj.name.toLowerCase() : '';
+    const sci =
+      typeof obj.scientific_name === 'string' ? obj.scientific_name.toLowerCase() : '';
+
+    if (!exact && (name === q || sci === q)) {
+      exact = p;
+      break; // can't beat exact
+    }
+    if (!startsWith && (name.startsWith(q) || sci.startsWith(q))) {
+      startsWith = p;
+      continue;
+    }
+    if (!contains && (name.includes(q) || sci.includes(q))) {
+      contains = p;
+    }
+  }
+
+  return exact ?? startsWith ?? contains ?? plants[0];
 }
 
 function mapPermapeopleToEnrichment(p: unknown): EnrichmentFields {
