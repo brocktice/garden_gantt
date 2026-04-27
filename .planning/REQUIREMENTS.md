@@ -84,7 +84,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **POL-04**: Real error states for: bad ZIP, network failure on Permapeople, localStorage full, corrupt import
 - [ ] **POL-05**: Loading states for any async operation (Permapeople fetch, ZIP lookup if any)
 - [ ] **POL-06**: Confirmation dialogs before destructive actions (delete planting, clear plan, overwrite-on-import) with undo where possible
-- [ ] **POL-07**: Modern typography, no jank during drag (60fps target on the gantt)
+- [x] **POL-07**: Modern typography, no jank during drag (60fps target on the gantt)
 - [x] **POL-08**: Keyboard accessibility: tab order, Enter to add, Escape to cancel, keyboard-driven drag fallback for the gantt
 - [x] **POL-09**: Color contrast meets WCAG AA on all text and interactive elements
 - [x] **POL-10**: Visible export prompt periodically (or on-demand) to mitigate localStorage-clear data loss
@@ -93,7 +93,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **DEPLOY-01**: Static-site deploy to Cloudflare Pages with CI/CD on push to main
 - [x] **DEPLOY-02**: Hash-based routing so deep links (`#/plan`, `#/setup`, `#/tasks`, `#/settings`) work after refresh on any static host
-- [ ] **DEPLOY-03**: Hashed asset filenames; index.html uncached so deploys propagate without stale cache
+- [x] **DEPLOY-03**: Hashed asset filenames; index.html uncached so deploys propagate without stale cache
 
 ## v2 Requirements
 
@@ -203,13 +203,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | POL-04 | Phase 4 | Complete |
 | POL-05 | Phase 4 | Pending |
 | POL-06 | Phase 4 | Pending |
-| POL-07 | Phase 4 | Pending |
+| POL-07 | Phase 4 | Complete |
 | POL-08 | Phase 4 | Complete |
 | POL-09 | Phase 4 | Complete |
 | POL-10 | Phase 4 | Complete |
 | DEPLOY-01 | Phase 4 | Pending |
 | DEPLOY-02 | Phase 1 | Complete |
-| DEPLOY-03 | Phase 4 | Pending |
+| DEPLOY-03 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 61 total

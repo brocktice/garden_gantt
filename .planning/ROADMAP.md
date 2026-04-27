@@ -109,7 +109,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] 04-04-PLAN.md — Onboarding slice: hand-rolled CoachMarks portal (4 marks, single dismissal) + Settings Reset onboarding row + data-coach-target attributes
 - [x] 04-05-PLAN.md — Export-reminder slice: dirty counter on planStore coarse setters + ExportReminderBanner + useExportReminder selector + exportPlan post-success side-effect
 - [x] 04-06-PLAN.md — Integration + a11y: AppShell banner-stack + SkipToMain + sr-only announcer + ConstraintTooltip a11y + useKeyboardBarDrag + WCAG audit checkpoint
-- [ ] 04-07-PLAN.md — Deploy + perf: 200-event stress fixture + public/_headers + POL-07 perf checkpoint + DEPLOY-01 Cloudflare Pages connect (user OAuth) + DEPLOY-03 verification
+- [x] 04-07-PLAN.md — Deploy + perf: 200-event stress fixture + public/_headers + POL-07 perf checkpoint + DEPLOY-01 Cloudflare Pages connect (user OAuth) + DEPLOY-03 verification
 **UI hint**: yes
 
 ## Inter-Phase Dependencies

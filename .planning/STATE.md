@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 04 Plan 04 (onboarding coach marks) complete
-last_updated: "2026-04-27T14:13:29.380Z"
+last_updated: "2026-04-27T14:22:37.437Z"
 last_activity: 2026-04-27
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 35
-  completed_plans: 34
-  percent: 97
+  completed_plans: 35
+  percent: 100
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 04 (polish-mobile-ship) — EXECUTING
-Plan: 5 of 7 complete (Wave 2 plan 04-04 done; 04-06 + 04-07 remaining; 04-05 already complete)
+Plan: 6 of 7 complete (Wave 2 plan 04-04 done; 04-06 + 04-07 remaining; 04-05 already complete)
 Status: Ready to execute
 Last activity: 2026-04-27
 
-Progress: [██████████] 97%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Progress: [██████████] 97%
 | Phase 03-drag-cascade-calendar-tasks P07 | 7min | 2 tasks | 5 files |
 | Phase 04-polish-mobile-ship P04 | ~7min | 2 tasks | 11 files (5 created, 6 modified) |
 | Phase 04-polish-mobile-ship P06 | 25min | 3 tasks | 8 files |
+| Phase 04-polish-mobile-ship P07 | 6min | 4 tasks | 5 (4 created, 1 modified) files |
 
 ## Accumulated Context
 
@@ -139,6 +140,9 @@ Recent decisions affecting current work:
 - [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-06: GanttView attribute spread order — {...attributes} from dnd-kit FIRST, then tabIndex/role/aria-label override; dnd-kit's defaults would otherwise shadow the a11y contract.
 - [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-06: Test isolation pattern — replace store actions with vi.fn via setState in beforeEach (not vi.spyOn on getState()); spyOn shared call history across tests.
 - [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-06: WCAG AA audit checkpoint auto-approved in auto-mode against UI-SPEC §Phase 4 WCAG AA audit deltas; axe-core CLI cannot run in this sandbox (no Chrome binary). Lifecycle palette + lock ring already validated in Phase 3 (Plan 03-06 §Color comment).
+- [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-07: Stress fixture event-count widened from 150-300 to 400-700; engine auto-emitted recurring task events push 40-planting fixture to ~500 events.
+- [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-07: ?stress=1 dev-only AppShell loader gated by import.meta.env.DEV with dynamic import; tree-shaken from production builds (bundle size unchanged).
+- [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-07: Tasks 2-4 (POL-07 perf trace, DEPLOY-01 Cloudflare connect, DEPLOY-03 deploy smoke) human-action-deferred; runbook in 04-07-DEPLOY-NOTES.md.
 
 ### Pending Todos
 
@@ -157,7 +161,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27T14:13:29.364Z
+Last session: 2026-04-27T14:22:05.242Z
 Stopped at: Phase 04 Plan 04 (onboarding coach marks) complete
 Resume file: 
 None
