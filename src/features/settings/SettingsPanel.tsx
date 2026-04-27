@@ -1,0 +1,110 @@
+// src/features/settings/SettingsPanel.tsx
+// /settings route content — Export + Import sections.
+// Source: [CITED: 02-UI-SPEC.md §9 Settings page (full layout + copy)]
+//         [CITED: 02-11-PLAN.md Task 2]
+//         [CITED: 02-CONTEXT.md D-27, D-28, D-29]
+import { useRef, useState, type ChangeEvent } from 'react';
+import { Download, Upload } from 'lucide-react';
+import { Button } from '../../ui/Button';
+import { exportPlan } from './exportPlan';
+import { parseImportFile, type ImportResult } from './importPlan';
+import { ImportPreviewModal } from './ImportPreviewModal';
+
+type SuccessResult = Extract<ImportResult, { ok: true }>;
+
+export function SettingsPanel() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewResult, setPreviewResult] = useState<SuccessResult | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [lastExport, setLastExport] = useState<string | null>(null);
+
+  const handleExport = () => {
+    const r = exportPlan();
+    if (r.ok) {
+      setLastExport(r.filename);
+      setImportError(null);
+    } else {
+      setImportError(r.reason);
+    }
+  };
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const r = await parseImportFile(file);
+    if (r.ok) {
+      setImportError(null);
+      setPreviewResult(r);
+    } else {
+      setPreviewResult(null);
+      setImportError(
+        r.reason === 'invalid-json'
+          ? "That file isn't valid JSON. Try a file you exported from Garden Gantt."
+          : r.reason === 'newer-version'
+            ? 'That plan was made with a newer version of Garden Gantt. Update the app and try again.'
+            : "That file doesn't look like a Garden Gantt plan. Make sure you're importing a file with extension .json that came from this app's Export.",
+      );
+    }
+    // Reset so picking the same file again still triggers onChange.
+    e.target.value = '';
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <h1 className="text-3xl font-semibold text-stone-900">Settings</h1>
+
+      <section className="mt-8 border-b border-stone-200 pb-6">
+        <h2 className="text-xl font-semibold text-stone-900">Export your plan</h2>
+        <p className="mt-1 text-base text-stone-600">
+          Download your full plan as a JSON file. Use this to back up your work or move it to
+          another browser.
+        </p>
+        <Button variant="primary" className="mt-4" onClick={handleExport}>
+          <Download className="h-4 w-4" /> Export plan
+        </Button>
+        <p className="mt-2 text-sm text-stone-500">
+          {lastExport ? `Last exported: ${lastExport}` : 'Last exported: never'}
+        </p>
+      </section>
+
+      <section className="py-6">
+        <h2 className="text-xl font-semibold text-stone-900">Import a plan</h2>
+        <p className="mt-1 text-base text-stone-600">
+          Replace your current plan with one from a JSON file. We&apos;ll show you a preview
+          first.
+        </p>
+        <Button
+          variant="secondary"
+          className="mt-4"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <Upload className="h-4 w-4" /> Import plan
+        </Button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json,application/json"
+          onChange={handleFileChange}
+          className="sr-only"
+          aria-hidden="true"
+        />
+
+        {importError && (
+          <div className="mt-4 bg-red-50 border border-red-200 p-3 rounded-md text-sm text-red-800">
+            {importError}
+          </div>
+        )}
+      </section>
+
+      {previewResult && (
+        <ImportPreviewModal
+          open={previewResult !== null}
+          onOpenChange={(open) => {
+            if (!open) setPreviewResult(null);
+          }}
+          result={previewResult}
+        />
+      )}
+    </div>
+  );
+}
