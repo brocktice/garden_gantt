@@ -9,6 +9,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { __clearSearchCacheForTests } from '../../../src/data/permapeople';
 
 const PERMAPEOPLE_FIXTURE = {
   plants: [
@@ -30,6 +31,7 @@ const PERMAPEOPLE_FIXTURE = {
 describe('CustomPlantModal', () => {
   beforeEach(() => {
     window.localStorage.clear();
+    __clearSearchCacheForTests();
   });
 
   afterEach(() => {

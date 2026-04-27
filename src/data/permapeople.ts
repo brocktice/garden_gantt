@@ -31,6 +31,48 @@ export type PermapeopleResult =
   | { status: 'rate-limited' }
   | { status: 'unreachable'; reason: 'cors' | 'network' | 'timeout' | 'http-5xx' | 'invalid-json' };
 
+// Module-level LRU cache keyed by normalized query. Persists across modal opens
+// for the lifetime of the page. Re-renders are free; second search of the same
+// query never hits the network.
+const SEARCH_CACHE_CAP = 100;
+const searchCache = new Map<string, EnrichmentFields[]>();
+
+/** Test-only hook — call in beforeEach to isolate fetch mocks. */
+export function __clearSearchCacheForTests(): void {
+  searchCache.clear();
+}
+
+/**
+ * Normalize a Permapeople-returned plant name to the project's "Common — Varietal"
+ * convention (matching curated entries like "Tomato — Cherokee Purple").
+ *
+ * Permapeople returns names like:
+ *   "Tomato 'Brandywine'"            → "Tomato — Brandywine"
+ *   'Tomato "Cherokee Purple"'        → "Tomato — Cherokee Purple"
+ *   "Solanum lycopersicum 'Brandywine'" → "Tomato — Brandywine" (when scientificName matches base)
+ *   "Tomato"                          → "Tomato" (no varietal, pass through)
+ *
+ * Falls back to the original name on any unexpected shape.
+ */
+export function normalizePermapeopleName(
+  rawName: string,
+  scientificName?: string,
+): string {
+  const name = rawName.trim();
+  if (!name) return name;
+  // Match "<base> 'varietal'" or '<base> "varietal"' (also Unicode curly quotes).
+  const m = name.match(/^(.+?)\s+['"‘’“”]([^'"‘’“”]+)['"‘’“”]\s*$/);
+  if (!m || !m[1] || !m[2]) return name;
+  let base = m[1].trim();
+  const varietal = m[2].trim();
+  // If base looks like the scientific name itself, prefer to drop it — the
+  // varietal alone is unhelpful, but we have nothing better. Caller can edit.
+  if (scientificName && base.toLowerCase() === scientificName.trim().toLowerCase()) {
+    base = scientificName.trim();
+  }
+  return `${base} — ${varietal}`;
+}
+
 /**
  * Search Permapeople for a plant by free-text query (CAT-06).
  *
@@ -44,13 +86,57 @@ export type PermapeopleResult =
  * matches RESEARCH §Pattern 5.
  */
 export async function searchPlant(query: string): Promise<PermapeopleResult> {
+  const list = await searchPlantsInternal(query);
+  if (typeof list === 'string') {
+    // Error sentinel — map to the discriminated-union failure shape.
+    return errorFromSentinel(list);
+  }
+  if (list.length === 0) return { status: 'not-found' };
+  const best = pickBestMatchByEnrichment(list, query) ?? list[0];
+  if (!best) return { status: 'not-found' };
+  return { status: 'ok', data: best };
+}
+
+/**
+ * Return the top-N ranked candidates for a free-text query. Used by the
+ * autocomplete dropdown. Each result is fully mapped to EnrichmentFields,
+ * so clicking one immediately populates the form.
+ *
+ * Network/CORS/timeout failures resolve to an empty list (autocomplete
+ * silently degrades — the user can still click "Add from Permapeople" to
+ * see the explicit error state). Successful queries are cached in-memory.
+ */
+export async function searchPlants(
+  query: string,
+  limit = 5,
+): Promise<EnrichmentFields[]> {
+  const list = await searchPlantsInternal(query);
+  if (typeof list === 'string') return [];
+  // Autocomplete-only filter: plants without a name are useless in a list UI.
+  // Keep them upstream so searchPlant() can still return their other fields.
+  const named = list.filter((e) => !!e.matchedName);
+  return rankByQuery(named, query).slice(0, limit);
+}
+
+/** Returns the mapped candidate list, or an error sentinel string. */
+async function searchPlantsInternal(
+  query: string,
+): Promise<EnrichmentFields[] | string> {
+  const cacheKey = query.trim().toLowerCase();
+  if (!cacheKey) return [];
+  const cached = searchCache.get(cacheKey);
+  if (cached) {
+    // LRU touch: re-insert at end.
+    searchCache.delete(cacheKey);
+    searchCache.set(cacheKey, cached);
+    return cached;
+  }
+
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
 
   let res: Response;
   try {
-    // Worker proxy strips Permapeople auth headers and adds them server-side.
-    // If pointing direct in dev, .env.local supplies x-permapeople-key-id/secret here too.
     res = await fetch(`${PERMAPEOPLE_BASE_URL}/search`, {
       method: 'POST',
       headers: {
@@ -62,80 +148,82 @@ export async function searchPlant(query: string): Promise<PermapeopleResult> {
     });
   } catch (e) {
     clearTimeout(timer);
-    if ((e as Error).name === 'AbortError') {
-      return { status: 'unreachable', reason: 'timeout' };
-    }
-    // TypeError on fetch is the canonical CORS / network signal in browsers.
-    // Per the live probe (02-CORS-SPIKE.md) this is the expected failure mode
-    // when the Worker proxy is not yet deployed and the user is hitting
-    // permapeople.org directly.
-    return { status: 'unreachable', reason: 'cors' };
+    if ((e as Error).name === 'AbortError') return 'timeout';
+    return 'cors';
   }
   clearTimeout(timer);
 
-  if (res.status === 429) return { status: 'rate-limited' };
-  if (res.status >= 500) return { status: 'unreachable', reason: 'http-5xx' };
-  if (!res.ok) return { status: 'not-found' };
+  if (res.status === 429) return 'rate-limited';
+  if (res.status >= 500) return 'http-5xx';
+  if (!res.ok) return 'not-found';
 
   let json: unknown;
   try {
     json = await res.json();
   } catch {
-    return { status: 'unreachable', reason: 'invalid-json' };
+    return 'invalid-json';
   }
 
   const plants = (json as { plants?: unknown[] } | null)?.plants;
-  if (!Array.isArray(plants) || plants.length === 0) {
-    return { status: 'not-found' };
+  if (!Array.isArray(plants) || plants.length === 0) return [];
+
+  const mapped = plants.map(mapPermapeopleToEnrichment);
+
+  // Cache and LRU-trim.
+  searchCache.set(cacheKey, mapped);
+  if (searchCache.size > SEARCH_CACHE_CAP) {
+    const oldest = searchCache.keys().next().value;
+    if (oldest !== undefined) searchCache.delete(oldest);
   }
-  const best = pickBestMatch(plants, query);
-  if (!best) return { status: 'not-found' };
-  return {
-    status: 'ok',
-    data: mapPermapeopleToEnrichment(best),
-  };
+  return mapped;
+}
+
+function errorFromSentinel(s: string): PermapeopleResult {
+  switch (s) {
+    case 'rate-limited':
+      return { status: 'rate-limited' };
+    case 'not-found':
+      return { status: 'not-found' };
+    case 'timeout':
+      return { status: 'unreachable', reason: 'timeout' };
+    case 'cors':
+      return { status: 'unreachable', reason: 'cors' };
+    case 'http-5xx':
+      return { status: 'unreachable', reason: 'http-5xx' };
+    case 'invalid-json':
+      return { status: 'unreachable', reason: 'invalid-json' };
+    default:
+      return { status: 'not-found' };
+  }
+}
+
+function pickBestMatchByEnrichment(
+  list: EnrichmentFields[],
+  query: string,
+): EnrichmentFields | undefined {
+  const ranked = rankByQuery(list, query);
+  return ranked[0];
 }
 
 /**
- * Rank Permapeople search candidates by relevance to the user's query.
- *
- * Permapeople's `/search` returns plants in an internal order (popularity-ish);
- * the top result is frequently NOT the closest name match. We re-rank by:
- *   1. Exact case-insensitive name match
- *   2. Name or scientific_name starts with query
- *   3. Name or scientific_name contains query
- *   4. Fall back to the first result Permapeople returned
- *
- * Ties broken by preserving Permapeople's original order.
+ * Stable-sort candidates by query relevance (exact > startsWith > contains > other),
+ * preserving Permapeople's original order within each tier.
  */
-function pickBestMatch(plants: unknown[], query: string): unknown {
+function rankByQuery(list: EnrichmentFields[], query: string): EnrichmentFields[] {
   const q = query.trim().toLowerCase();
-  if (!q) return plants[0];
-
-  let exact: unknown;
-  let startsWith: unknown;
-  let contains: unknown;
-
-  for (const p of plants) {
-    const obj = (p ?? {}) as Record<string, unknown>;
-    const name = typeof obj.name === 'string' ? obj.name.toLowerCase() : '';
-    const sci =
-      typeof obj.scientific_name === 'string' ? obj.scientific_name.toLowerCase() : '';
-
-    if (!exact && (name === q || sci === q)) {
-      exact = p;
-      break; // can't beat exact
-    }
-    if (!startsWith && (name.startsWith(q) || sci.startsWith(q))) {
-      startsWith = p;
-      continue;
-    }
-    if (!contains && (name.includes(q) || sci.includes(q))) {
-      contains = p;
-    }
-  }
-
-  return exact ?? startsWith ?? contains ?? plants[0];
+  if (!q) return [...list];
+  const score = (e: EnrichmentFields): number => {
+    const name = (e.matchedName ?? '').toLowerCase();
+    const sci = (e.scientificName ?? '').toLowerCase();
+    if (name === q || sci === q) return 0;
+    if (name.startsWith(q) || sci.startsWith(q)) return 1;
+    if (name.includes(q) || sci.includes(q)) return 2;
+    return 3;
+  };
+  return [...list]
+    .map((e, i) => ({ e, i, s: score(e) }))
+    .sort((a, b) => a.s - b.s || a.i - b.i)
+    .map((x) => x.e);
 }
 
 function mapPermapeopleToEnrichment(p: unknown): EnrichmentFields {
@@ -155,9 +243,12 @@ function mapPermapeopleToEnrichment(p: unknown): EnrichmentFields {
     }
   }
   const out: EnrichmentFields = {};
-  if (typeof obj.name === 'string') out.matchedName = obj.name;
+  const sci = typeof obj.scientific_name === 'string' ? obj.scientific_name : undefined;
+  if (typeof obj.name === 'string') {
+    out.matchedName = normalizePermapeopleName(obj.name, sci);
+  }
   if (typeof obj.description === 'string') out.description = obj.description;
-  if (typeof obj.scientific_name === 'string') out.scientificName = obj.scientific_name;
+  if (sci) out.scientificName = sci;
   if (typeof obj.image_url === 'string') out.imageUrl = obj.image_url;
   if (typeof dataMap['Family'] === 'string') out.family = dataMap['Family'];
   if (typeof dataMap['Genus'] === 'string') out.genus = dataMap['Genus'];

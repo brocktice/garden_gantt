@@ -6,7 +6,7 @@
 //         [CITED: 02-PATTERNS.md src/features/catalog/CustomPlantModal.tsx]
 //         [CITED: 02-CONTEXT.md D-13/D-14/D-15/D-18, CAT-07/CAT-08]
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Loader2, Sparkles } from 'lucide-react';
 import {
   Dialog,
@@ -27,7 +27,11 @@ import {
 } from '../../ui/Select';
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
 import { usePlanStore } from '../../stores/planStore';
-import { searchPlant, type EnrichmentFields } from '../../data/permapeople';
+import {
+  searchPlant,
+  searchPlants,
+  type EnrichmentFields,
+} from '../../data/permapeople';
 import { PlantSchema } from '../../domain/schemas';
 import type { Plant, PlantCategory, PlantTiming } from '../../domain/types';
 
@@ -198,6 +202,15 @@ function CustomPlantModalInner({
   const [enrich, setEnrich] = useState<EnrichState>({ status: 'idle' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [duplicateFromId, setDuplicateFromId] = useState<string>('');
+  // Permapeople autocomplete — debounced suggestions while the user types in
+  // the name field. Caches in src/data/permapeople.ts mean re-typing the same
+  // query is free; only first appearance of a query string hits the proxy.
+  const [suggestions, setSuggestions] = useState<EnrichmentFields[]>([]);
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  // Tracks the last value the user picked from the dropdown so re-rendering
+  // with the same name doesn't reopen the menu.
+  const lastPickedNameRef = useRef<string | null>(null);
 
   const isEdit = editingPlant !== null;
 
@@ -218,6 +231,48 @@ function CustomPlantModalInner({
       // Keep current name if user already typed one — duplicate-from is a baseline.
       name: f.name,
     }));
+  };
+
+  // Debounced autocomplete: 350ms after the user stops typing AND the query
+  // is ≥2 chars AND it's not the value they just picked → fetch top 5 ranked
+  // candidates from Permapeople (cached). Edit mode disables the dropdown
+  // since the user has already named the plant.
+  useEffect(() => {
+    if (isEdit) return;
+    const q = form.name.trim();
+    if (q.length < 2) {
+      setSuggestions([]);
+      setSuggestionsOpen(false);
+      return;
+    }
+    if (lastPickedNameRef.current === q) {
+      // Don't reopen the menu after picking; user can keep typing to dismiss.
+      return;
+    }
+    let cancelled = false;
+    setSuggestionsLoading(true);
+    const timer = setTimeout(async () => {
+      const results = await searchPlants(q, 5);
+      if (cancelled) return;
+      setSuggestions(results);
+      setSuggestionsOpen(results.length > 0);
+      setSuggestionsLoading(false);
+    }, 350);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+      setSuggestionsLoading(false);
+    };
+  }, [form.name, isEdit]);
+
+  const handlePickSuggestion = (data: EnrichmentFields) => {
+    lastPickedNameRef.current = data.matchedName?.trim() ?? form.name.trim();
+    setSuggestions([]);
+    setSuggestionsOpen(false);
+    // Re-use the existing apply path so all the fields populate consistently
+    // and `enrich.status === 'success'` so save() emits enrichment metadata.
+    setEnrich({ status: 'success', data });
+    applyPermapeopleResult(data);
   };
 
   const handleEnrich = async () => {
@@ -409,20 +464,82 @@ function CustomPlantModalInner({
             Basics
           </legend>
           <div className="space-y-3">
-            <div>
+            <div className="relative">
               <Label htmlFor="cp-name">
                 Plant name<span className="text-red-700"> *</span>
               </Label>
               <Input
                 id="cp-name"
                 aria-required="true"
+                aria-autocomplete="list"
+                aria-expanded={suggestionsOpen}
+                aria-controls="cp-name-suggestions"
+                autoComplete="off"
                 value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                onChange={(e) => {
+                  lastPickedNameRef.current = null;
+                  setForm({ ...form, name: e.target.value });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape' && suggestionsOpen) {
+                    e.stopPropagation();
+                    setSuggestionsOpen(false);
+                  }
+                }}
+                onBlur={() => {
+                  // Delay so click-on-option fires before menu closes.
+                  setTimeout(() => setSuggestionsOpen(false), 150);
+                }}
+                onFocus={() => {
+                  if (suggestions.length > 0) setSuggestionsOpen(true);
+                }}
                 placeholder='e.g. "Beet — Detroit Dark Red"'
               />
+              {suggestionsOpen && (suggestions.length > 0 || suggestionsLoading) && (
+                <ul
+                  id="cp-name-suggestions"
+                  role="listbox"
+                  className="absolute z-20 left-0 right-0 mt-1 max-h-72 overflow-y-auto rounded-md border border-stone-200 bg-white shadow-lg"
+                >
+                  {suggestionsLoading && suggestions.length === 0 && (
+                    <li className="px-3 py-2 text-sm text-stone-600">Searching…</li>
+                  )}
+                  {suggestions.map((s, i) => (
+                    <li key={`${s.matchedName ?? 'sug'}-${i}`} role="option">
+                      <button
+                        type="button"
+                        className="w-full text-left px-3 py-2 hover:bg-stone-100 focus:bg-stone-100 focus:outline-none"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => handlePickSuggestion(s)}
+                      >
+                        <div className="text-sm font-medium text-stone-900">
+                          {s.matchedName ?? '(unnamed)'}
+                        </div>
+                        {(s.scientificName || s.family) && (
+                          <div className="text-xs text-stone-600 italic">
+                            {s.scientificName}
+                            {s.scientificName && s.family ? ' · ' : ''}
+                            {!s.scientificName && s.family ? `Family: ${s.family}` : ''}
+                            {s.scientificName && s.family ? `Family: ${s.family}` : ''}
+                          </div>
+                        )}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
               <p className="mt-1 text-sm text-stone-600">
-                e.g. &quot;Beet — Detroit Dark Red&quot;
+                Type to see Permapeople matches; click one to autofill timing &amp;
+                description. Format: e.g. &quot;Beet — Detroit Dark Red&quot;.
               </p>
+              {enrich.status === 'success' && enrich.data.matchedName && (
+                <p className="mt-1 text-sm text-violet-700" aria-live="polite">
+                  Permapeople matched: <strong>{enrich.data.matchedName}</strong>
+                  {enrich.data.scientificName ? (
+                    <span className="italic"> ({enrich.data.scientificName})</span>
+                  ) : null}
+                </p>
+              )}
               {errors.name && (
                 <p className="text-sm text-red-700 mt-1" aria-live="polite">
                   {errors.name}

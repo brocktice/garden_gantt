@@ -7,7 +7,10 @@
 //         .planning/phases/02-data-layer-first-end-to-end/02-RESEARCH.md §Pattern 5
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { searchPlant } from '../../src/data/permapeople';
+import {
+  searchPlant,
+  __clearSearchCacheForTests,
+} from '../../src/data/permapeople';
 
 function jsonResponse(body: unknown, init: ResponseInit = { status: 200 }): Response {
   return new Response(JSON.stringify(body), {
@@ -20,6 +23,7 @@ describe('searchPlant (CAT-06 / CAT-07)', () => {
   let fetchSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
+    __clearSearchCacheForTests();
     fetchSpy = vi.spyOn(globalThis, 'fetch');
   });
 
