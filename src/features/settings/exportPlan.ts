@@ -12,6 +12,7 @@
 // and planStore.persist.migrate).
 
 import { usePlanStore } from '../../stores/planStore';
+import { useUIStore } from '../../stores/uiStore';
 import { ExportEnvelopeSchema } from '../../domain/schemas';
 import { nowISOString } from '../../domain/dateWrappers';
 import { CURRENT_SCHEMA_VERSION } from '../../domain/migrations';
@@ -54,6 +55,13 @@ export function exportPlan(): { ok: true; filename: string } | { ok: false; reas
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+
+  // D-15 (Plan 04-05): post-export bookkeeping — single side-effect site for "plan
+  // exported". Resets the dirty counter and stamps lastExportedAt. ONLY on the success
+  // branch — failure paths above leave the counter untouched (preserves "didn't really
+  // export" semantics; T-04-05-05 mitigation).
+  useUIStore.getState().setLastExportedAt(nowISOString());
+  useUIStore.getState().resetDirty();
 
   return { ok: true, filename };
 }

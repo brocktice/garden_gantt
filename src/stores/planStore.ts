@@ -47,6 +47,7 @@ import { migrateToCurrent, CURRENT_SCHEMA_VERSION } from '../domain/migrations';
 import { nowISOString } from '../domain/dateWrappers';
 import { samplePlan } from '../samplePlan';
 import { useCatalogStore } from './catalogStore';
+import { useUIStore } from './uiStore';
 
 interface PlanState {
   plan: GardenPlan | null;
@@ -117,14 +118,16 @@ export const usePlanStore = create<PlanState>()(
       (set, get): PlanState => ({
         plan: null,
 
-        setLocation: (location) =>
+        setLocation: (location) => {
           set((s) =>
             s.plan
               ? { plan: { ...s.plan, location, updatedAt: nowISOString() } }
               : { plan: createEmptyPlan(location) },
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
-        addPlanting: (planting) =>
+        addPlanting: (planting) => {
           set((s) =>
             s.plan
               ? {
@@ -135,9 +138,11 @@ export const usePlanStore = create<PlanState>()(
                   },
                 }
               : s,
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
-        removePlanting: (plantingId) =>
+        removePlanting: (plantingId) => {
           set((s) =>
             s.plan
               ? {
@@ -148,9 +153,11 @@ export const usePlanStore = create<PlanState>()(
                   },
                 }
               : s,
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
-        toggleSuccession: (plantingId) =>
+        toggleSuccession: (plantingId) => {
           set((s) =>
             s.plan
               ? {
@@ -165,9 +172,11 @@ export const usePlanStore = create<PlanState>()(
                   },
                 }
               : s,
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
-        upsertCustomPlant: (plant) =>
+        upsertCustomPlant: (plant) => {
           set((s) =>
             s.plan
               ? {
@@ -181,11 +190,13 @@ export const usePlanStore = create<PlanState>()(
                   },
                 }
               : s,
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
         // D-15 plan-side cascade: removing a custom plant unconditionally drops any plantings
         // referencing it (cascade is unconditional in the setter; UI presents the confirm).
-        removeCustomPlant: (plantId) =>
+        removeCustomPlant: (plantId) => {
           set((s) =>
             s.plan
               ? {
@@ -197,7 +208,9 @@ export const usePlanStore = create<PlanState>()(
                   },
                 }
               : s,
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
         // D-15 FULL cascade: catalogStore.customPlants (canonical home) + plan.customPlants
         // (export portability) + plan.plantings (referencing plantings).
@@ -217,6 +230,9 @@ export const usePlanStore = create<PlanState>()(
                 }
               : s,
           );
+          // D-14: increment exactly ONCE per cascade invocation regardless of how many
+          // plantings dropped (the cascade is one user-intent edit, not N).
+          useUIStore.getState().incrementDirty();
         },
 
         // D-03: structuredClone so mutating the store does not mutate the imported sample
@@ -234,7 +250,7 @@ export const usePlanStore = create<PlanState>()(
 
         // commitEdit: dedupe by (plantingId, eventType) — last-write-wins per Plan 03-01
         // findEdit convention. Engine consumes plan.edits[] (Plan 03-01 Task 2A).
-        commitEdit: (edit) =>
+        commitEdit: (edit) => {
           set((s) =>
             s.plan
               ? {
@@ -250,7 +266,9 @@ export const usePlanStore = create<PlanState>()(
                   },
                 }
               : s,
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
         // setLock: explicit boolean (NOT delete) so lock state shows up under JSON.stringify
         // exports and under `plan.plantings[i].locks?.transplant === false` reads.
@@ -271,7 +289,7 @@ export const usePlanStore = create<PlanState>()(
               : s,
           ),
 
-        addCustomTask: (task) =>
+        addCustomTask: (task) => {
           set((s) =>
             s.plan
               ? {
@@ -282,7 +300,9 @@ export const usePlanStore = create<PlanState>()(
                   },
                 }
               : s,
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
         // CR-03 (Plan 03-08): completedTaskIds pruning contract.
         //   - removeCustomTask(id) — UNCONDITIONAL purge of bare `${id}` and `${id}:*` keys.
@@ -293,7 +313,7 @@ export const usePlanStore = create<PlanState>()(
         //     (title, notes, category, completed) leave completedTaskIds untouched.
         // Both setters mutate inside the SAME `set()` call so zundo's handleSet coalesces
         // the prune + the task mutation into one atomic history entry (Cmd-Z restores both).
-        editCustomTask: (id, patch) =>
+        editCustomTask: (id, patch) => {
           set((s) => {
             if (!s.plan) return s;
             const recurrenceShapeChanged =
@@ -312,9 +332,11 @@ export const usePlanStore = create<PlanState>()(
                 updatedAt: nowISOString(),
               },
             };
-          }),
+          });
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
-        removeCustomTask: (id) =>
+        removeCustomTask: (id) => {
           set((s) =>
             s.plan
               ? {
@@ -330,7 +352,9 @@ export const usePlanStore = create<PlanState>()(
                   },
                 }
               : s,
-          ),
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
 
         // D-36: composite key `${taskId}:${ISODate}` for recurring per-occurrence completion;
         // bare `taskId` for one-off completion. Set semantics make double-toggle a no-op.

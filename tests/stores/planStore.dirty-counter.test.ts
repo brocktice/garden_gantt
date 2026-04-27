@@ -52,9 +52,11 @@ function makePlant(id: string, name: string): Plant {
 function makeCustomTask(id: string, title: string): CustomTask {
   return {
     id,
+    source: 'custom',
     title,
-    category: 'other',
+    category: 'custom',
     dueDate: '2026-05-01T12:00:00.000Z',
+    completed: false,
   };
 }
 
@@ -62,8 +64,9 @@ function makeEdit(plantingId: string): ScheduleEdit {
   return {
     plantingId,
     eventType: 'transplant',
-    newStart: '2026-05-15T12:00:00.000Z',
-    timestamp: '2026-04-27T12:00:00.000Z',
+    startOverride: '2026-05-15T12:00:00.000Z',
+    reason: 'user-drag',
+    editedAt: '2026-04-27T12:00:00.000Z',
   };
 }
 
