@@ -16,6 +16,8 @@ import {
   DialogFooter,
 } from '../../ui/Dialog';
 import { usePlanStore } from '../../stores/planStore';
+import { useUIStore } from '../../stores/uiStore';
+import { pushToast } from '../../ui/toast/useToast';
 import { exportPlan } from './exportPlan';
 import { parseImportFile, type ImportResult } from './importPlan';
 import { CORRUPT_IMPORT_COPY, ImportPreviewModal } from './ImportPreviewModal';
@@ -118,6 +120,36 @@ export function SettingsPanel() {
           result={previewResult}
         />
       )}
+
+      {/* Phase 4 (Plan 04-04, D-06/D-07): Reset onboarding — re-arms coach marks.
+          SEPARATE affordance from Clear plan (D-07): clearing the plan does NOT
+          re-show coach marks; only this Reset button re-arms them. */}
+      <section className="py-6 border-t border-stone-200 mt-2">
+        <h2 className="text-xl font-semibold text-stone-900">Onboarding</h2>
+        <div className="mt-4 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-stone-900">
+              Reset onboarding
+            </p>
+            <p className="text-base text-stone-700">
+              Show the Plan-page tour again on your next visit.
+            </p>
+          </div>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              useUIStore.getState().setCoachMarksDismissed(false);
+              pushToast({
+                variant: 'success',
+                duration: 5000,
+                title: 'Tour will show next time you visit Plan.',
+              });
+            }}
+          >
+            Reset
+          </Button>
+        </div>
+      </section>
 
       {/* Phase 4 (Plan 04-03): Danger zone — Clear plan with modal-confirm. */}
       <section className="py-6 border-t border-stone-200 mt-2">

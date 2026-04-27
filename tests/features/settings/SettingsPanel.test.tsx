@@ -20,7 +20,7 @@ beforeEach(() => {
   window.localStorage.clear();
   useUIStore.getState().setCoachMarksDismissed(true);
   // Drain toast store between tests
-  useToastStore.setState({ items: [] });
+  useToastStore.setState({ toasts: [] });
 });
 
 afterEach(() => {
@@ -78,9 +78,9 @@ describe('SettingsPanel — Reset onboarding row', () => {
       </MemoryRouter>,
     );
     await user.click(screen.getByRole('button', { name: 'Reset' }));
-    const items = useToastStore.getState().items;
-    expect(items.length).toBe(1);
-    expect(items[0]!.title).toBe(
+    const toasts = useToastStore.getState().toasts;
+    expect(toasts.length).toBe(1);
+    expect(toasts[0]!.title).toBe(
       'Tour will show next time you visit Plan.',
     );
   });
