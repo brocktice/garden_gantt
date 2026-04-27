@@ -19,9 +19,10 @@ import {
   DialogTitle,
 } from '../../ui/Dialog';
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
-import { usePlanStore } from '../../stores/planStore';
+import { getTemporal, usePlanStore } from '../../stores/planStore';
 import { useUIStore } from '../../stores/uiStore';
 import { expandSuccessions } from '../../domain/succession';
+import { pushToast } from '../../ui/toast/useToast';
 import type { Planting } from '../../domain/types';
 import { cn } from '../../ui/cn';
 
@@ -65,8 +66,17 @@ export function MyPlanPanel() {
 
   const handleRemoveConfirm = () => {
     if (!pendingRemove) return;
+    const plant = merged.get(pendingRemove.plantId);
+    const name = plant?.name ?? 'planting';
     removePlanting(pendingRemove.id);
     setPendingRemove(null);
+    // D-09 toast-with-undo (Plan 04-03 Task 2): reversible destructive op.
+    pushToast({
+      variant: 'success',
+      duration: 5000,
+      title: `Deleted ${name}.`,
+      action: { label: 'Undo', onClick: () => getTemporal().undo() },
+    });
   };
 
   const pendingPlant = pendingRemove

@@ -144,7 +144,8 @@ export function DayDetailDrawer() {
           <div className="px-6 py-4">
             {isEmpty ? (
               <div className="py-12 text-center">
-                <p className="text-xl font-semibold text-stone-900 mb-2">Nothing scheduled</p>
+                {/* Phase 4 (Plan 04-03 Task 2) D-11 retune: terse heading, no CTA. */}
+                <h2 className="text-xl font-semibold text-stone-900 mb-2">Nothing scheduled.</h2>
                 <p className="text-base text-stone-600">
                   No lifecycle events or tasks for {headingShort}. Click another day to inspect, or
                   close this panel.

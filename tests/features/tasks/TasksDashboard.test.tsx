@@ -49,7 +49,8 @@ describe('TasksDashboard', () => {
   it('Test 1 — renders empty state when no plan / no tasks', async () => {
     await renderDashboard();
     // No plan in store → empty state heading
-    expect(screen.getByText(/No tasks yet\./i)).toBeTruthy();
+    // Phase 4 (Plan 04-03 Task 2) D-11 retune: heading is now "No tasks today."
+    expect(screen.getByText(/No tasks today\./i)).toBeTruthy();
     // Heading
     expect(screen.getByRole('heading', { level: 1, name: 'Tasks' })).toBeTruthy();
   });

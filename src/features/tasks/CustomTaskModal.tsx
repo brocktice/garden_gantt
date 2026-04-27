@@ -38,6 +38,8 @@ import {
   SelectValue,
 } from '../../ui/Select';
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
+import { getTemporal } from '../../stores/planStore';
+import { pushToast } from '../../ui/toast/useToast';
 import { usePlanStore } from '../../stores/planStore';
 import { nowISOString, parseDate, toISODate } from '../../domain/dateWrappers';
 import type {
@@ -241,7 +243,15 @@ function CustomTaskModalInner({ open, onOpenChange, editingTask }: CustomTaskMod
 
   const handleDeleteConfirm = () => {
     if (editingTask) {
+      const title = editingTask.title;
       removeCustomTask(editingTask.id);
+      // D-09 toast-with-undo (Plan 04-03 Task 2): reversible destructive op.
+      pushToast({
+        variant: 'success',
+        duration: 5000,
+        title: `Deleted ${title}.`,
+        action: { label: 'Undo', onClick: () => getTemporal().undo() },
+      });
     }
     onOpenChange(false);
   };

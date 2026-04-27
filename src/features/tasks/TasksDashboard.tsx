@@ -9,9 +9,11 @@ import { useState } from 'react';
 import { Plus, ChevronDown } from 'lucide-react';
 import { Button } from '../../ui/Button';
 import { useUIStore } from '../../stores/uiStore';
+import { getTemporal, usePlanStore } from '../../stores/planStore';
 import { useTodayWeekOverdue } from './useTodayWeekOverdue';
 import { TaskGroup } from './TaskGroup';
 import { CustomTaskModal } from './CustomTaskModal';
+import { pushToast } from '../../ui/toast/useToast';
 import { nowISOString, toISODate, parseDate } from '../../domain/dateWrappers';
 import type { CustomTask } from '../../domain/types';
 
@@ -19,12 +21,29 @@ export function TasksDashboard() {
   const { today, thisWeek, overdue } = useTodayWeekOverdue();
   const groupBy = useUIStore((s) => s.taskGroupBy);
   const setGroupBy = useUIStore((s) => s.setTaskGroupBy);
+  const completedCount = usePlanStore(
+    (s) => s.plan?.completedTaskIds?.length ?? 0,
+  );
+  const clearCompletedTaskIds = usePlanStore((s) => s.clearCompletedTaskIds);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<CustomTask | null>(null);
 
   const todayISO = toISODate(parseDate(nowISOString())).slice(0, 10);
 
   const isEmpty = today.length === 0 && thisWeek.length === 0 && overdue.length === 0;
+
+  // D-09 toast-with-undo (Plan 04-03 Task 2): clearing completion is reversible.
+  const handleClearCompleted = () => {
+    if (completedCount === 0) return;
+    const n = completedCount;
+    clearCompletedTaskIds();
+    pushToast({
+      variant: 'success',
+      duration: 5000,
+      title: `Cleared ${n} completed.`,
+      action: { label: 'Undo', onClick: () => getTemporal().undo() },
+    });
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 py-8">
@@ -42,20 +61,28 @@ export function TasksDashboard() {
           Group by {groupBy === 'plant' ? 'plant' : 'category'}
           <ChevronDown className="h-4 w-4 ml-1" />
         </Button>
-        <Button
-          variant="primary"
-          onClick={() => {
-            setEditingTask(null);
-            setModalOpen(true);
-          }}
-        >
-          <Plus className="h-4 w-4 mr-1" /> New task
-        </Button>
+        <div className="flex items-center gap-2">
+          {completedCount > 0 && (
+            <Button variant="ghost" onClick={handleClearCompleted}>
+              Clear completed
+            </Button>
+          )}
+          <Button
+            variant="primary"
+            onClick={() => {
+              setEditingTask(null);
+              setModalOpen(true);
+            }}
+          >
+            <Plus className="h-4 w-4 mr-1" /> New task
+          </Button>
+        </div>
       </div>
 
       {isEmpty ? (
         <div className="py-12 text-center">
-          <h2 className="text-xl font-semibold text-stone-900 mb-2">No tasks yet.</h2>
+          {/* Phase 4 (Plan 04-03 Task 2) D-11 retune: terse heading, no CTA. */}
+          <h2 className="text-xl font-semibold text-stone-900 mb-2">No tasks today.</h2>
           <p className="text-base font-normal text-stone-600">
             Add a planting to your plan and tasks like watering and harden-off will show up
             here automatically. Or use <strong>+ New task</strong> to add a one-off.

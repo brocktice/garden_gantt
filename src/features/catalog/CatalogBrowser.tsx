@@ -6,10 +6,11 @@
 //         [CITED: 02-PATTERNS.md src/features/catalog/CatalogBrowser.tsx (NEW)]
 //         [CITED: D-15 cascade-confirmation Dialog wiring]
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { Input } from '../../ui/Input';
 import { Button } from '../../ui/Button';
+import { Skeleton } from '../../ui/Skeleton';
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
 import { usePlanStore } from '../../stores/planStore';
 import { useUIStore } from '../../stores/uiStore';
@@ -39,6 +40,14 @@ export function CatalogBrowser() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Plant | null>(null);
+  // Phase 4 (Plan 04-03 Task 2) D-08: brief skeleton during initial catalog
+  // hydration. Catalog data is static JSON shipped at build, so the loading
+  // window is one render tick. We flip false after first effect — covers the
+  // brief initial-fetch flash + filter recompute.
+  const [loadingFlash, setLoadingFlash] = useState(true);
+  useEffect(() => {
+    setLoadingFlash(false);
+  }, []);
 
   const myPlantingsByPlantId = useMemo(() => {
     const map = new Map<string, string>(); // plantId -> planting.id
@@ -165,7 +174,15 @@ export function CatalogBrowser() {
             }}
           />
         </li>
-        {filtered.map((plant) => {
+        {/* Phase 4 (Plan 04-03 Task 2) D-08 catalog skeleton — brief flash on
+            initial hydration + during catalog data resolution. */}
+        {loadingFlash &&
+          Array.from({ length: 11 }).map((_, i) => (
+            <li key={`skeleton-${i}`} aria-hidden="true">
+              <Skeleton shape="card" className="h-48 w-full" />
+            </li>
+          ))}
+        {!loadingFlash && filtered.map((plant) => {
           const enriched =
             (plant.enrichment as { source?: string } | undefined)?.source ===
             'permapeople';
@@ -196,14 +213,14 @@ export function CatalogBrowser() {
         })}
       </ul>
 
-      {/* Empty filter state */}
-      {filtered.length === 0 && (
+      {/* Empty filter state — Phase 4 (Plan 04-03 Task 2) D-11 retune. */}
+      {!loadingFlash && filtered.length === 0 && (
         <div className="text-center py-16 col-span-full">
-          <p className="text-lg font-semibold">No plants match those filters.</p>
+          <h2 className="text-xl font-semibold text-stone-900">No matches.</h2>
           <p className="text-sm text-stone-600 mt-1">
             Try removing a filter, or clear your search.
           </p>
-          <Button variant="ghost" className="mt-4" onClick={clearFilters}>
+          <Button variant="primary" className="mt-4" onClick={clearFilters}>
             Clear filters
           </Button>
         </div>
