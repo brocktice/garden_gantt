@@ -50,35 +50,41 @@ export function ImportPreviewModal({ open, onOpenChange, result }: ImportPreview
 
   const currentPlantingCount = currentPlan?.plantings.length ?? 0;
 
+  // WR-09 (REVIEW Phase 4): hoist the second-step confirm Dialog OUT of the
+  // outer DialogContent into a sibling so Radix's per-Dialog focus-trap +
+  // inert-aria handling does not collide. Two top-level <Dialog> siblings
+  // sharing component state is the pattern used by MyPlanPanel.
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Import preview</DialogTitle>
-          <DialogDescription>
-            Importing <strong>{result.meta.plantingsCount}</strong> planting(s),{' '}
-            <strong>{result.meta.customPlantsCount}</strong> custom plant(s), location ZIP{' '}
-            <strong>{result.meta.zip}</strong> (zone {result.meta.zone}). This will OVERWRITE
-            your current plan.
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Import preview</DialogTitle>
+            <DialogDescription>
+              Importing <strong>{result.meta.plantingsCount}</strong> planting(s),{' '}
+              <strong>{result.meta.customPlantsCount}</strong> custom plant(s), location ZIP{' '}
+              <strong>{result.meta.zip}</strong> (zone {result.meta.zone}). This will OVERWRITE
+              your current plan.
+            </DialogDescription>
+          </DialogHeader>
 
-        {currentPlan && currentPlan.plantings.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 p-3 rounded-md text-sm text-amber-800 mt-4">
-            Your current plan has {currentPlan.plantings.length} plantings. They will be
-            replaced. To keep them, cancel and Export your current plan first.
-          </div>
-        )}
+          {currentPlan && currentPlan.plantings.length > 0 && (
+            <div className="bg-amber-50 border border-amber-200 p-3 rounded-md text-sm text-amber-800 mt-4">
+              Your current plan has {currentPlan.plantings.length} plantings. They will be
+              replaced. To keep them, cancel and Export your current plan first.
+            </div>
+          )}
 
-        <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
-            Replace my plan
-          </Button>
-        </DialogFooter>
-      </DialogContent>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={() => setConfirmOpen(true)}>
+              Replace my plan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* D-09 second-step confirmation for irreversible overwrite. */}
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
@@ -100,6 +106,6 @@ export function ImportPreviewModal({ open, onOpenChange, result }: ImportPreview
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Dialog>
+    </>
   );
 }
