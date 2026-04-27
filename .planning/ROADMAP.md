@@ -87,7 +87,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] 03-03-PLAN.md — Gantt drag mechanics: DragLayer + clampModifier + GhostOverlay + ConstraintTooltip + DraggableBar + drag tokens (Wave 2)
 - [x] 03-04-PLAN.md — Calendar: FullCalendar wrapper + selectEventsForCalendar + DayDetailDrawer + PlanViewTabs (Wave 2)
 - [x] 03-05-PLAN.md — Tasks: TasksDashboard + CustomTaskModal + deriveTasks + expandRecurringTasks + useTodayWeekOverdue (Wave 2)
-- [ ] 03-06-PLAN.md — Lock UI: LockToggle + useLockKeybinding + AppShell undo/redo buttons + ConstraintTooltip top-level mount + remaining @theme tokens (Wave 3)
+- [x] 03-06-PLAN.md — Lock UI: LockToggle + useLockKeybinding + AppShell undo/redo buttons + ConstraintTooltip top-level mount + remaining @theme tokens (Wave 3)
 - [ ] 03-07-PLAN.md — App.tsx route wiring + lazy CalendarView + Phase 3 integration smoke + manual checkpoint (Wave 3)
 **UI hint**: yes
 

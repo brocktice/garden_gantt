@@ -46,9 +46,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **GANTT-05**: Drag respects constraints: cannot drag transplant of frost-tender plant before last frost; harden-off must precede transplant; harvest must follow transplant by at least DTM
 - [x] **GANTT-06**: Drag shows a ghost/preview of affected downstream events during the drag (cascade preview)
 - [x] **GANTT-07**: Releasing a drag commits a sparse `ScheduleEdit`; downstream events that weren't manually pinned reflow accordingly
-- [ ] **GANTT-08**: User can lock individual events (pin) so cascade reflow won't move them
+- [x] **GANTT-08**: User can lock individual events (pin) so cascade reflow won't move them
 - [x] **GANTT-09**: When a drag would violate a constraint, the bar snaps to the constraint boundary and surfaces a tooltip explaining why
-- [ ] **GANTT-10**: Undo (Cmd/Ctrl-Z, ≥20 levels) reverses any drag or schedule edit; redo (Cmd/Ctrl-Shift-Z) re-applies it
+- [x] **GANTT-10**: Undo (Cmd/Ctrl-Z, ≥20 levels) reverses any drag or schedule edit; redo (Cmd/Ctrl-Shift-Z) re-applies it
 
 ### Calendar View
 
@@ -177,9 +177,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GANTT-05 | Phase 3 | Complete |
 | GANTT-06 | Phase 3 | Complete |
 | GANTT-07 | Phase 3 | Complete |
-| GANTT-08 | Phase 3 | Pending |
+| GANTT-08 | Phase 3 | Complete |
 | GANTT-09 | Phase 3 | Complete |
-| GANTT-10 | Phase 3 | Pending |
+| GANTT-10 | Phase 3 | Complete |
 | CAL-01 | Phase 3 | Complete |
 | CAL-02 | Phase 3 | Complete |
 | CAL-03 | Phase 3 | Complete |

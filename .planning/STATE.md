@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Completed 03-drag-cascade-calendar-tasks/04 (calendar view + drawer + tabs)
-last_updated: "2026-04-27T04:48:47.876Z"
+last_updated: "2026-04-27T04:58:45.848Z"
 last_activity: 2026-04-27
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 27
-  completed_plans: 25
-  percent: 93
+  completed_plans: 26
+  percent: 96
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 03 (drag-cascade-calendar-tasks) — EXECUTING
-Plan: 6 of 7
+Plan: 7 of 7
 Status: Ready to execute
 Last activity: 2026-04-27
 
-Progress: [█████████░] 93%
+Progress: [██████████] 96%
 
 ## Performance Metrics
 
@@ -63,6 +63,7 @@ Progress: [█████████░] 93%
 | Phase 03-drag-cascade-calendar-tasks P03 | 11min | 3 tasks | 17 files |
 | Phase 03-drag-cascade-calendar-tasks P04 | 8min | 3 tasks | 10 files |
 | Phase 03-drag-cascade-calendar-tasks P05 | 12min | 3 tasks | 12 files |
+| Phase 03 P06 | 5min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -115,6 +116,10 @@ Recent decisions affecting current work:
 - [Phase ?]: Phase 3 P05: TASK-06 — no bulk multi-select in v1 per D-34; per-row checkboxes only
 - [Phase ?]: Phase 3 P05: one-off range check uses YYYY-MM-DD string compare to dodge sub-day ISO precision excluding tasks created seconds before render
 - [Phase ?]: Phase 3 P05: CustomTask.plantingId captured in modal form state but not yet threaded through saved CustomTask; deferred to Plan 03-07 / Phase 4
+- [Phase ?]: Phase 3 P06: foreignObject hosts LockToggle in per-bar SVG g — last child draws above fill+ring; ghost-overlay z-order trade-off accepted for Phase 3 best-effort
+- [Phase ?]: Phase 3 P06: stopPropagation in LockToggle.onClick prevents double-fire with useLockKeybinding document Alt-click listener
+- [Phase ?]: Phase 3 P06: ConstraintTooltip mount migrated from DragLayer to AppShell top-level — survives view changes; Plan 03-03 tests unaffected
+- [Phase ?]: Phase 3 P06: header Undo/Redo uses native title attribute for hover hint — Radix Tooltip 200ms-delay polish deferred to Phase 4
 
 ### Pending Todos
 
@@ -133,7 +138,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27T04:48:38.693Z
+Last session: 2026-04-27T04:58:23.823Z
 Stopped at: Completed 03-drag-cascade-calendar-tasks/04 (calendar view + drawer + tabs)
 Resume file: 
 None
