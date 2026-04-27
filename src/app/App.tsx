@@ -4,8 +4,8 @@
 //
 // Plan 07 created this with Loading… placeholders for /, /plan, *.
 // Plan 01-08 wired <GanttView/> into / and /plan. Plan 02-08 wired <SetupWizard/> into /setup.
-// Plan 02-10 (this plan) adds /catalog → <CatalogBrowser/>; updates /tasks placeholder copy.
-// Plan 02-11 will swap /settings → <SettingsPanel/> in a follow-up wave (depends_on 02-10).
+// Plan 02-10 added /catalog → <CatalogBrowser/>; updated /tasks placeholder copy.
+// Plan 02-11 (this plan) swaps /settings → <SettingsPanel/> (export/import surface, D-27/28/29).
 import { Route, Routes } from 'react-router';
 import { AppShell } from './AppShell';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -13,6 +13,7 @@ import { PlaceholderRoute } from './PlaceholderRoute';
 import { GanttView } from '../features/gantt/GanttView';
 import { SetupWizard } from '../features/setup/SetupWizard';
 import { CatalogBrowser } from '../features/catalog/CatalogBrowser';
+import { SettingsPanel } from '../features/settings/SettingsPanel';
 
 export function App() {
   return (
@@ -33,15 +34,7 @@ export function App() {
               />
             }
           />
-          <Route
-            path="/settings"
-            element={
-              <PlaceholderRoute
-                heading="Settings — Coming soon"
-                body="Import / export and preferences land in the next plan (02-11)."
-              />
-            }
-          />
+          <Route path="/settings" element={<SettingsPanel />} />
           {/* Catch-all → gantt */}
           <Route path="*" element={<GanttView />} />
         </Routes>
