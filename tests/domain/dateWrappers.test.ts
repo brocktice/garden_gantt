@@ -12,6 +12,8 @@ import {
   nowISOString,
   lastDayOfMonth,
   currentYear,
+  ymdToISONoon,
+  isoNoonToYMD,
 } from '../../src/domain/dateWrappers';
 
 describe('parseDate — coerce date-only to UTC noon (SCH-03)', () => {
@@ -127,5 +129,31 @@ describe('currentYear — canonical "current calendar year" site', () => {
     const y = currentYear();
     expect(y).toBeGreaterThanOrEqual(2026);
     expect(y).toBeLessThanOrEqual(2100);
+  });
+});
+
+describe('ymdToISONoon / isoNoonToYMD — Phase 4 native <input type=date> round-trip', () => {
+  it('ymdToISONoon coerces YYYY-MM-DD to noon-UTC ISO string', () => {
+    expect(ymdToISONoon('2026-05-15')).toBe('2026-05-15T12:00:00.000Z');
+  });
+
+  it('isoNoonToYMD extracts YYYY-MM-DD from a noon-UTC ISO string', () => {
+    expect(isoNoonToYMD('2026-05-15T12:00:00.000Z')).toBe('2026-05-15');
+  });
+
+  it('round-trip ymdToISONoon → isoNoonToYMD → ymdToISONoon is identity', () => {
+    const samples = [
+      '2026-01-01',
+      '2026-02-28',
+      '2024-02-29',
+      '2026-12-31',
+      '2027-07-12',
+    ];
+    for (const ymd of samples) {
+      const iso = ymdToISONoon(ymd);
+      const back = isoNoonToYMD(iso);
+      expect(back).toBe(ymd);
+      expect(ymdToISONoon(back)).toBe(iso);
+    }
   });
 });
