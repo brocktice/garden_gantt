@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 04 Plan 04 (onboarding) complete
-last_updated: "2026-04-27T13:53:00.000Z"
-last_activity: 2026-04-27 -- Phase 04 Plan 04 (onboarding coach marks) complete
+stopped_at: Phase 04 Plan 04 (onboarding coach marks) complete
+last_updated: "2026-04-27T14:13:29.380Z"
+last_activity: 2026-04-27
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 35
-  completed_plans: 32
-  percent: 91
+  completed_plans: 34
+  percent: 97
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Phase: 04 (polish-mobile-ship) — EXECUTING
-Plan: 4 of 7 complete (Wave 2 plan 04-04 done; 04-06 + 04-07 remaining; 04-05 already complete)
-Status: Executing Phase 04
-Last activity: 2026-04-27 -- Phase 04 Plan 04 (onboarding coach marks) complete
+Plan: 5 of 7 complete (Wave 2 plan 04-04 done; 04-06 + 04-07 remaining; 04-05 already complete)
+Status: Ready to execute
+Last activity: 2026-04-27
 
-Progress: [██████████] 100%
+Progress: [██████████] 97%
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Progress: [██████████] 100%
 | Phase 03 P06 | 5min | 2 tasks | 7 files |
 | Phase 03-drag-cascade-calendar-tasks P07 | 7min | 2 tasks | 5 files |
 | Phase 04-polish-mobile-ship P04 | ~7min | 2 tasks | 11 files (5 created, 6 modified) |
+| Phase 04-polish-mobile-ship P06 | 25min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -131,6 +132,13 @@ Recent decisions affecting current work:
 - [Phase 04-polish-mobile-ship]: Plan 04-04: isFirstBar prop on DraggableBar (i===0 && ei===0) drives both data-coach-target='first-bar' on the wrapping <g> AND propagation to LockToggle.isFirst → data-coach-target='first-lock-toggle' (single boolean, two anchors).
 - [Phase 04-polish-mobile-ship]: Plan 04-04: 'Reset onboarding' Settings row lives in its own 'Onboarding' section above 'Danger zone' (D-07: separate from Clear plan; clearing the plan does NOT re-arm coach marks).
 - [Phase 04-polish-mobile-ship]: Plan 04-04: Plan 06 will mount <CoachMarks /> in AppShell — this plan does NOT modify AppShell.
+- [Phase ?]: test
+- [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-06: Banner-stack at AppShell uses single-mount priority selector (storage-full > iOS Private > export-reminder); only ONE banner visible at any time (Open Question 1 recommendation a; mitigates T-04-06-03).
+- [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-06: useKeyboardBarDrag uses ScheduleEdit canonical shape (startOverride + reason='user-form-edit' + editedAt) — plan said newStart but the type defines startOverride; tests assert against canonical shape.
+- [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-06: ConstraintTooltip key={eventId|reasons.join('|')} forces React remount when message changes; aria-live=polite then re-announces only on real changes (RESEARCH Pitfall 3); visible header/body carry aria-hidden so SR reads sr-only summary only.
+- [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-06: GanttView attribute spread order — {...attributes} from dnd-kit FIRST, then tabIndex/role/aria-label override; dnd-kit's defaults would otherwise shadow the a11y contract.
+- [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-06: Test isolation pattern — replace store actions with vi.fn via setState in beforeEach (not vi.spyOn on getState()); spyOn shared call history across tests.
+- [Phase ?]: [Phase 04-polish-mobile-ship]: Plan 04-06: WCAG AA audit checkpoint auto-approved in auto-mode against UI-SPEC §Phase 4 WCAG AA audit deltas; axe-core CLI cannot run in this sandbox (no Chrome binary). Lifecycle palette + lock ring already validated in Phase 3 (Plan 03-06 §Color comment).
 
 ### Pending Todos
 
@@ -149,7 +157,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27T13:53:00.000Z
+Last session: 2026-04-27T14:13:29.364Z
 Stopped at: Phase 04 Plan 04 (onboarding coach marks) complete
 Resume file: 
-.planning/phases/04-polish-mobile-ship/04-04-SUMMARY.md
+None

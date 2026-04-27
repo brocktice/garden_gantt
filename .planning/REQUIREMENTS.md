@@ -81,13 +81,13 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **POL-01**: Mobile-responsive layout: calendar default on phones; gantt readable in landscape on phones; full editing on desktop/tablet
 - [x] **POL-02**: First-run onboarding walks new users from blank slate to first gantt without dead ends
 - [ ] **POL-03**: Real empty states with a clear next-step CTA on every primary view (catalog empty, plan empty, dashboard empty)
-- [ ] **POL-04**: Real error states for: bad ZIP, network failure on Permapeople, localStorage full, corrupt import
+- [x] **POL-04**: Real error states for: bad ZIP, network failure on Permapeople, localStorage full, corrupt import
 - [ ] **POL-05**: Loading states for any async operation (Permapeople fetch, ZIP lookup if any)
 - [ ] **POL-06**: Confirmation dialogs before destructive actions (delete planting, clear plan, overwrite-on-import) with undo where possible
 - [ ] **POL-07**: Modern typography, no jank during drag (60fps target on the gantt)
-- [ ] **POL-08**: Keyboard accessibility: tab order, Enter to add, Escape to cancel, keyboard-driven drag fallback for the gantt
-- [ ] **POL-09**: Color contrast meets WCAG AA on all text and interactive elements
-- [ ] **POL-10**: Visible export prompt periodically (or on-demand) to mitigate localStorage-clear data loss
+- [x] **POL-08**: Keyboard accessibility: tab order, Enter to add, Escape to cancel, keyboard-driven drag fallback for the gantt
+- [x] **POL-09**: Color contrast meets WCAG AA on all text and interactive elements
+- [x] **POL-10**: Visible export prompt periodically (or on-demand) to mitigate localStorage-clear data loss
 
 ### Deployment
 
@@ -200,13 +200,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | POL-01 | Phase 4 | Pending |
 | POL-02 | Phase 4 | Complete |
 | POL-03 | Phase 4 | Pending |
-| POL-04 | Phase 4 | Pending |
+| POL-04 | Phase 4 | Complete |
 | POL-05 | Phase 4 | Pending |
 | POL-06 | Phase 4 | Pending |
 | POL-07 | Phase 4 | Pending |
-| POL-08 | Phase 4 | Pending |
-| POL-09 | Phase 4 | Pending |
-| POL-10 | Phase 4 | Pending |
+| POL-08 | Phase 4 | Complete |
+| POL-09 | Phase 4 | Complete |
+| POL-10 | Phase 4 | Complete |
 | DEPLOY-01 | Phase 4 | Pending |
 | DEPLOY-02 | Phase 1 | Complete |
 | DEPLOY-03 | Phase 4 | Pending |
