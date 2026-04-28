@@ -284,6 +284,15 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                 const plant = merged.get(p.plantId);
                 const rowY = AXIS_HEIGHT + i * (ROW_HEIGHT + ROW_GAP);
                 const rowEvents = eventsByPlanting.get(p.id) ?? [];
+                // Render order: multi-day range bars first, single-day point markers last,
+                // so the indoor-start / transplant / direct-sow dots draw ON TOP of any
+                // overlapping germination-window or harden-off range that starts on the
+                // same date. Stable secondary sort preserves scheduler emit order.
+                const sortedRowEvents = [...rowEvents].sort((a, b) => {
+                  const aPoint = a.start === a.end ? 1 : 0;
+                  const bPoint = b.start === b.end ? 1 : 0;
+                  return aPoint - bPoint;
+                });
                 const isDerived = (p.successionIndex ?? 0) > 0;
                 const aLabel = isDerived
                   ? `Succession ${(p.successionIndex ?? 0) + 1} of ${plant?.name ?? p.plantId}`
@@ -296,7 +305,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                     aria-label={aLabel}
                     transform={`translate(0, ${rowY})`}
                   >
-                    {rowEvents.map((e, ei) => {
+                    {sortedRowEvents.map((e, ei) => {
                       const fill = lifecyclePalette[e.type];
                       // Skip task events (water-seedlings, harden-off-day, fertilize-at-flowering).
                       if (!fill || !plant) return null;
@@ -473,8 +482,13 @@ function DraggableBar({
   const ariaLabel = `${plantLabel} ${phaseLabel} from ${startShort} to ${endShort}. Press arrow keys to adjust, L to lock, Enter to commit, Escape to cancel.`;
 
   // Lock icon position per UI-SPEC §"Gantt Visual Treatment — Lock icon".
-  // foreignObject hosts an HTML <button> inside the SVG.
-  const lockX = x + width - 24 - 2; // -2px inside right edge; -24 = hit-target width
+  // foreignObject hosts an HTML <button> inside the SVG. For zero-duration / very thin
+  // bars (indoor-start, transplant, direct-sow markers where width clamps to 4px),
+  // `x + width - 26` would land 22px LEFT of the bar's left edge, extending the <g>'s
+  // bbox and making the drag click target reach into empty whitespace. Clamping at `x`
+  // keeps the lock anchored from the bar's left edge for tiny bars (visually overlaps
+  // the dot, which is the right trade-off — the bbox stays at the visible bar).
+  const lockX = Math.max(x, x + width - 24 - 2);
   const lockY = BAR_Y_OFFSET - 8; // -8px from top of bar
 
   return (
