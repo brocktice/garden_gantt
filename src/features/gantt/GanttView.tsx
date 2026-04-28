@@ -552,6 +552,39 @@ function DraggableBar({
           role="button"
         />
       )}
+      {/* Drag affordance: three thin vertical lines centered inside the bar. Rendered
+          only on draggable bars wide enough to host the glyph (≥14px). Thin point
+          markers (4px-wide indoor-start / transplant / direct-sow) rely on
+          cursor:grab + the lock icon for drag affordance. */}
+      {isDraggable && width >= 14 && (
+        <g
+          aria-hidden="true"
+          pointerEvents="none"
+          stroke="#FFFFFF"
+          strokeOpacity={0.75}
+          strokeWidth={1}
+          strokeLinecap="round"
+        >
+          <line
+            x1={x + width / 2 - 3}
+            x2={x + width / 2 - 3}
+            y1={BAR_Y_OFFSET + 5}
+            y2={BAR_Y_OFFSET + BAR_HEIGHT - 5}
+          />
+          <line
+            x1={x + width / 2}
+            x2={x + width / 2}
+            y1={BAR_Y_OFFSET + 5}
+            y2={BAR_Y_OFFSET + BAR_HEIGHT - 5}
+          />
+          <line
+            x1={x + width / 2 + 3}
+            x2={x + width / 2 + 3}
+            y1={BAR_Y_OFFSET + 5}
+            y2={BAR_Y_OFFSET + BAR_HEIGHT - 5}
+          />
+        </g>
+      )}
       {/* Phase 3 Plan 03-06: lock outline ring (UI-SPEC §"Gantt Visual Treatment — Lock outline ring"). */}
       {isLocked && (
         <rect
