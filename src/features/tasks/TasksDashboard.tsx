@@ -25,6 +25,7 @@ export function TasksDashboard() {
     (s) => s.plan?.completedTaskIds?.length ?? 0,
   );
   const clearCompletedTaskIds = usePlanStore((s) => s.clearCompletedTaskIds);
+  const completeTaskIds = usePlanStore((s) => s.completeTaskIds);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<CustomTask | null>(null);
 
@@ -48,6 +49,18 @@ export function TasksDashboard() {
     });
   };
 
+  const handleCompletePast = () => {
+    if (overdue.length === 0) return;
+    const ids = overdue.map((t) => t.id);
+    completeTaskIds(ids);
+    pushToast({
+      variant: 'success',
+      duration: 5000,
+      title: `Marked ${ids.length} past ${ids.length === 1 ? 'task' : 'tasks'} complete.`,
+      action: { label: 'Undo', onClick: () => getTemporal().undo() },
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 py-8">
       <h1 className="text-3xl font-semibold text-stone-900">Tasks</h1>
@@ -65,6 +78,11 @@ export function TasksDashboard() {
           <ChevronDown className="h-4 w-4 ml-1" />
         </Button>
         <div className="flex items-center gap-2">
+          {overdue.length > 0 && (
+            <Button variant="secondary" onClick={handleCompletePast}>
+              Mark past complete
+            </Button>
+          )}
           {completedCount > 0 && (
             <Button variant="ghost" onClick={handleClearCompleted}>
               Clear completed

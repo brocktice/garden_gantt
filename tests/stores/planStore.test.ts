@@ -557,6 +557,20 @@ describe('usePlanStore — Phase 3 setters (Plan 03-02)', () => {
     usePlanStore.getState().toggleTaskCompletion('task-1:2026-05-15');
     expect(usePlanStore.getState().plan!.completedTaskIds).toEqual(['task-1']);
   });
+
+  it('completeTaskIds adds multiple completion keys without removing existing keys', async () => {
+    const { usePlanStore } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    usePlanStore.getState().toggleTaskCompletion('existing');
+
+    usePlanStore.getState().completeTaskIds(['task-1', 'task-2', 'existing']);
+
+    expect(usePlanStore.getState().plan!.completedTaskIds).toEqual([
+      'existing',
+      'task-1',
+      'task-2',
+    ]);
+  });
 });
 
 describe('usePlanStore — updatedAt format (SCH-03 / nowISOString invariant)', () => {

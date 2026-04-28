@@ -82,6 +82,7 @@ interface PlanState {
   // toggleTaskCompletion: idempotent toggle on completedTaskIds (D-36). Composite key for
   // recurring tasks `${taskId}:${ISODate}`; bare taskId for one-off tasks.
   toggleTaskCompletion: (compositeKey: string) => void;
+  completeTaskIds: (compositeKeys: string[]) => void;
   // Phase 4 (Plan 04-03) — destructive setters with modal-confirm + toast-with-undo.
   // clearPlan: resets plan to null. Modal-confirm gated in SettingsPanel.
   clearPlan: () => void;
@@ -433,6 +434,20 @@ export const usePlanStore = create<PlanState>()(
             const next = new Set(s.plan.completedTaskIds ?? []);
             if (next.has(compositeKey)) next.delete(compositeKey);
             else next.add(compositeKey);
+            return {
+              plan: {
+                ...s.plan,
+                completedTaskIds: Array.from(next),
+                updatedAt: nowISOString(),
+              },
+            };
+          }),
+
+        completeTaskIds: (compositeKeys) =>
+          set((s) => {
+            if (!s.plan || compositeKeys.length === 0) return s;
+            const next = new Set(s.plan.completedTaskIds ?? []);
+            for (const key of compositeKeys) next.add(key);
             return {
               plan: {
                 ...s.plan,

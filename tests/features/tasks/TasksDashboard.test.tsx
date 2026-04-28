@@ -11,7 +11,12 @@ import { render, screen, cleanup, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import type { Location, GardenPlan, CustomTask } from '../../../src/domain/types';
-import { nowISOString } from '../../../src/domain/dateWrappers';
+import {
+  addDays,
+  nowISOString,
+  parseDate,
+  toISODate,
+} from '../../../src/domain/dateWrappers';
 
 const sampleLocation: Location = {
   zip: '20001',
@@ -130,5 +135,45 @@ describe('TasksDashboard', () => {
     await user.click(newTaskBtn);
     // Radix Dialog renders with role="dialog"
     expect(screen.getByRole('dialog')).toBeTruthy();
+  });
+
+  it('Test 6 — Mark past complete completes all overdue tasks only', async () => {
+    const today = todayISOFor();
+    const yesterday = toISODate(addDays(parseDate(today), -1));
+    const tomorrow = toISODate(addDays(parseDate(today), 1));
+    const planStoreModule = await import('../../../src/stores/planStore');
+    planStoreModule.usePlanStore.getState().setLocation(sampleLocation);
+    planStoreModule.usePlanStore.getState().addCustomTask({
+      id: 'C-past-1',
+      source: 'custom',
+      title: 'Past one',
+      category: 'water',
+      dueDate: yesterday,
+      completed: false,
+    });
+    planStoreModule.usePlanStore.getState().addCustomTask({
+      id: 'C-past-2',
+      source: 'custom',
+      title: 'Past two',
+      category: 'water',
+      dueDate: yesterday,
+      completed: false,
+    });
+    planStoreModule.usePlanStore.getState().addCustomTask({
+      id: 'C-future',
+      source: 'custom',
+      title: 'Future',
+      category: 'water',
+      dueDate: tomorrow,
+      completed: false,
+    });
+
+    const user = userEvent.setup();
+    await renderDashboard();
+    await user.click(screen.getByRole('button', { name: /mark past complete/i }));
+
+    const completed = planStoreModule.usePlanStore.getState().plan!.completedTaskIds;
+    expect(completed).toEqual(expect.arrayContaining(['C-past-1', 'C-past-2']));
+    expect(completed).not.toContain('C-future');
   });
 });

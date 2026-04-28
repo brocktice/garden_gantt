@@ -49,8 +49,9 @@ export function partitionTasksByWindow(
 }
 
 /**
- * React hook variant. Reads expanded tasks from useExpandedTasks (today..today+30) and
- * partitions via the pure helper.
+ * React hook variant. Reads expanded tasks from useExpandedTasks (today-30..today+30) and
+ * partitions via the pure helper. The backward window is required for overdue custom
+ * tasks; otherwise they are filtered out before the overdue bucket can see them.
  */
 export function useTodayWeekOverdue(): {
   today: Task[];
@@ -58,7 +59,11 @@ export function useTodayWeekOverdue(): {
   overdue: Task[];
 } {
   const todayISO = nowISOString();
-  const tasks = useExpandedTasks(todayISO, toISODate(addDays(parseDate(todayISO), 30)));
+  const today = parseDate(todayISO);
+  const tasks = useExpandedTasks(
+    toISODate(addDays(today, -30)),
+    toISODate(addDays(today, 30)),
+  );
 
   return useMemo(() => partitionTasksByWindow(tasks, todayISO), [tasks, todayISO]);
 }
