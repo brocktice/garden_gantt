@@ -109,4 +109,27 @@ describe('CatalogBrowser', () => {
 
     expect(usePlanStore.getState().plan?.plantings.length).toBe(1);
   });
+
+  it('allows adding the same vegetable as another independent planting', async () => {
+    const user = userEvent.setup();
+    const { usePlanStore } = await import('../../../src/stores/planStore');
+    usePlanStore.setState({ plan: null });
+    usePlanStore.getState().setLocation(sampleLocation);
+
+    await renderCatalog();
+    const addTomato = await screen.findByRole('button', {
+      name: /add tomato to plan/i,
+    });
+    await user.click(addTomato);
+    const addAnother = await screen.findByRole('button', {
+      name: /add another tomato planting/i,
+    });
+    await user.click(addAnother);
+
+    const tomatoPlantings = usePlanStore
+      .getState()
+      .plan!.plantings.filter((p) => p.plantId === 'tomato');
+    expect(tomatoPlantings).toHaveLength(2);
+    expect(tomatoPlantings.map((p) => p.id)).toEqual(['p-tomato', 'p-tomato-2']);
+  });
 });

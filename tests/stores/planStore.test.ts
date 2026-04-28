@@ -166,6 +166,18 @@ describe('usePlanStore — Phase 2 setters', () => {
     expect(usePlanStore.getState().plan!.plantings[0]!.successionEnabled).toBe(false);
   });
 
+  it('setSuccessionCount stores a clamped integer count', async () => {
+    const { usePlanStore } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    usePlanStore.getState().addPlanting(makePlanting('p-lettuce', 'lettuce'));
+
+    usePlanStore.getState().setSuccessionCount('p-lettuce', 2.8);
+    expect(usePlanStore.getState().plan!.plantings[0]!.successionCount).toBe(2);
+
+    usePlanStore.getState().setSuccessionCount('p-lettuce', 99);
+    expect(usePlanStore.getState().plan!.plantings[0]!.successionCount).toBe(20);
+  });
+
   it('setPlantingStartMethod stores override and prunes incompatible edits and locks', async () => {
     const { usePlanStore } = await import('../../src/stores/planStore');
     usePlanStore.getState().setLocation(sampleLocation);

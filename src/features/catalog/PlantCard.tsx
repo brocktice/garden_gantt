@@ -46,6 +46,7 @@ const ICONS: Record<PlantCategory, ComponentType<{ className?: string }>> = {
 export interface PlantCardProps {
   plant: Plant;
   added: boolean;
+  plantingCount?: number;
   /** True when description came from Permapeople (CAT-08 — Sparkles indicator). */
   enrichedFromPermapeople?: boolean | undefined;
   onAdd: () => void;
@@ -59,6 +60,7 @@ export interface PlantCardProps {
 export function PlantCard({
   plant,
   added,
+  plantingCount = 0,
   enrichedFromPermapeople,
   onAdd,
   onRemove,
@@ -168,13 +170,24 @@ export function PlantCard({
       </CardBody>
       <CardFooter>
         {added ? (
-          <Button
-            variant="ghost"
-            className="w-full text-stone-600 hover:text-red-700"
-            onClick={onRemove}
-          >
-            Remove from plan
-          </Button>
+          <div className="flex w-full flex-col gap-2">
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={onAdd}
+              aria-label={`Add another ${plant.name} planting`}
+            >
+              Add another
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full text-stone-600 hover:text-red-700"
+              onClick={onRemove}
+            >
+              Remove one
+              {plantingCount > 1 ? ` (${plantingCount})` : ''}
+            </Button>
+          </div>
         ) : (
           <Button
             variant="primary"

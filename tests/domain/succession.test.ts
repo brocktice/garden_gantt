@@ -62,6 +62,16 @@ describe('expandSuccessions', () => {
     expect(out.plantings[1]!.startOffsetDays).toBe(14);
   });
 
+  it('honors explicit successionCount instead of using every available slot', () => {
+    const plan = buildPlan([{ plantId: 'lettuce', successionEnabled: true }]);
+    plan.plantings[0]!.successionCount = 2;
+    const out = expandSuccessions(plan, sampleCatalog);
+
+    expect(out.plantings).toHaveLength(3);
+    expect(out.plantings[1]!.startOffsetDays).toBe(14);
+    expect(out.plantings[2]!.startOffsetDays).toBe(28);
+  });
+
   it('does not expand when a second planting cannot mature before first frost', () => {
     const longSeasonPlant: Plant = {
       ...sampleCatalog.get('tomato')!,
@@ -82,15 +92,15 @@ describe('expandSuccessions', () => {
     expect(out.plantings).toHaveLength(1);
   });
 
-  it('expands lettuce in zone 7 to 5 plantings (1 original + 4 succession, capped by maxSuccessions=4)', () => {
+  it('expands lettuce in zone 7 to 2 plantings by default (1 original + 1 succession)', () => {
     // Lettuce: dtm=50, interval=14, maxSuccessions=4, directSowOffset=-28
     // baseAnchor = 2026-04-15 + (-28d) = 2026-03-18
     // daysToFirstFrost (2026-10-20 - 2026-03-18) = 216
     // maxIndex = floor((216 - 50) / 14) = 11
-    // upperBound = min(11, 4) = 4 → original + 4 = 5 plantings
+    // upperBound = min(11, 4) = 4; default count = 1 → original + 1 = 2 plantings
     const plan = buildPlan([{ plantId: 'lettuce', successionEnabled: true }]);
     const out = expandSuccessions(plan, sampleCatalog);
-    expect(out.plantings).toHaveLength(5);
+    expect(out.plantings).toHaveLength(2);
   });
 
   it('preserves identity of original planting (index 0 keeps original id and successionIndex 0)', () => {
@@ -132,7 +142,8 @@ describe('expandSuccessions', () => {
 
     // (N+1)th succession would NOT fit (unless capped early by maxSuccessions).
     // If maxSuccessions caps before frost-cap, this assertion is skipped.
-    const maxSuccessions = lettuce.timing.maxSuccessions ?? 12;
+    const requestedCount = plan.plantings[0]!.successionCount ?? 1;
+    const maxSuccessions = Math.min(lettuce.timing.maxSuccessions ?? 12, requestedCount);
     if (N < maxSuccessions) {
       const harvestNplus1 = differenceInDays(
         firstFrost,

@@ -9,6 +9,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { useMemo, useState } from 'react';
 import { MapPin, Trash2, X } from 'lucide-react';
 import { Button } from '../../ui/Button';
+import { Input } from '../../ui/Input';
 import { Switch } from '../../ui/Switch';
 import {
   Dialog,
@@ -22,8 +23,10 @@ import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
 import { getTemporal, usePlanStore } from '../../stores/planStore';
 import { useUIStore } from '../../stores/uiStore';
 import {
+  clampSuccessionCount,
   expandSuccessions,
   getSuccessionCapacity,
+  successionLastPlantingDate,
 } from '../../domain/succession';
 import { resolveStartMethod } from '../../domain/plantingTiming';
 import { pushToast } from '../../ui/toast/useToast';
@@ -41,6 +44,7 @@ export function MyPlanPanel() {
   const plan = usePlanStore((s) => s.plan);
   const removePlanting = usePlanStore((s) => s.removePlanting);
   const toggleSuccession = usePlanStore((s) => s.toggleSuccession);
+  const setSuccessionCount = usePlanStore((s) => s.setSuccessionCount);
   const setPlantingStartMethod = usePlanStore((s) => s.setPlantingStartMethod);
   const merged = useCatalogStore(selectMerged);
 
@@ -166,6 +170,20 @@ export function MyPlanPanel() {
                   const showSuccession =
                     successionCapacity !== null && successionCapacity.upperBound >= 1;
                   const interval = successionCapacity?.intervalDays;
+                  const successionCount =
+                    successionCapacity !== null
+                      ? clampSuccessionCount(
+                          planting.successionCount,
+                          successionCapacity,
+                        )
+                      : 0;
+                  const lastSuccessionDate =
+                    successionCapacity !== null && successionCount > 0
+                      ? successionLastPlantingDate(
+                          successionCapacity,
+                          successionCount,
+                        )
+                      : null;
                   const startsIndoors =
                     resolveStartMethod(planting, plant) === 'indoor-start';
                   const derivedCount =
@@ -235,8 +253,32 @@ export function MyPlanPanel() {
                             {isOn && derivedCount > 0 && interval && (
                               <p className="text-sm text-stone-600 mt-0.5">
                                 Adds {derivedCount} more plantings every{' '}
-                                {interval} days, ending before first fall frost.
+                                {interval} days. Last planting:{' '}
+                                {lastSuccessionDate
+                                  ? formatDate(lastSuccessionDate)
+                                  : 'n/a'}.
                               </p>
+                            )}
+                            {isOn && successionCapacity && (
+                              <label className="mt-2 block">
+                                <span className="text-xs font-medium text-stone-700">
+                                  Additional plantings
+                                </span>
+                                <Input
+                                  type="number"
+                                  min={1}
+                                  max={successionCapacity.upperBound}
+                                  value={successionCount}
+                                  onChange={(e) =>
+                                    setSuccessionCount(
+                                      planting.id,
+                                      Number(e.target.value),
+                                    )
+                                  }
+                                  className="mt-1 h-9"
+                                  aria-label={`Additional succession plantings for ${plant.name}`}
+                                />
+                              </label>
                             )}
                           </div>
                         </div>

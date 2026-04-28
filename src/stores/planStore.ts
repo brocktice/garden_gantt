@@ -55,6 +55,7 @@ interface PlanState {
   addPlanting: (planting: Planting) => void;
   removePlanting: (plantingId: string) => void;
   toggleSuccession: (plantingId: string) => void;
+  setSuccessionCount: (plantingId: string, count: number) => void;
   setPlantingStartMethod: (
     plantingId: string,
     startMethod: 'direct-sow' | 'indoor-start',
@@ -175,6 +176,26 @@ export const usePlanStore = create<PlanState>()(
                     plantings: s.plan.plantings.map((p) =>
                       p.id === plantingId
                         ? { ...p, successionEnabled: !p.successionEnabled }
+                        : p,
+                    ),
+                    updatedAt: nowISOString(),
+                  },
+                }
+              : s,
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
+
+        setSuccessionCount: (plantingId, count) => {
+          const safeCount = Math.max(1, Math.min(20, Math.trunc(count)));
+          set((s) =>
+            s.plan
+              ? {
+                  plan: {
+                    ...s.plan,
+                    plantings: s.plan.plantings.map((p) =>
+                      p.id === plantingId
+                        ? { ...p, successionCount: safeCount }
                         : p,
                     ),
                     updatedAt: nowISOString(),

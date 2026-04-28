@@ -49,9 +49,11 @@ export function CatalogBrowser() {
   const loadingFlash = false;
 
   const myPlantingsByPlantId = useMemo(() => {
-    const map = new Map<string, string>(); // plantId -> planting.id
+    const map = new Map<string, string[]>(); // plantId -> planting ids
     for (const pl of plan?.plantings ?? []) {
-      if (!map.has(pl.plantId)) map.set(pl.plantId, pl.id);
+      const ids = map.get(pl.plantId) ?? [];
+      ids.push(pl.id);
+      map.set(pl.plantId, ids);
     }
     return map;
   }, [plan?.plantings]);
@@ -71,15 +73,24 @@ export function CatalogBrowser() {
       navigate('/setup');
       return;
     }
+    const existingIds = new Set(plan.plantings.map((pl) => pl.id));
+    let id = plantingId(plant.id, 0);
+    if (existingIds.has(id)) {
+      let n = 2;
+      do {
+        id = `${plantingId(plant.id, 0)}-${n}`;
+        n += 1;
+      } while (existingIds.has(id));
+    }
     addPlanting({
-      id: plantingId(plant.id, 0),
+      id,
       plantId: plant.id,
       successionIndex: 0,
     });
   };
 
   const handleRemove = (plant: Plant) => {
-    const plId = myPlantingsByPlantId.get(plant.id);
+    const plId = myPlantingsByPlantId.get(plant.id)?.at(-1);
     if (plId) removePlanting(plId);
   };
 
@@ -194,7 +205,8 @@ export function CatalogBrowser() {
             <li key={plant.id}>
               <PlantCard
                 plant={plant}
-                added={myPlantingsByPlantId.has(plant.id)}
+                added={(myPlantingsByPlantId.get(plant.id)?.length ?? 0) > 0}
+                plantingCount={myPlantingsByPlantId.get(plant.id)?.length ?? 0}
                 enrichedFromPermapeople={enriched}
                 onAdd={() => handleAdd(plant)}
                 onRemove={() => handleRemove(plant)}

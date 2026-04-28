@@ -15,7 +15,7 @@
 // successionIndex 0 is reserved for the original planting (identity preserved).
 
 import type { GardenPlan, Plant, Planting } from './types';
-import { parseDate, addDays, differenceInDays } from './dateWrappers';
+import { parseDate, addDays, differenceInDays, toISODate } from './dateWrappers';
 import {
   directSowOffsetForPlanting,
   resolveStartMethod,
@@ -23,10 +23,12 @@ import {
 } from './plantingTiming';
 
 export const DEFAULT_SUCCESSION_INTERVAL_DAYS = 14;
+export const DEFAULT_SUCCESSION_COUNT = 1;
 
 export interface SuccessionCapacity {
   intervalDays: number;
   upperBound: number;
+  baseAnchorISO: string;
 }
 
 export function getSuccessionCapacity(
@@ -51,7 +53,27 @@ export function getSuccessionCapacity(
   const daysToFirstFrost = differenceInDays(firstFrost, baseAnchor);
   const maxIndex = Math.floor((daysToFirstFrost - dtm) / intervalDays);
   const safetyCap = plant.timing.maxSuccessions ?? 12;
-  return { intervalDays, upperBound: Math.min(maxIndex, safetyCap) };
+  return {
+    intervalDays,
+    upperBound: Math.min(maxIndex, safetyCap),
+    baseAnchorISO: toISODate(baseAnchor),
+  };
+}
+
+export function clampSuccessionCount(
+  requested: number | undefined,
+  capacity: SuccessionCapacity,
+): number {
+  const fallback = Math.min(DEFAULT_SUCCESSION_COUNT, capacity.upperBound);
+  const count = requested ?? fallback;
+  return Math.max(0, Math.min(count, capacity.upperBound));
+}
+
+export function successionLastPlantingDate(
+  capacity: SuccessionCapacity,
+  count: number,
+): string {
+  return toISODate(addDays(parseDate(capacity.baseAnchorISO), count * capacity.intervalDays));
 }
 
 /**
@@ -84,8 +106,10 @@ export function expandSuccessions(
 
     const capacity = getSuccessionCapacity(plan, planting, plant);
     if (!capacity || capacity.upperBound < 1) continue;
+    const count = clampSuccessionCount(planting.successionCount, capacity);
+    if (count < 1) continue;
 
-    for (let i = 1; i <= capacity.upperBound; i++) {
+    for (let i = 1; i <= count; i++) {
       expanded.push({
         ...planting,
         id: `${planting.id}-s${i}`,
