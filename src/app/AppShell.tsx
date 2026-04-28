@@ -130,17 +130,24 @@ export function AppShell({ children }: AppShellProps) {
     <>
       <SkipToMain />
       {banner}
-      <header className="sticky top-0 z-20 w-full bg-white border-b border-stone-200 h-[60px] px-6">
-        <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
-          <div className="flex items-baseline gap-3">
-            <span className="text-xl font-semibold text-stone-900">Garden Gantt</span>
-            <span className="hidden md:inline text-sm font-normal text-stone-600">
-              Plug in your ZIP and your plants. Get a season schedule.
-            </span>
+      <header className="sticky top-0 z-20 w-full bg-white border-b border-stone-200 px-4 md:h-[60px] md:px-6">
+        <div className="max-w-7xl mx-auto flex h-full flex-col gap-2 py-2 md:flex-row md:items-center md:justify-between md:gap-6 md:py-0">
+          <div className="flex min-w-0 items-center justify-between gap-3">
+            <div className="min-w-0">
+              <span className="text-xl font-semibold text-stone-900">Garden Gantt</span>
+              <span className="hidden md:inline text-sm font-normal text-stone-600">
+                Plug in your ZIP and your plants. Get a season schedule.
+              </span>
+            </div>
+            {!hideMyPlanPill && (
+              <div className="shrink-0 md:hidden">
+                <MyPlanPill />
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-6">
-            <nav>
-              <ul className="flex items-center gap-6">
+          <div className="flex min-w-0 items-center gap-3 md:gap-6">
+            <nav className="min-w-0 flex-1 overflow-x-auto md:flex-initial md:overflow-visible">
+              <ul className="flex min-w-max items-center gap-4 pr-1 md:gap-6 md:pr-0">
                 {NAV_LINKS.map((link) => {
                   const isActive = currentHash === link.hash;
                   const className = isActive
@@ -157,7 +164,7 @@ export function AppShell({ children }: AppShellProps) {
               </ul>
             </nav>
             {showHistoryButtons && (
-              <div className="flex gap-1">
+              <div className="flex shrink-0 gap-1">
                 <button
                   type="button"
                   onClick={() => getTemporal().undo()}
@@ -192,7 +199,11 @@ export function AppShell({ children }: AppShellProps) {
                 </button>
               </div>
             )}
-            {!hideMyPlanPill && <MyPlanPill />}
+            {!hideMyPlanPill && (
+              <div className="hidden md:block">
+                <MyPlanPill />
+              </div>
+            )}
           </div>
         </div>
       </header>

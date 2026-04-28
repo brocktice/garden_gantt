@@ -86,7 +86,6 @@ export function watchQuotaExceeded(onFull: () => void): () => void {
         try {
           onFull();
         } catch (notifyErr) {
-          // eslint-disable-next-line no-console -- intentional: notifier failure must surface
           console.error('watchQuotaExceeded onFull threw:', notifyErr);
         }
       }

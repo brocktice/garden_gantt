@@ -241,8 +241,6 @@ function CustomPlantModalInner({
     if (isEdit) return;
     const q = form.name.trim();
     if (q.length < 2) {
-      setSuggestions([]);
-      setSuggestionsOpen(false);
       return;
     }
     if (lastPickedNameRef.current === q) {
@@ -478,7 +476,12 @@ function CustomPlantModalInner({
                 value={form.name}
                 onChange={(e) => {
                   lastPickedNameRef.current = null;
-                  setForm({ ...form, name: e.target.value });
+                  const nextName = e.target.value;
+                  setForm({ ...form, name: nextName });
+                  if (nextName.trim().length < 2) {
+                    setSuggestions([]);
+                    setSuggestionsOpen(false);
+                  }
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Escape' && suggestionsOpen) {

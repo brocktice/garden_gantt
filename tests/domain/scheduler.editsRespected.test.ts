@@ -130,4 +130,67 @@ describe('generateSchedule — plan.edits[] consumed (GANTT-07)', () => {
     expect(transplant).toBeDefined();
     expect(transplant!.start).toBe('2026-05-25T12:00:00.000Z');
   });
+
+  it('indoor-start edits are clamped so germination and harden-off cannot overlap transplant', () => {
+    const edit: ScheduleEdit = {
+      plantingId: 'p-tomato',
+      eventType: 'indoor-start',
+      startOverride: '2026-04-25T12:00:00.000Z',
+      reason: 'user-drag',
+      editedAt: '2026-04-26T17:00:00.000Z',
+    };
+    const events = generateSchedule(planFor('tomato', [edit]), sampleCatalog);
+    const indoor = events.find((e) => e.type === 'indoor-start')!;
+    const germ = events.find((e) => e.type === 'germination-window')!;
+    const harden = events.find((e) => e.type === 'harden-off')!;
+    const transplant = events.find((e) => e.type === 'transplant')!;
+
+    expect(indoor.start).toBe('2026-04-25T12:00:00.000Z');
+    expect(germ.end < harden.start).toBe(true);
+    expect(harden.end < transplant.start).toBe(true);
+    expect(transplant.start).toBe('2026-05-13T12:00:00.000Z');
+    expect(transplant.constraintsApplied).toContain(
+      'indoorStartMustAllowGerminationAndHardenOff',
+    );
+  });
+
+  it('harden-off edits are clamped between germination and transplant', () => {
+    const edit: ScheduleEdit = {
+      plantingId: 'p-tomato',
+      eventType: 'harden-off',
+      startOverride: '2026-03-10T12:00:00.000Z',
+      endOverride: '2026-05-05T12:00:00.000Z',
+      reason: 'user-drag',
+      editedAt: '2026-04-26T17:00:00.000Z',
+    };
+    const events = generateSchedule(planFor('tomato', [edit]), sampleCatalog);
+    const germ = events.find((e) => e.type === 'germination-window')!;
+    const harden = events.find((e) => e.type === 'harden-off')!;
+    const transplant = events.find((e) => e.type === 'transplant')!;
+
+    expect(germ.end < harden.start).toBe(true);
+    expect(harden.end < transplant.start).toBe(true);
+    expect(harden.constraintsApplied).toContain('hardenOffMustFollowGermination');
+    expect(harden.constraintsApplied).toContain('hardenOffMustPrecedeTransplant');
+  });
+
+  it('per-planting startMethodOverride can switch an indoor-start crop to direct-sow', () => {
+    const plan: GardenPlan = {
+      ...planFor('tomato'),
+      plantings: [
+        {
+          id: 'p-tomato',
+          plantId: 'tomato',
+          successionIndex: 0,
+          startMethodOverride: 'direct-sow',
+        },
+      ],
+    };
+    const events = generateSchedule(plan, sampleCatalog);
+
+    expect(events.some((e) => e.type === 'direct-sow')).toBe(true);
+    expect(events.some((e) => e.type === 'indoor-start')).toBe(false);
+    expect(events.some((e) => e.type === 'harden-off')).toBe(false);
+    expect(events.some((e) => e.type === 'transplant')).toBe(false);
+  });
 });

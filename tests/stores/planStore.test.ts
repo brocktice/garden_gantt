@@ -166,6 +166,38 @@ describe('usePlanStore — Phase 2 setters', () => {
     expect(usePlanStore.getState().plan!.plantings[0]!.successionEnabled).toBe(false);
   });
 
+  it('setPlantingStartMethod stores override and prunes incompatible edits and locks', async () => {
+    const { usePlanStore } = await import('../../src/stores/planStore');
+    usePlanStore.getState().setLocation(sampleLocation);
+    usePlanStore.getState().addPlanting({
+      ...makePlanting('p-tomato', 'tomato'),
+      locks: { transplant: true, 'direct-sow': true },
+    });
+    usePlanStore.getState().commitEdit({
+      plantingId: 'p-tomato',
+      eventType: 'transplant',
+      startOverride: '2026-05-20T12:00:00.000Z',
+      reason: 'user-form-edit',
+      editedAt: '2026-04-26T17:00:00.000Z',
+    });
+    usePlanStore.getState().commitEdit({
+      plantingId: 'p-tomato',
+      eventType: 'direct-sow',
+      startOverride: '2026-05-01T12:00:00.000Z',
+      reason: 'user-form-edit',
+      editedAt: '2026-04-26T17:00:00.000Z',
+    });
+
+    usePlanStore.getState().setPlantingStartMethod('p-tomato', 'direct-sow');
+
+    const planting = usePlanStore.getState().plan!.plantings[0]!;
+    expect(planting.startMethodOverride).toBe('direct-sow');
+    expect(planting.locks).toEqual({ 'direct-sow': true });
+    expect(usePlanStore.getState().plan!.edits).toEqual([
+      expect.objectContaining({ eventType: 'direct-sow' }),
+    ]);
+  });
+
   it('upsertCustomPlant adds new + replaces existing by id', async () => {
     const { usePlanStore } = await import('../../src/stores/planStore');
     usePlanStore.getState().setLocation(sampleLocation);

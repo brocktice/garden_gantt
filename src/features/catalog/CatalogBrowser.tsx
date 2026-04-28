@@ -6,7 +6,7 @@
 //         [CITED: 02-PATTERNS.md src/features/catalog/CatalogBrowser.tsx (NEW)]
 //         [CITED: D-15 cascade-confirmation Dialog wiring]
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Search, X } from 'lucide-react';
 import { Input } from '../../ui/Input';
@@ -43,14 +43,10 @@ export function CatalogBrowser() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPlant, setEditingPlant] = useState<Plant | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Plant | null>(null);
-  // Phase 4 (Plan 04-03 Task 2) D-08: brief skeleton during initial catalog
-  // hydration. Catalog data is static JSON shipped at build, so the loading
-  // window is one render tick. We flip false after first effect — covers the
-  // brief initial-fetch flash + filter recompute.
-  const [loadingFlash, setLoadingFlash] = useState(true);
-  useEffect(() => {
-    setLoadingFlash(false);
-  }, []);
+  // Catalog data is static JSON shipped at build, so there is no async loading
+  // window in normal use. Keep this branch available for future async catalog
+  // hydration without forcing an extra render on every catalog mount.
+  const loadingFlash = false;
 
   const myPlantingsByPlantId = useMemo(() => {
     const map = new Map<string, string>(); // plantId -> planting.id

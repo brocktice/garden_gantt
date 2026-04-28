@@ -16,6 +16,43 @@
 
 import type { GardenPlan, Plant, Planting } from './types';
 import { parseDate, addDays, differenceInDays } from './dateWrappers';
+import {
+  directSowOffsetForPlanting,
+  resolveStartMethod,
+  transplantOffsetForPlanting,
+} from './plantingTiming';
+
+export const DEFAULT_SUCCESSION_INTERVAL_DAYS = 14;
+
+export interface SuccessionCapacity {
+  intervalDays: number;
+  upperBound: number;
+}
+
+export function getSuccessionCapacity(
+  plan: GardenPlan,
+  planting: Planting,
+  plant: Plant,
+): SuccessionCapacity | null {
+  const intervalDays =
+    plant.timing.successionIntervalDays ?? DEFAULT_SUCCESSION_INTERVAL_DAYS;
+  if (intervalDays <= 0) return null;
+
+  const dtm = plant.timing.daysToMaturity;
+  if (!dtm || dtm <= 0) return null;
+
+  const lastFrost = parseDate(plan.location.lastFrostDate);
+  const firstFrost = parseDate(plan.location.firstFrostDate);
+  const offsetDays =
+    resolveStartMethod(planting, plant) === 'indoor-start'
+      ? transplantOffsetForPlanting(planting, plant)
+      : directSowOffsetForPlanting(planting, plant);
+  const baseAnchor = addDays(lastFrost, offsetDays);
+  const daysToFirstFrost = differenceInDays(firstFrost, baseAnchor);
+  const maxIndex = Math.floor((daysToFirstFrost - dtm) / intervalDays);
+  const safetyCap = plant.timing.maxSuccessions ?? 12;
+  return { intervalDays, upperBound: Math.min(maxIndex, safetyCap) };
+}
 
 /**
  * Pure pre-pass that expands successionEnabled plantings into a series of derived
@@ -36,8 +73,6 @@ export function expandSuccessions(
   plan: GardenPlan,
   catalog: ReadonlyMap<string, Plant>,
 ): GardenPlan {
-  const lastFrost = parseDate(plan.location.lastFrostDate);
-  const firstFrost = parseDate(plan.location.firstFrostDate);
   const expanded: Planting[] = [];
 
   for (const planting of plan.plantings) {
@@ -47,35 +82,10 @@ export function expandSuccessions(
     const plant = catalog.get(planting.plantId);
     if (!plant) continue; // missing plant: silently skip (Phase 1 invariant)
 
-    const t = plant.timing;
-    const interval = t.successionIntervalDays;
-    if (!interval || interval <= 0) continue;
+    const capacity = getSuccessionCapacity(plan, planting, plant);
+    if (!capacity || capacity.upperBound < 1) continue;
 
-    const dtm = t.daysToMaturity;
-    if (!dtm || dtm <= 0) continue; // Pitfall D — defensive
-
-    // Pick anchor offset based on startMethod
-    let offsetDays: number;
-    if (t.startMethod === 'indoor-start') {
-      offsetDays = t.transplantOffsetDaysFromLastFrost ?? 0;
-    } else if (t.startMethod === 'direct-sow') {
-      offsetDays = t.directSowOffsetDaysFromLastFrost ?? 0;
-    } else {
-      // 'either' — prefer direct-sow if specified, else transplant, else 0
-      offsetDays =
-        t.directSowOffsetDaysFromLastFrost ??
-        t.transplantOffsetDaysFromLastFrost ??
-        0;
-    }
-    const baseAnchor = addDays(lastFrost, offsetDays);
-
-    const daysToFirstFrost = differenceInDays(firstFrost, baseAnchor);
-    const maxIndex = Math.floor((daysToFirstFrost - dtm) / interval);
-    const safetyCap = t.maxSuccessions ?? 12;
-    const upperBound = Math.min(maxIndex, safetyCap);
-    if (upperBound < 1) continue; // no room for even one succession
-
-    for (let i = 1; i <= upperBound; i++) {
+    for (let i = 1; i <= capacity.upperBound; i++) {
       expanded.push({
         ...planting,
         id: `${planting.id}-s${i}`,
@@ -84,7 +94,7 @@ export function expandSuccessions(
         // The engine reads startOffsetDays and shifts its lastFrost anchor; downstream
         // events (indoor-start, transplant, harvest, etc.) all shift in lockstep so each
         // succession row plants on a distinct calendar date (D-22 visual goal).
-        startOffsetDays: (planting.startOffsetDays ?? 0) + i * interval,
+        startOffsetDays: (planting.startOffsetDays ?? 0) + i * capacity.intervalDays,
         // successionEnabled stays true so visual grouping works
       });
     }

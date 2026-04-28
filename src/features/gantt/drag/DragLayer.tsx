@@ -51,6 +51,12 @@ export function DragLayer() {
   const setViolation = useDragStore((s) => s.setLastConstraintViolation);
   const transientSchedule = useTransientSchedule();
   const activeId = useDragStore((s) => s.activeEventId);
+  const setViolationAfterRender = useCallback<typeof setViolation>(
+    (violation) => {
+      queueMicrotask(() => setViolation(violation));
+    },
+    [setViolation],
+  );
 
   // Single dispatcher modifier: reads active.data.current to find the event/plant for the
   // active drag. Memoized on `plan` so React identity is stable across drag ticks.
@@ -70,11 +76,11 @@ export function DragLayer() {
         event: data.event,
         plan,
         plant: data.plant,
-        setViolation,
+        setViolation: setViolationAfterRender,
       });
       return inner(args);
     };
-  }, [plan, setViolation]);
+  }, [plan, setViolationAfterRender]);
 
   const onDragStart = useCallback((e: DragStartEvent) => handleDragStart(e), []);
   const onDragMove = useCallback((e: DragMoveEvent) => handleDragMove(e), []);

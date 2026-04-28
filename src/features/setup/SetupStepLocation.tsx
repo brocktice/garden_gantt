@@ -235,8 +235,6 @@ export function SetupStepLocation({
       result.lookupTimestamp = nowISOString();
     }
     onValidRef.current(result);
-    // WR-08: callback deps deliberately excluded — they are read via refs.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [zip, lookup, overrides, manualZone, manualLast, manualFirst]);
 
   const showSamplePlanLink = plan === null;

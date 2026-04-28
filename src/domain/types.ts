@@ -109,6 +109,9 @@ export interface Planting {
   id: string;
   plantId: string;
   label?: string;
+  // Per-planting start-method override. Catalog timing remains the default, but a
+  // gardener can choose to start a specific planting indoors or direct-sow it.
+  startMethodOverride?: 'direct-sow' | 'indoor-start';
   successionIndex: number;
   notes?: string;
   // Phase 2 (D-21): when true, expandSuccessions pre-pass derives additional plantings.

@@ -134,7 +134,6 @@ function extractRows(pages: { items: PdfTextItem[] }[]): PsuRow[] {
     const buckets = new Map<number, Bucket>();
     for (const it of items) {
       if (it.str.trim() === '') continue;
-      const x = it.transform[4] ?? 0;
       const y = it.transform[5] ?? 0;
       // Skip page header/title/footer regions.
       if (y > HEADER_Y_THRESHOLD || y < 50) continue;

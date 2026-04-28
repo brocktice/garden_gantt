@@ -55,6 +55,10 @@ interface PlanState {
   addPlanting: (planting: Planting) => void;
   removePlanting: (plantingId: string) => void;
   toggleSuccession: (plantingId: string) => void;
+  setPlantingStartMethod: (
+    plantingId: string,
+    startMethod: 'direct-sow' | 'indoor-start',
+  ) => void;
   upsertCustomPlant: (plant: Plant) => void;
   removeCustomPlant: (plantId: string) => void;
   // D-15 full cascade: removes plant from BOTH catalogStore.customPlants AND plan.customPlants,
@@ -172,6 +176,45 @@ export const usePlanStore = create<PlanState>()(
                       p.id === plantingId
                         ? { ...p, successionEnabled: !p.successionEnabled }
                         : p,
+                    ),
+                    updatedAt: nowISOString(),
+                  },
+                }
+              : s,
+          );
+          useUIStore.getState().incrementDirty(); // D-14
+        },
+
+        setPlantingStartMethod: (plantingId, startMethod) => {
+          const incompatibleEventTypes: EventType[] =
+            startMethod === 'indoor-start'
+              ? ['direct-sow']
+              : ['indoor-start', 'harden-off', 'transplant'];
+          set((s) =>
+            s.plan
+              ? {
+                  plan: {
+                    ...s.plan,
+                    plantings: s.plan.plantings.map((p) => {
+                      if (p.id !== plantingId) return p;
+                      const nextLocks = { ...(p.locks ?? {}) };
+                      for (const eventType of incompatibleEventTypes) {
+                        delete nextLocks[eventType];
+                      }
+                      const { locks: _locks, ...rest } = p;
+                      void _locks;
+                      return {
+                        ...rest,
+                        startMethodOverride: startMethod,
+                        ...(Object.keys(nextLocks).length > 0
+                          ? { locks: nextLocks }
+                          : {}),
+                      };
+                    }),
+                    edits: s.plan.edits.filter(
+                      (e) =>
+                        e.plantingId !== plantingId ||
+                        !incompatibleEventTypes.includes(e.eventType),
                     ),
                     updatedAt: nowISOString(),
                   },

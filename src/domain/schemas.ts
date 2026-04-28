@@ -92,6 +92,7 @@ export const PlantingSchema = z.object({
   id: z.string().min(1),
   plantId: z.string().min(1),
   label: z.string().optional(),
+  startMethodOverride: z.enum(['direct-sow', 'indoor-start']).optional(),
   successionIndex: z.number().int().min(0),
   // Phase 2 (D-21): toggle for engine pre-pass succession expansion.
   successionEnabled: z.boolean().optional(),

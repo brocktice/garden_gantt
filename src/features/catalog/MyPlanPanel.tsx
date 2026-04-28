@@ -21,7 +21,11 @@ import {
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
 import { getTemporal, usePlanStore } from '../../stores/planStore';
 import { useUIStore } from '../../stores/uiStore';
-import { expandSuccessions } from '../../domain/succession';
+import {
+  expandSuccessions,
+  getSuccessionCapacity,
+} from '../../domain/succession';
+import { resolveStartMethod } from '../../domain/plantingTiming';
 import { pushToast } from '../../ui/toast/useToast';
 import type { Planting } from '../../domain/types';
 import { cn } from '../../ui/cn';
@@ -37,6 +41,7 @@ export function MyPlanPanel() {
   const plan = usePlanStore((s) => s.plan);
   const removePlanting = usePlanStore((s) => s.removePlanting);
   const toggleSuccession = usePlanStore((s) => s.toggleSuccession);
+  const setPlantingStartMethod = usePlanStore((s) => s.setPlantingStartMethod);
   const merged = useCatalogStore(selectMerged);
 
   const [pendingRemove, setPendingRemove] = useState<Planting | null>(null);
@@ -155,9 +160,14 @@ export function MyPlanPanel() {
                 {plantings.map((planting) => {
                   const plant = merged.get(planting.plantId);
                   if (!plant) return null;
-                  const interval = plant.timing.successionIntervalDays;
+                  const successionCapacity = plan
+                    ? getSuccessionCapacity(plan, planting, plant)
+                    : null;
                   const showSuccession =
-                    typeof interval === 'number' && interval > 0;
+                    successionCapacity !== null && successionCapacity.upperBound >= 1;
+                  const interval = successionCapacity?.intervalDays;
+                  const startsIndoors =
+                    resolveStartMethod(planting, plant) === 'indoor-start';
                   const derivedCount =
                     successionCounts.get(planting.id) ?? 0;
                   const isOn = !!planting.successionEnabled;
@@ -180,6 +190,31 @@ export function MyPlanPanel() {
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
+                      </div>
+                      <div className="mt-2 flex items-start gap-3">
+                        <Switch
+                          id={`start-indoors-${planting.id}`}
+                          checked={startsIndoors}
+                          onCheckedChange={(checked) =>
+                            setPlantingStartMethod(
+                              planting.id,
+                              checked ? 'indoor-start' : 'direct-sow',
+                            )
+                          }
+                        />
+                        <div className="flex-1">
+                          <label
+                            htmlFor={`start-indoors-${planting.id}`}
+                            className="text-sm font-medium text-stone-900"
+                          >
+                            Start indoors
+                          </label>
+                          <p className="text-sm text-stone-600 mt-0.5">
+                            {startsIndoors
+                              ? 'Seeds, germination, harden-off, then transplant.'
+                              : 'Direct-sow in the garden.'}
+                          </p>
+                        </div>
                       </div>
                       {showSuccession && (
                         <div className="mt-2 flex items-start gap-3">

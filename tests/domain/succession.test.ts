@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 import { expandSuccessions } from '../../src/domain/succession';
 import { unverifiedFixtureSampleCatalog as sampleCatalog } from '../../src/assets/catalog.unverified';
 import { parseDate, addDays, differenceInDays } from '../../src/domain/dateWrappers';
-import type { GardenPlan } from '../../src/domain/types';
+import type { GardenPlan, Plant } from '../../src/domain/types';
 
 function buildPlan(
   plantings: Array<{ plantId: string; successionEnabled?: boolean }>,
@@ -52,12 +52,34 @@ describe('expandSuccessions', () => {
     expect(out.plantings[0]!.successionIndex).toBe(0);
   });
 
-  it('returns plan unchanged for plants without successionIntervalDays even if flagged', () => {
-    // tomato has no successionIntervalDays in the catalog
+  it('uses the default interval for plants without catalog successionIntervalDays', () => {
+    // tomato has no successionIntervalDays in the catalog, but the UI still lets
+    // gardeners opt into a 14-day succession cadence.
     const plan = buildPlan([{ plantId: 'tomato', successionEnabled: true }]);
     const out = expandSuccessions(plan, sampleCatalog);
-    expect(out.plantings).toHaveLength(1);
+    expect(out.plantings.length).toBeGreaterThan(1);
     expect(out.plantings[0]!.id).toBe(plan.plantings[0]!.id);
+    expect(out.plantings[1]!.startOffsetDays).toBe(14);
+  });
+
+  it('does not expand when a second planting cannot mature before first frost', () => {
+    const longSeasonPlant: Plant = {
+      ...sampleCatalog.get('tomato')!,
+      id: 'long-season-test',
+      timing: {
+        ...sampleCatalog.get('tomato')!.timing,
+        daysToMaturity: 175,
+        maxSuccessions: 12,
+      },
+    };
+    const catalog = new Map(sampleCatalog);
+    catalog.set(longSeasonPlant.id, longSeasonPlant);
+    const plan = buildPlan([
+      { plantId: longSeasonPlant.id, successionEnabled: true },
+    ]);
+    const out = expandSuccessions(plan, catalog);
+
+    expect(out.plantings).toHaveLength(1);
   });
 
   it('expands lettuce in zone 7 to 5 plantings (1 original + 4 succession, capped by maxSuccessions=4)', () => {

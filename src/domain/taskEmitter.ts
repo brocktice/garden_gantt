@@ -195,8 +195,10 @@ export function expandRecurringTasks(
     const effectiveEnd = stopAt < end ? stopAt : end;
 
     let cursor = parseDate(ct.dueDate);
-    // Skip ahead to range start if dueDate is before it.
-    while (cursor < start) {
+    // Skip ahead to range start by calendar day, not by wall-clock timestamp.
+    // Callers often pass "now" as rangeStart; comparing full timestamps would
+    // incorrectly drop a task due earlier today.
+    while (toISODate(cursor).slice(0, 10) < startDay) {
       cursor = addDays(cursor, interval);
     }
     while (cursor <= effectiveEnd) {

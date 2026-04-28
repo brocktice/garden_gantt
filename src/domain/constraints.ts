@@ -14,6 +14,12 @@
 
 import type { EventType, GardenPlan, Plant, ScheduleEvent } from './types';
 import { parseDate, addDays, toISODate } from './dateWrappers';
+import {
+  directSowOffsetForPlanting,
+  requiresHardeningForPlanting,
+  resolveStartMethod,
+  transplantOffsetForPlanting,
+} from './plantingTiming';
 
 export type ConstraintResult =
   | { ok: true; finalDate: string; clamped?: false }
@@ -79,11 +85,15 @@ const noTransplantBeforeLastFrostForTender: ConstraintRule = {
 // of harden-off can reuse the same constraint shape.)
 const hardenOffMustPrecedeTransplant: ConstraintRule = {
   name: 'hardenOffMustPrecedeTransplant',
-  appliesTo: (e, p) => e.type === 'transplant' && p.timing.requiresHardening === true,
+  appliesTo: (e) => e.type === 'transplant',
   check: (event, candidate, plan, plant) => {
     const planting = plan.plantings.find((p) => p.id === event.plantingId);
     if (!planting) return { ok: true, finalDate: candidate };
+    if (!requiresHardeningForPlanting(planting, plant)) {
+      return { ok: true, finalDate: candidate };
+    }
     const hardenDays = plant.timing.daysToHardenOff ?? 7;
+    const germWindow = plant.timing.daysToGermination?.[1] ?? 10;
 
     // Indoor anchor: post-edit if a user-drag set it, else computed from
     // plant.timing.weeksIndoorBeforeLastFrost (negative offset from lastFrost).
@@ -97,19 +107,18 @@ const hardenOffMustPrecedeTransplant: ConstraintRule = {
     const candidateDate = parseDate(candidate);
     const hardenOffEnd = addDays(candidateDate, -1);
     const hardenOffStart = addDays(hardenOffEnd, -hardenDays);
+    const germEnd = addDays(indoorAnchor, germWindow);
 
-    if (hardenOffStart.getTime() >= indoorAnchor.getTime()) {
+    if (hardenOffStart.getTime() > germEnd.getTime()) {
       return { ok: true, finalDate: candidate };
     }
-    // Clamp candidate forward so harden-off can begin no earlier than the indoor anchor:
-    //   minTransplant = indoorAnchor + hardenDays + 1 day
-    const minTransplant = toISODate(addDays(indoorAnchor, hardenDays + 1));
+    const minTransplant = toISODate(addDays(indoorAnchor, germWindow + hardenDays + 1));
     return {
       ok: true,
       clamped: true,
       finalDate: minTransplant,
       reasons: [
-        `Harden-off must precede transplant by ${hardenDays} days (earliest transplant: ${minTransplant.slice(0, 10)}).`,
+        `Indoor-start sequence requires germination before harden-off and harden-off before transplant (earliest transplant: ${minTransplant.slice(0, 10)}).`,
       ],
     };
   },
@@ -126,14 +135,14 @@ const harvestMustFollowTransplantByDTM: ConstraintRule = {
 
     // Anchor: 'transplant' for indoor-start (and 'either'); 'direct-sow' for direct-sow.
     const anchorType: EventType =
-      plant.timing.startMethod === 'direct-sow' ? 'direct-sow' : 'transplant';
+      resolveStartMethod(planting, plant) === 'direct-sow' ? 'direct-sow' : 'transplant';
 
     const baseLastFrost = parseDate(plan.location.lastFrostDate);
     const computedAnchorISO =
       anchorType === 'transplant'
-        ? toISODate(addDays(baseLastFrost, plant.timing.transplantOffsetDaysFromLastFrost ?? 0))
+        ? toISODate(addDays(baseLastFrost, transplantOffsetForPlanting(planting, plant)))
         : toISODate(
-            addDays(baseLastFrost, plant.timing.directSowOffsetDaysFromLastFrost ?? 0),
+            addDays(baseLastFrost, directSowOffsetForPlanting(planting, plant)),
           );
 
     const anchorEditISO = findEditAnchor(plan, planting.id, anchorType);

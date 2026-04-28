@@ -84,7 +84,8 @@ describe('hardenOffMustPrecedeTransplant (Phase 3 GANTT-05)', () => {
     // indoorStart = lastFrost (2026-04-15) - 5w = 2026-03-11
     // If user drags transplant to 2026-03-15, harden-off span = 2026-03-07..2026-03-14,
     //   which starts before indoorAnchor 2026-03-11.
-    // Rule clamps to indoorAnchor + hardenDays + 1 = 2026-03-11 + 8d = 2026-03-19.
+    // Rule clamps to indoorAnchor + germination window + hardenDays + 1:
+    // 2026-03-11 + 10d germination + 7d harden-off + 1d = 2026-03-29.
     const broccoli = sampleCatalog.get('broccoli')!;
     const planWithBroccoli: GardenPlan = {
       ...plan,
@@ -95,8 +96,8 @@ describe('hardenOffMustPrecedeTransplant (Phase 3 GANTT-05)', () => {
     expect(result.ok).toBe(true);
     expect('clamped' in result && result.clamped).toBe(true);
     if ('clamped' in result && result.clamped) {
-      expect(result.finalDate).toBe('2026-03-19T12:00:00.000Z');
-      const hasHardenReason = result.reasons.some((r) => r.includes('Harden-off'));
+      expect(result.finalDate).toBe('2026-03-29T12:00:00.000Z');
+      const hasHardenReason = result.reasons.some((r) => r.includes('harden-off'));
       expect(hasHardenReason).toBe(true);
     }
   });

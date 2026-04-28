@@ -17,6 +17,12 @@ import { parseDate, addDays, subDays, toISODate } from './dateWrappers';
 import { eventId } from './ids';
 import { canMove } from './constraints';
 import { emitTaskEvents, type PlantingAnchors } from './taskEmitter';
+import {
+  directSowOffsetForPlanting,
+  requiresHardeningForPlanting,
+  resolveStartMethod,
+  transplantOffsetForPlanting,
+} from './plantingTiming';
 
 /**
  * Last-write-wins lookup for an edit on (plantingId, eventType).
@@ -56,13 +62,23 @@ function eventsForPlanting(
   };
 
   const t = plant.timing;
+  const startMethod = resolveStartMethod(planting, plant);
+  const requiresHardening = requiresHardeningForPlanting(planting, plant);
+  const effectivePlant: Plant = {
+    ...plant,
+    timing: {
+      ...plant.timing,
+      startMethod,
+      requiresHardening,
+    },
+  };
   const germWindow = t.daysToGermination?.[1] ?? 10;
 
-  if (t.startMethod === 'indoor-start') {
+  if (startMethod === 'indoor-start') {
     // weeksIndoorBeforeLastFrost is required for indoor-start plants in our Phase 1 catalog
     const weeks = t.weeksIndoorBeforeLastFrost ?? 6;
     const computedIndoorStart = subDays(lastFrost, weeks * 7);
-    const computedTransplant = addDays(lastFrost, t.transplantOffsetDaysFromLastFrost ?? 0);
+    const computedTransplant = addDays(lastFrost, transplantOffsetForPlanting(planting, plant));
     const daysToHardenOff = t.daysToHardenOff ?? 7;
 
     // Phase 3 GANTT-07: consume plan.edits[] BEFORE downstream cascade math so harvest +
@@ -71,7 +87,7 @@ function eventsForPlanting(
     const indoorEdit = findEdit(plan, planting.id, 'indoor-start');
     const transplantEdit = findEdit(plan, planting.id, 'transplant');
 
-    const indoorStartISO = indoorEdit
+    let indoorStartISO = indoorEdit
       ? indoorEdit.startOverride
       : toISODate(computedIndoorStart);
     let transplantISO = transplantEdit
@@ -100,8 +116,20 @@ function eventsForPlanting(
       transplantConstraints = result.reasons.map((reason) => {
         if (reason.includes('Tender plant')) return 'noTransplantBeforeLastFrostForTender';
         if (reason.includes('Harden-off must precede')) return 'hardenOffMustPrecedeTransplant';
+        if (reason.includes('Indoor-start sequence')) {
+          return 'indoorStartMustAllowGerminationAndHardenOff';
+        }
         return 'unknown';
       });
+    }
+
+    const maxIndoorStartISO = toISODate(
+      subDays(parseDate(transplantISO), daysToHardenOff + germWindow + 1),
+    );
+    let indoorConstraints: string[] = [];
+    if (parseDate(indoorStartISO).getTime() > parseDate(maxIndoorStartISO).getTime()) {
+      indoorStartISO = maxIndoorStartISO;
+      indoorConstraints = ['indoorStartMustAllowGerminationAndHardenOff'];
     }
 
     // Recompute downstream anchors from the (post-edit, post-clamp) transplant.
@@ -121,7 +149,7 @@ function eventsForPlanting(
     anchors.harvestStart = toISODate(harvestStart);
     anchors.harvestEnd = toISODate(harvestEnd);
 
-    if (t.requiresHardening) {
+    if (requiresHardening) {
       anchors.hardenOffStart = toISODate(hardenOffStart);
       anchors.hardenOffEnd = toISODate(hardenOffEnd);
     }
@@ -134,8 +162,8 @@ function eventsForPlanting(
       type: 'indoor-start',
       start: anchors.indoorStart,
       end: anchors.indoorStart,
-      edited: indoorEdit !== undefined,
-      constraintsApplied: [],
+      edited: indoorEdit !== undefined || indoorConstraints.length > 0,
+      constraintsApplied: indoorConstraints,
     });
     out.push({
       id: eventId(planting.id, 'germination-window'),
@@ -147,19 +175,39 @@ function eventsForPlanting(
       edited: false,
       constraintsApplied: [],
     });
-    if (t.requiresHardening && anchors.hardenOffStart && anchors.hardenOffEnd) {
+    if (requiresHardening && anchors.hardenOffStart && anchors.hardenOffEnd) {
       const hardenOffEdit = findEdit(plan, planting.id, 'harden-off');
+      const minHardenStart = addDays(parseDate(anchors.germEnd), 1);
+      const maxHardenEnd = subDays(parseDate(transplantISO), 1);
+      let hardenStartISO = anchors.hardenOffStart;
+      let hardenEndISO = anchors.hardenOffEnd;
+      const hardenConstraints: string[] = [];
+      if (hardenOffEdit) {
+        hardenStartISO = hardenOffEdit.startOverride;
+        hardenEndISO = hardenOffEdit.endOverride ?? hardenOffEdit.startOverride;
+        if (parseDate(hardenStartISO).getTime() < minHardenStart.getTime()) {
+          hardenStartISO = toISODate(minHardenStart);
+          hardenConstraints.push('hardenOffMustFollowGermination');
+        }
+        if (parseDate(hardenEndISO).getTime() > maxHardenEnd.getTime()) {
+          hardenEndISO = toISODate(maxHardenEnd);
+          hardenConstraints.push('hardenOffMustPrecedeTransplant');
+        }
+        if (parseDate(hardenStartISO).getTime() > parseDate(hardenEndISO).getTime()) {
+          hardenStartISO = toISODate(minHardenStart);
+          hardenEndISO = toISODate(maxHardenEnd);
+          hardenConstraints.push('hardenOffWindowRestoredToValidRange');
+        }
+      }
       out.push({
         id: eventId(planting.id, 'harden-off'),
         plantingId: planting.id,
         plantId: plant.id,
         type: 'harden-off',
-        start: hardenOffEdit ? hardenOffEdit.startOverride : anchors.hardenOffStart,
-        end: hardenOffEdit
-          ? hardenOffEdit.endOverride ?? hardenOffEdit.startOverride
-          : anchors.hardenOffEnd,
-        edited: hardenOffEdit !== undefined,
-        constraintsApplied: [],
+        start: hardenStartISO,
+        end: hardenEndISO,
+        edited: hardenOffEdit !== undefined || hardenConstraints.length > 0,
+        constraintsApplied: hardenConstraints,
       });
     }
     out.push({
@@ -189,7 +237,7 @@ function eventsForPlanting(
     });
   } else {
     // direct-sow OR either (treated as direct-sow)
-    const computedDirectSow = addDays(lastFrost, t.directSowOffsetDaysFromLastFrost ?? 0);
+    const computedDirectSow = addDays(lastFrost, directSowOffsetForPlanting(planting, plant));
     const directSowEdit = findEdit(plan, planting.id, 'direct-sow');
     const directSowISO = directSowEdit
       ? directSowEdit.startOverride
@@ -247,7 +295,7 @@ function eventsForPlanting(
 
   // Auto-task events (D-12; gated on catalog flags). Reads from anchors that have already
   // been updated for edits + constraint clamps, so projected tasks reflect the edited plan.
-  out.push(...emitTaskEvents(planting.id, plant.id, plant, anchors));
+  out.push(...emitTaskEvents(planting.id, plant.id, effectivePlant, anchors));
 
   return out;
 }

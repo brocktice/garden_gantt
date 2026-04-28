@@ -22,7 +22,6 @@ import {
 export function parseDate(iso: string): UTCDate {
   // Accept both date-only and datetime forms; coerce date-only to noon UTC.
   const trimmed = iso.length === 10 ? `${iso}T12:00:00Z` : iso;
-  // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (SCH-03).
   return new UTCDate(new Date(trimmed));
 }
 
@@ -71,7 +70,6 @@ export function differenceInDays(a: Date, b: Date): number {
  * (per Phase 2 extension of SCH-03 — see RESEARCH.md §Pattern 4).
  */
 export function nowISOString(): string {
-  // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (Phase 2 extension of SCH-03).
   return new Date().toISOString();
 }
 
@@ -84,7 +82,6 @@ export function nowISOString(): string {
  * the last day of THAT month — i.e., lastDayOfMonth(2024, 2) === 29.
  */
 export function lastDayOfMonth(year: number, month: number): number {
-  // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (Phase 2 extension of SCH-03).
   return new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
 
@@ -93,7 +90,6 @@ export function lastDayOfMonth(year: number, month: number): number {
  * other feature surfaces that need "the current calendar year" without a raw `new Date()`.
  */
 export function currentYear(): number {
-  // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (Phase 2 extension of SCH-03).
   return new Date().getUTCFullYear();
 }
 
@@ -131,7 +127,6 @@ export function isoNoonToYMD(iso: string): string {
  * violate the SCH-03 noon-UTC storage invariant.
  */
 export function todayLocalYMD(): string {
-  // eslint-disable-next-line no-restricted-syntax -- THIS is the allowed site (Phase 4 extension of SCH-03).
   const d = new Date();
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
