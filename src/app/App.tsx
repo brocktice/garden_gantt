@@ -17,15 +17,25 @@ import { Navigate, Route, Routes, useSearchParams } from 'react-router';
 import { AppShell } from './AppShell';
 import { ErrorBoundary } from './ErrorBoundary';
 import { PlanViewTabs } from './PlanViewTabs';
-import { DragLayer } from '../features/gantt/drag/DragLayer';
-import { SetupWizard } from '../features/setup/SetupWizard';
-import { CatalogBrowser } from '../features/catalog/CatalogBrowser';
-import { SettingsPanel } from '../features/settings/SettingsPanel';
-import { TasksDashboard } from '../features/tasks/TasksDashboard';
 import { usePlanStore } from '../stores/planStore';
 
 // Lazy-loaded calendar — Vite emits a separate chunk so first /plan paint stays small.
 const CalendarView = lazy(() => import('../features/calendar/CalendarView'));
+const DragLayer = lazy(() =>
+  import('../features/gantt/drag/DragLayer').then((m) => ({ default: m.DragLayer })),
+);
+const SetupWizard = lazy(() =>
+  import('../features/setup/SetupWizard').then((m) => ({ default: m.SetupWizard })),
+);
+const CatalogBrowser = lazy(() =>
+  import('../features/catalog/CatalogBrowser').then((m) => ({ default: m.CatalogBrowser })),
+);
+const TasksDashboard = lazy(() =>
+  import('../features/tasks/TasksDashboard').then((m) => ({ default: m.TasksDashboard })),
+);
+const SettingsPanel = lazy(() =>
+  import('../features/settings/SettingsPanel').then((m) => ({ default: m.SettingsPanel })),
+);
 
 // UI-SPEC §6: stone-100 grid placeholder at calendar dimensions; no shimmer (Phase 4 polish).
 function CalendarSkeleton() {
@@ -38,6 +48,15 @@ function CalendarSkeleton() {
       >
         <span className="sr-only">Loading calendar…</span>
       </div>
+    </div>
+  );
+}
+
+function RouteSkeleton() {
+  return (
+    <div className="space-y-4" aria-hidden="true">
+      <div className="h-8 w-48 rounded-md bg-stone-100" />
+      <div className="h-40 rounded-md bg-stone-100" />
     </div>
   );
 }
@@ -65,7 +84,9 @@ function PlanRoute() {
           <CalendarView />
         </Suspense>
       ) : (
-        <DragLayer />
+        <Suspense fallback={<RouteSkeleton />}>
+          <DragLayer />
+        </Suspense>
       )}
     </>
   );
@@ -80,11 +101,11 @@ export function App() {
               Guarded by RequireSetup so first-time users land on /setup. */}
           <Route path="/" element={<RequireSetup><PlanRoute /></RequireSetup>} />
           <Route path="/plan" element={<RequireSetup><PlanRoute /></RequireSetup>} />
-          <Route path="/setup" element={<SetupWizard />} />
-          <Route path="/catalog" element={<RequireSetup><CatalogBrowser /></RequireSetup>} />
-          <Route path="/tasks" element={<RequireSetup><TasksDashboard /></RequireSetup>} />
+          <Route path="/setup" element={<Suspense fallback={<RouteSkeleton />}><SetupWizard /></Suspense>} />
+          <Route path="/catalog" element={<RequireSetup><Suspense fallback={<RouteSkeleton />}><CatalogBrowser /></Suspense></RequireSetup>} />
+          <Route path="/tasks" element={<RequireSetup><Suspense fallback={<RouteSkeleton />}><TasksDashboard /></Suspense></RequireSetup>} />
           {/* /settings stays open: import-plan flow can run before setup. */}
-          <Route path="/settings" element={<SettingsPanel />} />
+          <Route path="/settings" element={<Suspense fallback={<RouteSkeleton />}><SettingsPanel /></Suspense>} />
           {/* Catch-all → PlanRoute (also guarded). */}
           <Route path="*" element={<RequireSetup><PlanRoute /></RequireSetup>} />
         </Routes>

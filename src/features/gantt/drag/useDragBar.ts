@@ -12,7 +12,7 @@
 import { useDraggable } from '@dnd-kit/core';
 import type { ScheduleEvent, Plant } from '../../../domain/types';
 
-const DRAGGABLE_TYPES = new Set<ScheduleEvent['type']>([
+export const DRAGGABLE_BAR_TYPES = new Set<ScheduleEvent['type']>([
   'indoor-start',
   'transplant',
   'direct-sow',
@@ -20,7 +20,7 @@ const DRAGGABLE_TYPES = new Set<ScheduleEvent['type']>([
 ]);
 
 export function useDragBar(args: { event: ScheduleEvent; plant: Plant }) {
-  const isDraggableType = DRAGGABLE_TYPES.has(args.event.type);
+  const isDraggableType = DRAGGABLE_BAR_TYPES.has(args.event.type);
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: args.event.id,

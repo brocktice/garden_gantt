@@ -117,7 +117,7 @@ export interface Planting {
   // Phase 2 (D-21): when true, expandSuccessions pre-pass derives additional plantings.
   successionEnabled?: boolean;
   // Number of additional derived plantings to create when successionEnabled is true.
-  // Missing value uses all season-capacity slots for backward compatibility.
+  // Missing value uses the domain default, clamped to available season capacity.
   successionCount?: number;
   // Phase 2 (Plan 02-10 deviation — Rule 2): per-planting offset (in days) applied to the
   // engine's lastFrost anchor. Used by expandSuccessions to stagger derived plantings by

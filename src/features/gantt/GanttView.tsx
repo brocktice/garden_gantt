@@ -33,8 +33,9 @@ import { usePlanStore } from '../../stores/planStore';
 import { useDragStore } from '../../stores/dragStore';
 import { lastDayOfMonth } from '../../domain/dateWrappers';
 import { expandSuccessions } from '../../domain/succession';
+import { buildPlantingLabelMap } from '../../domain/plantingLabels';
 import type { EventType, GardenPlan, Plant, ScheduleEvent } from '../../domain/types';
-import { useDragBar } from './drag/useDragBar';
+import { DRAGGABLE_BAR_TYPES, useDragBar } from './drag/useDragBar';
 import { GhostOverlay } from './drag/GhostOverlay';
 import { useTransientSchedule } from './drag/useTransientSchedule';
 import { setActiveScale } from './drag/scaleHandoff';
@@ -53,13 +54,6 @@ const AXIS_HEIGHT = 32;
 const LABEL_WIDTH = 140;
 const PX_PER_DAY = 3;
 const MIN_PLOT_WIDTH = 720;
-
-const DRAGGABLE_BAR_TYPES = new Set<ScheduleEvent['type']>([
-  'indoor-start',
-  'transplant',
-  'direct-sow',
-  'harvest-window',
-]);
 
 /**
  * Compute axis bounds (start/end ISO YYYY-MM-DD strings) snapped to month boundaries.
@@ -120,6 +114,10 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
   const plantings = useMemo(() => {
     return expandSuccessions(plan, merged).plantings;
   }, [plan, merged]);
+  const plantingLabels = useMemo(
+    () => buildPlantingLabelMap(plantings, merged),
+    [plantings, merged],
+  );
 
   const { start: axisStart, end: axisEnd } = useMemo(
     () => computeAxisBounds(events, plan),
@@ -194,11 +192,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
         >
           <div style={{ height: AXIS_HEIGHT }} />
           {plantings.map((p, i) => {
-            const plant = merged.get(p.plantId);
-            const isDerived = (p.successionIndex ?? 0) > 0;
-            const label = isDerived
-              ? `${plant?.name ?? p.plantId} #${(p.successionIndex ?? 0) + 1}`
-              : (plant?.name ?? p.plantId);
+            const label = plantingLabels.get(p.id) ?? p.id;
             return (
               <div
                 key={p.id}
@@ -294,9 +288,10 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                   return aPoint - bPoint;
                 });
                 const isDerived = (p.successionIndex ?? 0) > 0;
+                const label = plantingLabels.get(p.id) ?? p.id;
                 const aLabel = isDerived
-                  ? `Succession ${(p.successionIndex ?? 0) + 1} of ${plant?.name ?? p.plantId}`
-                  : (plant?.name ?? p.plantId);
+                  ? `${label}, succession planting`
+                  : label;
 
                 return (
                   <g
@@ -329,7 +324,7 @@ function GanttViewInner({ plan, events, merged }: GanttViewInnerProps) {
                           event={e}
                           plant={plant}
                           plantingId={p.id}
-                          plantLabel={plant.name}
+                          plantLabel={label}
                           fill={fill}
                           scale={scale}
                           isLocked={isLocked}

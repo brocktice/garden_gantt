@@ -1,6 +1,6 @@
 // src/features/catalog/MyPlanPanel.tsx
 // Right-side slide-out drawer (UI-SPEC §5, D-21). Shows location summary, plantings list,
-// succession Switch (only when plant.timing.successionIntervalDays defined), remove button.
+// indoor-start controls, succession controls, and remove buttons.
 //
 // Source: [CITED: 02-UI-SPEC.md §5 Component Inventory item 5 — full copy table]
 //         [CITED: 02-PATTERNS.md MyPlanPanel.tsx]
@@ -29,6 +29,7 @@ import {
   successionLastPlantingDate,
 } from '../../domain/succession';
 import { resolveStartMethod } from '../../domain/plantingTiming';
+import { buildPlantingLabelMap } from '../../domain/plantingLabels';
 import { pushToast } from '../../ui/toast/useToast';
 import type { Planting } from '../../domain/types';
 import { cn } from '../../ui/cn';
@@ -50,7 +51,11 @@ export function MyPlanPanel() {
 
   const [pendingRemove, setPendingRemove] = useState<Planting | null>(null);
 
-  const plantings = plan?.plantings ?? [];
+  const plantings = useMemo(() => plan?.plantings ?? [], [plan?.plantings]);
+  const plantingLabels = useMemo(
+    () => buildPlantingLabelMap(plantings, merged),
+    [plantings, merged],
+  );
 
   // Compute per-planting succession derived count for the caption.
   const successionCounts = useMemo(() => {
@@ -164,6 +169,7 @@ export function MyPlanPanel() {
                 {plantings.map((planting) => {
                   const plant = merged.get(planting.plantId);
                   if (!plant) return null;
+                  const plantingLabel = plantingLabels.get(planting.id) ?? plant.name;
                   const successionCapacity = plan
                     ? getSuccessionCapacity(plan, planting, plant)
                     : null;
@@ -197,14 +203,14 @@ export function MyPlanPanel() {
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm font-semibold text-stone-900 truncate">
-                            {plant.name}
+                            {plantingLabel}
                           </span>
                         </div>
                         <button
                           type="button"
                           onClick={() => setPendingRemove(planting)}
                           className="text-stone-500 hover:text-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
-                          aria-label={`Remove ${plant.name}`}
+                          aria-label={`Remove ${plantingLabel}`}
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -276,7 +282,7 @@ export function MyPlanPanel() {
                                     )
                                   }
                                   className="mt-1 h-9"
-                                  aria-label={`Additional succession plantings for ${plant.name}`}
+                                  aria-label={`Additional succession plantings for ${plantingLabel}`}
                                 />
                               </label>
                             )}

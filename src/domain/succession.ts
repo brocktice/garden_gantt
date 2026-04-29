@@ -1,7 +1,7 @@
 // src/domain/succession.ts
 // Pure pre-pass that expands plantings with successionEnabled: true into N derived
-// plantings, spaced by plant.timing.successionIntervalDays, capped at firstFrostDate
-// (per CONTEXT D-20). Returns a NEW plan; does not mutate input.
+// plantings, spaced by the catalog interval or a default interval, capped at firstFrostDate.
+// Returns a NEW plan; does not mutate input.
 //
 // Wired into useDerivedSchedule.ts (Plan 02-10) BEFORE generateSchedule(). Non-succession
 // plans pass through unchanged so Phase 1's 7 engine snapshots remain byte-identical.
@@ -78,8 +78,8 @@ export function successionLastPlantingDate(
 
 /**
  * Pure pre-pass that expands successionEnabled plantings into a series of derived
- * plantings spaced by successionIntervalDays, capped so each derived planting's
- * harvest completes before firstFrostDate (D-20).
+ * plantings spaced by the catalog successionIntervalDays or the domain default,
+ * capped so each derived planting's harvest completes before firstFrostDate (D-20).
  *
  * Cap formula:
  *   baseAnchor       = lastFrost + offset (per startMethod)
@@ -89,7 +89,7 @@ export function successionLastPlantingDate(
  *
  * Identity invariant: the original planting (successionIndex 0, original id) is
  * always preserved at the same position. Plans with no successionEnabled plantings
- * (or plants without successionIntervalDays) round-trip unchanged.
+ * round-trip unchanged.
  */
 export function expandSuccessions(
   plan: GardenPlan,

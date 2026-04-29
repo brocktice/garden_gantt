@@ -8,7 +8,7 @@
 
 import { useMemo } from 'react';
 import { useExpandedTasks } from './useExpandedTasks';
-import { parseDate, addDays, toISODate, nowISOString } from '../../domain/dateWrappers';
+import { parseDate, addDays, subDays, toISODate, nowISOString } from '../../domain/dateWrappers';
 import type { Task } from '../../domain/types';
 
 /**
@@ -49,9 +49,9 @@ export function partitionTasksByWindow(
 }
 
 /**
- * React hook variant. Reads expanded tasks from useExpandedTasks (today-30..today+30) and
- * partitions via the pure helper. The backward window is required for overdue custom
- * tasks; otherwise they are filtered out before the overdue bucket can see them.
+ * React hook variant. Reads expanded tasks from a wide lookback window and partitions
+ * via the pure helper. The backward window is required for overdue custom tasks;
+ * otherwise they are filtered out before the overdue bucket can see them.
  */
 export function useTodayWeekOverdue(): {
   today: Task[];
@@ -61,7 +61,7 @@ export function useTodayWeekOverdue(): {
   const todayISO = nowISOString();
   const today = parseDate(todayISO);
   const tasks = useExpandedTasks(
-    toISODate(addDays(today, -30)),
+    toISODate(subDays(today, 400)),
     toISODate(addDays(today, 30)),
   );
 

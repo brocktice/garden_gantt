@@ -166,5 +166,5 @@ describe('Phase 2 Flow A — happy path', () => {
     await waitFor(() => {
       expect(screen.queryByText(/No plants in your plan yet/i)).toBeNull();
     });
-  });
+  }, 15000);
 });

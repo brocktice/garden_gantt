@@ -19,6 +19,8 @@ import { Dialog, DialogPortal, DialogOverlay, DialogTitle, DialogDescription } f
 import { lifecyclePalette } from '../gantt/lifecyclePalette';
 import { cn } from '../../ui/cn';
 import { parseDate } from '../../domain/dateWrappers';
+import { expandSuccessions } from '../../domain/succession';
+import { buildPlantingLabelMap } from '../../domain/plantingLabels';
 import type { ScheduleEvent, Task } from '../../domain/types';
 
 function safeFormat(selectedDate: string, pattern: string): string {
@@ -45,6 +47,8 @@ export function DayDetailDrawer() {
   const toggleTask = usePlanStore((s) => s.toggleTaskCompletion);
   const catalog = useCatalogStore(selectMerged);
   const plan = usePlanStore((s) => s.plan);
+  const expandedPlantings = plan ? expandSuccessions(plan, catalog).plantings : [];
+  const plantingLabels = buildPlantingLabelMap(expandedPlantings, catalog);
 
   if (!selectedDate) return null;
 
@@ -159,9 +163,7 @@ export function DayDetailDrawer() {
                 if (plantingId === FREE_FLOATING_KEY) {
                   groupName = 'Free-floating tasks';
                 } else {
-                  const planting = plan?.plantings.find((p) => p.id === plantingId);
-                  const plant = planting ? catalog.get(planting.plantId) : undefined;
-                  groupName = plant?.name ?? planting?.label ?? plantingId;
+                  groupName = plantingLabels.get(plantingId) ?? plantingId;
                 }
                 return (
                   <div key={plantingId} className="mt-4 mb-2">

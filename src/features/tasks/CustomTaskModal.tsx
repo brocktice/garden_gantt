@@ -42,6 +42,7 @@ import { getTemporal } from '../../stores/planStore';
 import { pushToast } from '../../ui/toast/useToast';
 import { usePlanStore } from '../../stores/planStore';
 import { nowISOString, todayLocalYMD } from '../../domain/dateWrappers';
+import { buildPlantingLabelMap } from '../../domain/plantingLabels';
 import type {
   CustomTask,
   TaskCategory,
@@ -205,11 +206,11 @@ function CustomTaskModalInner({ open, onOpenChange, editingTask }: CustomTaskMod
   const plantingOptions = useMemo(() => {
     const base = [{ value: FREE_FLOATING, label: 'None — free-floating task' }];
     if (!plan) return base;
+    const labels = buildPlantingLabelMap(plan.plantings, catalog);
     for (const p of plan.plantings) {
-      const plant = catalog.get(p.plantId);
       base.push({
         value: p.id,
-        label: plant?.name ?? p.label ?? p.id,
+        label: labels.get(p.id) ?? p.id,
       });
     }
     return base;

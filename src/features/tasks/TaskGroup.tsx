@@ -5,7 +5,10 @@
 import { TaskRow } from './TaskRow';
 import { useCatalogStore, selectMerged } from '../../stores/catalogStore';
 import { usePlanStore } from '../../stores/planStore';
+import { expandSuccessions } from '../../domain/succession';
+import { buildPlantingLabelMap } from '../../domain/plantingLabels';
 import type { Task, TaskCategory } from '../../domain/types';
+import { useMemo } from 'react';
 
 export interface TaskGroupProps {
   tasks: Task[];
@@ -26,14 +29,19 @@ export function TaskGroup({ tasks, groupBy, todayISO }: TaskGroupProps) {
   const catalog = useCatalogStore(selectMerged);
   const plan = usePlanStore((s) => s.plan);
   const toggle = usePlanStore((s) => s.toggleTaskCompletion);
+  const expandedPlantings = useMemo(
+    () => (plan ? expandSuccessions(plan, catalog).plantings : []),
+    [plan, catalog],
+  );
+  const plantingLabels = useMemo(
+    () => buildPlantingLabelMap(expandedPlantings, catalog),
+    [expandedPlantings, catalog],
+  );
 
   function keyOf(t: Task): string {
     if (groupBy === 'plant') {
       if (!t.plantingId) return FREE_FLOATING_KEY;
-      const planting = plan?.plantings.find((p) => p.id === t.plantingId);
-      if (!planting) return t.plantingId;
-      const plant = catalog.get(planting.plantId);
-      return plant?.name ?? planting.label ?? planting.id;
+      return plantingLabels.get(t.plantingId) ?? t.plantingId;
     }
     return t.category;
   }
@@ -54,9 +62,7 @@ export function TaskGroup({ tasks, groupBy, todayISO }: TaskGroupProps) {
   // Plant-name lookup for "Group by category" view (TaskRow secondary line).
   const lookupPlantName = (t: Task): string | undefined => {
     if (!t.plantingId) return undefined;
-    const planting = plan?.plantings.find((p) => p.id === t.plantingId);
-    if (!planting) return undefined;
-    return catalog.get(planting.plantId)?.name ?? planting.label;
+    return plantingLabels.get(t.plantingId);
   };
 
   return (
