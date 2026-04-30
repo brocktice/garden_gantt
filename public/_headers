@@ -1,7 +1,11 @@
 # Cloudflare Pages cache headers — DEPLOY-03
 # Source: https://developers.cloudflare.com/pages/configuration/headers/
 
-# index.html must NOT cache so a deploy is reflected on the next page load.
+# The HTML shell must NOT cache so a deploy is reflected on the next page load.
+# Cloudflare serves the same file for both "/" and "/index.html".
+/
+  Cache-Control: no-cache, no-store, must-revalidate
+
 /index.html
   Cache-Control: no-cache, no-store, must-revalidate
 
